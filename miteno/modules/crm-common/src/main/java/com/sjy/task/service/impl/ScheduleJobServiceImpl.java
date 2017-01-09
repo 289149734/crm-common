@@ -35,7 +35,7 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
 
 	@Transactional(value = TxType.REQUIRES_NEW)
 	@Override
-	public Long initScheduleJob(ScheduleJob job, Date businessDate) {
+	public String initScheduleJob(ScheduleJob job, Date businessDate) {
 		ScheduleJobResult result = new ScheduleJobResult();
 		result.setJob(job);
 		result.setRecordDate(new Date());

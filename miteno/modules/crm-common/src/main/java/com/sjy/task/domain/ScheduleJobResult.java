@@ -3,20 +3,17 @@
  */
 package com.sjy.task.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import com.sjy.util.UuidRootEntity;
 
 /**
  * ScheduleJob执行结果
@@ -30,17 +27,9 @@ import lombok.Data;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "tbl_ScheduleJobResult")
-@Data
-public class ScheduleJobResult implements Serializable {
-	/** 任务id **/
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ScheduleJobResultSeq")
-	@SequenceGenerator(name = "ScheduleJobResultSeq", sequenceName = "seq_ScheduleJobResult")
-	@Column(name = "id", unique = true, nullable = false)
-	private Long id;
-	
-	@Version
-	Integer version = -1;
+@Setter
+@Getter
+public class ScheduleJobResult extends UuidRootEntity {
 
 	@ManyToOne
 	ScheduleJob job;

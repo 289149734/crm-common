@@ -25,7 +25,7 @@ public interface ScheduleJobService {
 	 * @param businessDate
 	 * @return
 	 */
-	Long initScheduleJob(ScheduleJob job, Date businessDate);
+	String initScheduleJob(ScheduleJob job, Date businessDate);
 
 	/**
 	 * 获取最后执行任务时间
