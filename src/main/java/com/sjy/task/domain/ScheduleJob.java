@@ -5,16 +5,14 @@ package com.sjy.task.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import org.quartz.Job;
+
+import com.sjy.util.UuidRootEntity;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
@@ -23,19 +21,12 @@ import org.quartz.Job;
  * @e-mail 289149734@qq.com
  * 
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "tbl_ScheduleJob")
-@Data
-public class ScheduleJob {
-	/** 任务id **/
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ScheduleJobSeq")
-	@SequenceGenerator(name = "ScheduleJobSeq", sequenceName = "seq_ScheduleJob")
-	@Column(name = "id", unique = true, nullable = false)
-	private Long id;
-
-	@Version
-	Integer version = -1;
+@Setter
+@Getter
+public class ScheduleJob extends UuidRootEntity {
 
 	/** 任务名称 **/
 	@Column(unique = true)
