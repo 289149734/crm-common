@@ -3,7 +3,7 @@
  */
 package com.sjy.task;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -20,7 +20,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * 
  */
 @Configuration
-@Log4j
+@Slf4j
 public class SchedulerListener implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Autowired
