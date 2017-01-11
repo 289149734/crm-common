@@ -10,7 +10,7 @@
 	<url>http://maven.apache.org</url>
 	<description>会员公用模块</description>
 
-	<!-- 配置部署的远程仓�? -->
+	<!-- 配置远程仓库地址 -->
 	<distributionManagement>
 		<repository>
 			<id>sjy-releases</id>

@@ -48,6 +48,10 @@ public class ScheduleJob extends UuidRootEntity {
 	private String jobClass;
 
 	public Job getJob() throws Exception {
-		return (Job) Class.forName(jobClass).newInstance();
+		try {
+			return (Job) Class.forName(jobClass).newInstance();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

@@ -43,6 +43,8 @@ public class MyScheduler {
 	private void startJobs(Scheduler scheduler) throws Exception {
 		Iterable<ScheduleJob> jobs = scheduleJobRepository.findNormalJobs();
 		for (ScheduleJob job : jobs) {
+			if (job.getJob() == null) continue;
+
 			TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobName(), job.getJobGroup());
 			// 获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
 			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
