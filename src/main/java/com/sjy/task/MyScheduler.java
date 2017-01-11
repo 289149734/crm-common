@@ -72,7 +72,7 @@ public class MyScheduler {
 				scheduler.rescheduleJob(triggerKey, trigger);
 			}
 
-			log.debug("【{}-{}】加载成功", job.getJobDesc(), job.getJobName());
+			log.debug("【{}-{}】加载成功,运行时间：{}", job.getJobDesc(), job.getJobName(), job.getCronExpression());
 		}
 	}
 }

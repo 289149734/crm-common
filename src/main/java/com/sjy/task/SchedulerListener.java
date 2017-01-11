@@ -3,6 +3,8 @@
  */
 package com.sjy.task;
 
+import java.util.Properties;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
@@ -19,9 +22,11 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * @e-mail 289149734@qq.com
  * 
  */
-@Configuration
 @Slf4j
+@Configuration
 public class SchedulerListener implements ApplicationListener<ContextRefreshedEvent> {
+
+	public final static String fileName = "quartz.properties";
 
 	@Autowired
 	public MyScheduler myScheduler;
@@ -29,10 +34,28 @@ public class SchedulerListener implements ApplicationListener<ContextRefreshedEv
 	@Autowired
 	public MyJobFactory myJobFactory;
 
+	public Properties quartzProperties() {
+		try {
+			ClassPathResource resource = new ClassPathResource(fileName);
+			Properties cfg = new Properties();
+			cfg.load(resource.getInputStream());
+			log.debug("加载{}文件成功", fileName);
+			for (Object key : cfg.keySet()) {
+				log.debug("{} = {}", key, cfg.get(key));
+			}
+			return cfg;
+		} catch (Exception e) {
+			log.debug("加载{}文件失败", fileName);
+			return null;
+		}
+	}
+
 	@Bean
 	public SchedulerFactoryBean schedulerFactoryBean() {
 		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 		schedulerFactoryBean.setJobFactory(myJobFactory);
+		Properties cfg = quartzProperties();
+		if (cfg != null) schedulerFactoryBean.setQuartzProperties(cfg);
 		return schedulerFactoryBean;
 	}
 
