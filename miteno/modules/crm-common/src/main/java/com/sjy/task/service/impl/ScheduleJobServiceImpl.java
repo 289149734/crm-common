@@ -58,7 +58,7 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
 
 	@Transactional(value = TxType.REQUIRES_NEW)
 	@Override
-	public void updateScheduleJob(Long id, int jobStatus, Date finishDate, long costTimes, String errorMsg) {
+	public void updateScheduleJob(String id, int jobStatus, Date finishDate, long costTimes, String errorMsg) {
 		scheduleJobResultRepository.updateJob(id, finishDate, costTimes, jobStatus, errorMsg);
 	}
 

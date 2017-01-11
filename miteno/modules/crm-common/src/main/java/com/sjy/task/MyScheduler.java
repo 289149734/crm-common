@@ -3,7 +3,7 @@
  */
 package com.sjy.task;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
@@ -26,7 +26,7 @@ import com.sjy.task.domain.ScheduleJob;
  * @e-mail 289149734@qq.com
  * 
  */
-@Log4j
+@Slf4j
 @Component
 public class MyScheduler {
 	@Autowired
@@ -72,7 +72,7 @@ public class MyScheduler {
 				scheduler.rescheduleJob(triggerKey, trigger);
 			}
 
-			log.debug("【" + job.getJobDesc() + "-" + job.getJobName() + "】加载成功");
+			log.debug("【{}-{}】加载成功", job.getJobDesc(), job.getJobName());
 		}
 	}
 }

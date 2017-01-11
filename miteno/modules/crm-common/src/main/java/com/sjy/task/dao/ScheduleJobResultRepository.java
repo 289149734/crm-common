@@ -28,5 +28,5 @@ public interface ScheduleJobResultRepository extends CrudRepository<ScheduleJobR
 
 	@Modifying
 	@Query("update ScheduleJobResult as o set o.finishDate = ?2, o.costTimes = ?3, o.jobStatus = ?4, o.errorMsg = ?5 where o.id = ?1")
-	int updateJob(Long id, Date finishDate, long costTimes, int jobStatus, String errorMsg);
+	int updateJob(String id, Date finishDate, long costTimes, int jobStatus, String errorMsg);
 }

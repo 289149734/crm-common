@@ -43,5 +43,5 @@ public interface ScheduleJobService {
 	 * @param errorMsg
 	 * @return
 	 */
-	void updateScheduleJob(Long id, int jobStatus, Date finishDate, long costTimes, String errorMsg);
+	void updateScheduleJob(String id, int jobStatus, Date finishDate, long costTimes, String errorMsg);
 }
