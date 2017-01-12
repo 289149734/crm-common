@@ -17,6 +17,7 @@ import com.sjy.task.dao.ScheduleJobResultRepository;
 import com.sjy.task.domain.ScheduleJob;
 import com.sjy.task.domain.ScheduleJobResult;
 import com.sjy.task.service.ScheduleJobService;
+import com.sjy.util.DateUtils;
 
 /**
  * ScheduleJobResult服务类
@@ -52,6 +53,8 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
 			Calendar c = Calendar.getInstance();
 			c.set(2016, 6, 1, 0, 0, 0); // 设置系统启用时间
 			date = c.getTime();
+		} else {
+			date = DateUtils.getNextDay(date);
 		}
 		return date;
 	}
