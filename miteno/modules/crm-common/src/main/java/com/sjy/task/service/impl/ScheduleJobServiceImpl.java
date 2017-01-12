@@ -59,6 +59,20 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
 		return date;
 	}
 
+	@Override
+	public Date getLastJobMonth(ScheduleJob job) {
+		Date date = scheduleJobResultRepository.findLastJobDate(job);
+		if (date == null) {
+			Calendar c = Calendar.getInstance();
+			c.set(2016, 6, 1, 0, 0, 0); // 设置系统启用时间
+			c.set(Calendar.MILLISECOND, 0);
+			date = c.getTime();
+		} else {
+			date = DateUtils.getNextMonthDay(date);
+		}
+		return date;
+	}
+
 	@Transactional(value = TxType.REQUIRES_NEW)
 	@Override
 	public void updateScheduleJob(String id, int jobStatus, Date finishDate, long costTimes, String errorMsg) {
