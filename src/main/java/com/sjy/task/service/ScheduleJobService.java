@@ -36,6 +36,14 @@ public interface ScheduleJobService {
 	Date getLastJobDate(ScheduleJob job);
 
 	/**
+	 * 获取最后执行任务时间(月)
+	 * 
+	 * @param job
+	 * @return
+	 */
+	Date getLastJobMonth(ScheduleJob job);
+
+	/**
 	 * 更新任务执行结果
 	 * 
 	 * @param id

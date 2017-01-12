@@ -55,6 +55,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
 		return c.getTime();
 	}
 
@@ -71,6 +72,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		c.set(Calendar.HOUR_OF_DAY, 23);
 		c.set(Calendar.MINUTE, 59);
 		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 999);
 		return getNextDay(c.getTime());
 	}
 
@@ -81,6 +83,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
 		return c.getTime();
 	}
 
@@ -91,6 +94,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		c.set(Calendar.HOUR_OF_DAY, 23);
 		c.set(Calendar.MINUTE, 59);
 		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 999);
 		return c.getTime();
 	}
 
@@ -101,6 +105,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
 		return c.getTime();
 	}
 
@@ -111,6 +116,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		c.set(Calendar.HOUR_OF_DAY, 23);
 		c.set(Calendar.MINUTE, 59);
 		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 999);
 		return c.getTime();
 	}
 
@@ -206,7 +212,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		else {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
-			cal.add(Calendar.DATE, 1);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
