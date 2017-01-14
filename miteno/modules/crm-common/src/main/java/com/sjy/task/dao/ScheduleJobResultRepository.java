@@ -21,7 +21,7 @@ import com.sjy.task.domain.ScheduleJobResult;
  * 
  */
 @Component
-public interface ScheduleJobResultRepository extends CrudRepository<ScheduleJobResult, Long> {
+public interface ScheduleJobResultRepository extends CrudRepository<ScheduleJobResult, String> {
 
 	@Query("select max(o.businessDate) from ScheduleJobResult as o where o.job = ?1")
 	Date findLastJobDate(ScheduleJob job);
