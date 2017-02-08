@@ -23,6 +23,11 @@ import org.apache.commons.beanutils.BeanUtilsBean2;
  * 
  */
 public class BeanUtils extends BeanUtilsBean {
+	@Override
+	protected Object convert(Object value, Class<?> type) {
+		return super.convert(value, type);
+	}
+
 	/**
 	 * Converts a map to a JavaBean.
 	 * 
@@ -42,7 +47,7 @@ public class BeanUtils extends BeanUtilsBean {
 	 * @throws InvocationTargetException
 	 *             failed to call setters
 	 */
-	public static <T> T toBean(Class<T> type, Map<String, ? extends Object> map) {
+	public <T> T toBean(Class<T> type, Map<String, ? extends Object> map) {
 		try {
 			T obj = type.newInstance();
 			BeanInfo beanInfo = Introspector.getBeanInfo(type);
@@ -52,9 +57,9 @@ public class BeanUtils extends BeanUtilsBean {
 				String propertyName = descriptor.getName();
 				if (map.containsKey(propertyName)) {
 					Object value = map.get(propertyName);
-					Object[] args = new Object[1];
-					args[0] = value;
-					descriptor.getWriteMethod().invoke(obj, args);
+					Class<?> valType = descriptor.getPropertyType();
+					value = convert(value, valType);
+					descriptor.getWriteMethod().invoke(obj, value);
 				}
 			}
 			return obj;
@@ -77,7 +82,7 @@ public class BeanUtils extends BeanUtilsBean {
 	 * @throws InvocationTargetException
 	 *             failed to call setters
 	 */
-	public static Map<String, Object> toMap(Object bean) {
+	public Map<String, Object> toMap(Object bean) {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
