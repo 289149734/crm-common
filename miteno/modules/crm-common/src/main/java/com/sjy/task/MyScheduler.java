@@ -3,6 +3,8 @@
  */
 package com.sjy.task;
 
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.quartz.CronScheduleBuilder;
@@ -41,7 +43,8 @@ public class MyScheduler {
 	}
 
 	private void startJobs(Scheduler scheduler) throws Exception {
-		Iterable<ScheduleJob> jobs = scheduleJobRepository.findNormalJobs();
+		List<ScheduleJob> jobs = scheduleJobRepository.findNormalJobs();
+		log.debug("总共有{}个自动任务", jobs.size());
 		for (ScheduleJob job : jobs) {
 			if (job.getJob() == null) continue;
 
