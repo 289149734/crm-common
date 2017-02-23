@@ -224,6 +224,16 @@ public class StringUtil extends StringUtils {
 		return sb.toString().toUpperCase();
 	}
 
+	public static List<String> splitForList(String str, String separator) {
+		List<String> list = new ArrayList<String>();
+		String[] arrs = split(str, separator);
+		if (arrs != null) {
+			for (String e : arrs)
+				list.add(e);
+		} 
+		return list;
+	}
+
 	public static void main(String[] args) throws Exception {
 		byte[] bb = "李炎".getBytes("GBK");
 		System.out.println(bytesToHexStr(bb, 0, bb.length > 5 ? 5 : bb.length));

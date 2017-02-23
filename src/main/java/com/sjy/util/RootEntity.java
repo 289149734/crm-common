@@ -27,7 +27,7 @@ import lombok.Data;
 public class RootEntity implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", unique = true, nullable = false)
 	protected Long id;
 

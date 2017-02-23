@@ -28,8 +28,8 @@ import org.hibernate.annotations.GenericGenerator;
 public class UuidRootEntity implements Serializable {
 
 	@Id
+	@GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
 	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid")
 	@Column(name = "id", unique = true, length = 32, nullable = false)
 	protected String id;
 
