@@ -7,13 +7,14 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Version;
 
 import lombok.Data;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
@@ -26,9 +27,12 @@ import lombok.Data;
 @MappedSuperclass
 @Data
 public class SeqRootEntity implements Serializable {
+	// org.hibernate.id.enhanced.SequenceStyleGenerator
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WxMessageSeq")
-	@SequenceGenerator(name = "WxMessageSeq", sequenceName = "seq_WxMessage")
+	@GenericGenerator(name = "DefaultSeq", strategy = "com.sjy.util.MySequenceStyleGenerator", parameters = {
+			@Parameter(name = "prefer_sequence_per_entity", value = "true"), @Parameter(name = "sequence_per_entity_suffix", value = "SEQ_"),
+			@Parameter(name = "initial_value", value = "100000"), @Parameter(name = "increment_size", value = "1") })
+	@GeneratedValue(generator = "DefaultSeq")
 	@Column(name = "id", unique = true, nullable = false)
 	Long id;
 
