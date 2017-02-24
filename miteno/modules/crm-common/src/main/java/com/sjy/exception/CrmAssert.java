@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.dubbo.rpc.RpcException;
 import com.sjy.util.StringUtil;
 
 /**
@@ -25,7 +26,7 @@ public class CrmAssert extends Assert {
 
 	public static void notNull(String object, String message) {
 		if (StringUtil.isBlank(object)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -38,12 +39,12 @@ public class CrmAssert extends Assert {
 	 */
 	public static void notNullAndExist(String val, List<String> objects, String message) {
 		if (StringUtil.isBlank(val) || !objects.contains(val.trim())) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
 	/**
-	 * Assert a boolean expression, throwing {@code CrmException} if the test
+	 * Assert a boolean expression, throwing {@code RpcException} if the test
 	 * result is {@code false}.
 	 * 
 	 * <pre class="code">
@@ -54,17 +55,17 @@ public class CrmAssert extends Assert {
 	 *            a boolean expression
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if expression is {@code false}
 	 */
 	public static void isTrue(boolean expression, String message) {
 		if (!expression) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
 	/**
-	 * Assert a boolean expression, throwing {@code CrmException} if the test
+	 * Assert a boolean expression, throwing {@code RpcException} if the test
 	 * result is {@code false}.
 	 * 
 	 * <pre class="code">
@@ -73,7 +74,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param expression
 	 *            a boolean expression
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if expression is {@code false}
 	 */
 	public static void isTrue(boolean expression) {
@@ -91,12 +92,24 @@ public class CrmAssert extends Assert {
 	 *            the object to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object is not {@code null}
 	 */
 	public static void isNull(Object object, String message) {
 		if (object != null) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
+		}
+	}
+
+	public static void isNull(Integer object, String message) {
+		if (object != null && object.intValue() != 0) {
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
+		}
+	}
+
+	public static void isNull(Long object, String message) {
+		if (object != null && object.longValue() != 0L) {
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -109,7 +122,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param object
 	 *            the object to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object is not {@code null}
 	 */
 	public static void isNull(Object object) {
@@ -127,12 +140,12 @@ public class CrmAssert extends Assert {
 	 *            the object to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object is {@code null}
 	 */
 	public static void notNull(Object object, String message) {
 		if (object == null) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -145,7 +158,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param object
 	 *            the object to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object is {@code null}
 	 */
 	public static void notNull(Object object) {
@@ -165,12 +178,12 @@ public class CrmAssert extends Assert {
 	 * @param message
 	 *            the exception message to use if the assertion fails
 	 * @see StringUtils#hasLength
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the text is empty
 	 */
 	public static void hasLength(String text, String message) {
 		if (!StringUtils.hasLength(text)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -185,7 +198,7 @@ public class CrmAssert extends Assert {
 	 * @param text
 	 *            the String to check
 	 * @see StringUtils#hasLength
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the text is empty
 	 */
 	public static void hasLength(String text) {
@@ -205,12 +218,12 @@ public class CrmAssert extends Assert {
 	 * @param message
 	 *            the exception message to use if the assertion fails
 	 * @see StringUtils#hasText
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the text does not contain valid text content
 	 */
 	public static void hasText(String text, String message) {
 		if (!StringUtils.hasText(text)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -225,7 +238,7 @@ public class CrmAssert extends Assert {
 	 * @param text
 	 *            the String to check
 	 * @see StringUtils#hasText
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the text does not contain valid text content
 	 */
 	public static void hasText(String text) {
@@ -245,12 +258,12 @@ public class CrmAssert extends Assert {
 	 *            the substring to find within the text
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the text contains the substring
 	 */
 	public static void doesNotContain(String textToSearch, String substring, String message) {
 		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -265,7 +278,7 @@ public class CrmAssert extends Assert {
 	 *            the text to search
 	 * @param substring
 	 *            the substring to find within the text
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the text contains the substring
 	 */
 	public static void doesNotContain(String textToSearch, String substring) {
@@ -284,12 +297,12 @@ public class CrmAssert extends Assert {
 	 *            the array to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object array is {@code null} or has no elements
 	 */
 	public static void notEmpty(Object[] array, String message) {
 		if (ObjectUtils.isEmpty(array)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -303,7 +316,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param array
 	 *            the array to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object array is {@code null} or has no elements
 	 */
 	public static void notEmpty(Object[] array) {
@@ -322,14 +335,14 @@ public class CrmAssert extends Assert {
 	 *            the array to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object array contains a {@code null} element
 	 */
 	public static void noNullElements(Object[] array, String message) {
 		if (array != null) {
 			for (Object element : array) {
 				if (element == null) {
-					throw new CrmException(message);
+					throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 				}
 			}
 		}
@@ -345,7 +358,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param array
 	 *            the array to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object array contains a {@code null} element
 	 */
 	public static void noNullElements(Object[] array) {
@@ -364,12 +377,12 @@ public class CrmAssert extends Assert {
 	 *            the collection to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the collection is {@code null} or has no elements
 	 */
 	public static void notEmpty(Collection<?> collection, String message) {
 		if (CollectionUtils.isEmpty(collection)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -383,7 +396,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param collection
 	 *            the collection to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the collection is {@code null} or has no elements
 	 */
 	public static void notEmpty(Collection<?> collection) {
@@ -402,12 +415,12 @@ public class CrmAssert extends Assert {
 	 *            the map to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the map is {@code null} or has no entries
 	 */
 	public static void notEmpty(Map<?, ?> map, String message) {
 		if (CollectionUtils.isEmpty(map)) {
-			throw new CrmException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -421,7 +434,7 @@ public class CrmAssert extends Assert {
 	 * 
 	 * @param map
 	 *            the map to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the map is {@code null} or has no entries
 	 */
 	public static void notEmpty(Map<?, ?> map) {
@@ -439,7 +452,7 @@ public class CrmAssert extends Assert {
 	 *            the required class
 	 * @param obj
 	 *            the object to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object is not an instance of clazz
 	 * @see Class#isInstance
 	 */
@@ -463,14 +476,14 @@ public class CrmAssert extends Assert {
 	 *            the function itself, and which may be used to provide context.
 	 *            It should normally end in ":" or "." so that the generated
 	 *            message looks OK when appended to it.
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the object is not an instance of clazz
 	 * @see Class#isInstance
 	 */
 	public static void isInstanceOf(Class<?> type, Object obj, String message) {
 		notNull(type, "Type to check against must not be null");
 		if (!type.isInstance(obj)) {
-			throw new CrmException((StringUtils.hasLength(message) ? message + " " : "") + "Object of class ["
+			throw new RpcException(RpcException.BIZ_EXCEPTION, (StringUtils.hasLength(message) ? message + " " : "") + "Object of class ["
 					+ (obj != null ? obj.getClass().getName() : "null") + "] must be an instance of " + type);
 		}
 	}
@@ -486,7 +499,7 @@ public class CrmAssert extends Assert {
 	 *            the super type to check
 	 * @param subType
 	 *            the sub type to check
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the classes are not assignable
 	 */
 	public static void isAssignable(Class<?> superType, Class<?> subType) {
@@ -509,20 +522,21 @@ public class CrmAssert extends Assert {
 	 *            the function itself, and which may be used to provide context.
 	 *            It should normally end in ":" or "." so that the generated
 	 *            message looks OK when appended to it.
-	 * @throws CrmException
+	 * @throws RpcException
 	 *             if the classes are not assignable
 	 */
 	public static void isAssignable(Class<?> superType, Class<?> subType, String message) {
 		notNull(superType, "Type to check against must not be null");
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			throw new CrmException((StringUtils.hasLength(message) ? message + " " : "") + subType + " is not assignable to " + superType);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, (StringUtils.hasLength(message) ? message + " " : "") + subType
+					+ " is not assignable to " + superType);
 		}
 	}
 
 	/**
 	 * Assert a boolean expression, throwing {@code IllegalStateException} if
 	 * the test result is {@code false}. Call isTrue if you wish to throw
-	 * CrmException on an assertion failure.
+	 * RpcException on an assertion failure.
 	 * 
 	 * <pre class="code">
 	 * Assert.state(id == null, &quot;The id property must not already be initialized&quot;);
@@ -537,7 +551,7 @@ public class CrmAssert extends Assert {
 	 */
 	public static void state(boolean expression, String message) {
 		if (!expression) {
-			throw new IllegalStateException(message);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
 
@@ -545,7 +559,7 @@ public class CrmAssert extends Assert {
 	 * Assert a boolean expression, throwing {@link IllegalStateException} if
 	 * the test result is {@code false}.
 	 * <p>
-	 * Call {@link #isTrue(boolean)} if you wish to throw {@link CrmException}
+	 * Call {@link #isTrue(boolean)} if you wish to throw {@link RpcException}
 	 * on an assertion failure.
 	 * 
 	 * <pre class="code">
