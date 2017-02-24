@@ -23,15 +23,24 @@ public class MyPhysicalNamingStrategyStandardImpl extends PhysicalNamingStrategy
 	@Override
 	public Identifier toPhysicalTableName(Identifier name, JdbcEnvironment context) {
 		if (!name.getText().toUpperCase().startsWith("TBL_")) {
-			name = new Identifier("TBL_" + name.getText(), name.isQuoted());
+			String tableName = "TBL_" + name.getText();
+			if (tableName.toUpperCase().endsWith("DTO")) {
+				tableName = tableName.substring(0, tableName.length() - 3);
+			}
+			name = new Identifier(tableName, name.isQuoted());
 		}
-		log.debug("加载数据库表-----------" + name.getText());
+		log.debug("加载数据库表-----------{}", name.getText());
 		return name;
 	}
 
 	@Override
 	public Identifier toPhysicalSequenceName(Identifier name, JdbcEnvironment context) {
-		log.debug("加载数据库序列-----------" + name.getText());
+		String sequenceName = name.getText();
+		if (sequenceName.toUpperCase().endsWith("DTO")) {
+			sequenceName = sequenceName.substring(0, sequenceName.length() - 3);
+			name = new Identifier(sequenceName, name.isQuoted());
+		}
+		log.debug("加载数据库序列-----------{}", name.getText());
 		return name;
 	}
 
