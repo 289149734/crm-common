@@ -30,7 +30,7 @@ public class UuidRootEntity implements Serializable {
 	@Id
 	@GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
 	@GeneratedValue(generator = "uuid")
-	@Column(name = "id", unique = true, length = 32, nullable = false)
+	@Column(name = "id", unique = true, length = 36, nullable = false)
 	protected String id;
 
 	@Version
