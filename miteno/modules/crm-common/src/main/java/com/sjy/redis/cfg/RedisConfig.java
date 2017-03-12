@@ -16,6 +16,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -32,6 +33,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Configuration
 @EnableCaching
+// session失效时间5分钟
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 5 * 60)
 public class RedisConfig extends CachingConfigurerSupport {
 	@Bean
 	public KeyGenerator wiselyKeyGenerator() {
