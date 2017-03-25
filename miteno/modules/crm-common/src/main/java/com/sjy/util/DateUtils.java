@@ -21,6 +21,11 @@ import java.util.Map;
 public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	public final static String START_TIME = "start_time";
 	public final static String END_TIME = "end_time";
+	// 以毫秒表示的时间
+	private static final long DAY_IN_MILLIS = 24 * 3600 * 1000;
+	private static final long HOUR_IN_MILLIS = 3600 * 1000;
+	private static final long MINUTE_IN_MILLIS = 60 * 1000;
+	private static final long SECOND_IN_MILLIS = 1000;
 
 	public static String format(Date d, String pattern) {
 		DateFormat format = new SimpleDateFormat(pattern);
@@ -404,5 +409,54 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	 */
 	public static boolean isYearEnd(Date d) {
 		return false;
+	}
+
+	/**
+	 * 指定日历的毫秒数
+	 * 
+	 * @param cal
+	 *            指定日历
+	 * @return 指定日历的毫秒数
+	 */
+	public static long getMillis(Calendar cal) {
+		return cal.getTime().getTime();
+	}
+
+	/**
+	 * 计算两个时间之间的差值，根据标志的不同而不同
+	 * 
+	 * @param flag
+	 *            计算标志，表示按照年/月/日/时/分/秒等计算
+	 * @param calSrc
+	 *            减数
+	 * @param calDes
+	 *            被减数
+	 * @return 两个日期之间的差值
+	 */
+	public static int dateDiff(char flag, Calendar calSrc, Calendar calDes) {
+
+		long millisDiff = getMillis(calSrc) - getMillis(calDes);
+
+		if (flag == 'y') {
+			return (calSrc.get(Calendar.YEAR) - calDes.get(Calendar.YEAR));
+		}
+
+		if (flag == 'd') {
+			return (int) (millisDiff / DAY_IN_MILLIS);
+		}
+
+		if (flag == 'h') {
+			return (int) (millisDiff / HOUR_IN_MILLIS);
+		}
+
+		if (flag == 'm') {
+			return (int) (millisDiff / MINUTE_IN_MILLIS);
+		}
+
+		if (flag == 's') {
+			return (int) (millisDiff / SECOND_IN_MILLIS);
+		}
+
+		return 0;
 	}
 }
