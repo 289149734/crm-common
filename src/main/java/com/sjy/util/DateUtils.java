@@ -4,6 +4,7 @@
 package com.sjy.util;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,6 +20,8 @@ import java.util.Map;
  * 
  */
 public class DateUtils extends org.apache.commons.lang.time.DateUtils {
+	private static Map<String, ThreadLocal<SimpleDateFormat>> dateFormats = new HashMap<String, ThreadLocal<SimpleDateFormat>>();
+	private static Map<String, ThreadLocal<DecimalFormat>> numberFormats = new HashMap<String, ThreadLocal<DecimalFormat>>();
 	public final static String START_TIME = "start_time";
 	public final static String END_TIME = "end_time";
 	// 以毫秒表示的时间
@@ -30,6 +33,57 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	public static String format(Date d, String pattern) {
 		DateFormat format = new SimpleDateFormat(pattern);
 		return format.format(d);
+	}
+
+	public static String format(Object obj, String format) {
+		if (obj == null) return null;
+		if (obj instanceof Date) return formatDate(format, (Date) obj);
+		if (obj instanceof Number) return formatNumber(format, ((Number) obj).doubleValue());
+		return obj.toString();
+	}
+
+	public static String formatNumber(String pattern, double number) {
+		DecimalFormat format = getNumberFormatter(pattern);
+		return format.format(number);
+	}
+
+	private static DecimalFormat getNumberFormatter(final String format) {
+		ThreadLocal<DecimalFormat> formatLocal = numberFormats.get(format);
+		if (formatLocal == null) {
+			formatLocal = new ThreadLocal<DecimalFormat>() {
+				protected DecimalFormat initialValue() {
+					return new DecimalFormat(format);
+				}
+			};
+			numberFormats.put(format, formatLocal);
+		}
+		return formatLocal.get();
+	}
+
+	/**
+	 * 可以临时指定一个format
+	 * 
+	 * @param format
+	 * @param date
+	 * @return
+	 */
+	public static String formatDate(String format, Date date) {
+		if (date == null) return null;
+		SimpleDateFormat formatter = getDateFormatter(format);
+		return formatter.format(date);
+	}
+
+	private static SimpleDateFormat getDateFormatter(final String format) {
+		ThreadLocal<SimpleDateFormat> formatLocal = dateFormats.get(format);
+		if (formatLocal == null) {
+			formatLocal = new ThreadLocal<SimpleDateFormat>() {
+				protected SimpleDateFormat initialValue() {
+					return new SimpleDateFormat(format);
+				}
+			};
+			dateFormats.put(format, formatLocal);
+		}
+		return formatLocal.get();
 	}
 
 	public static Date parse(String str, String pattern) {

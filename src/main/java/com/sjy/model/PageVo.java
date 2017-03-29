@@ -18,6 +18,8 @@ public class PageVo {
 	int limit;
 	String sort;
 	String order;
+	Long orgId; // 当前机构ID
+	Integer orgLevel; // 当前机构等级
 
 	public int getPage() {
 		return offset / limit;
