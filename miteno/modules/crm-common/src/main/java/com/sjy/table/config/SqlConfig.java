@@ -67,7 +67,7 @@ public class SqlConfig {
 	}
 
 	public void checkSqlFiles() {
-		if (!root.exists()) return;
+		if (root == null || !root.exists()) return;
 
 		for (File f : root.listFiles()) {
 			if (f.isDirectory()) continue;
