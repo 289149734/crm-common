@@ -3,8 +3,6 @@
  */
 package com.sjy.table.controller;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -17,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sjy.model.PageUtil;
 import com.sjy.model.PageVo;
 import com.sjy.table.config.PageResult;
 import com.sjy.table.service.EjbQueryService;
-import com.sjy.util.StringUtil;
 
 /**
  * 公共表单查询服务
@@ -39,23 +37,11 @@ public class EjbQueryController {
 	@Resource
 	EjbQueryService ejbQueryService;
 
-	private Map<String, Object> getSearchParams(HttpServletRequest request) {
-		Map<String, Object> params = new HashMap<String, Object>(request.getParameterMap().size());
-		for (Iterator<String> iter = request.getParameterMap().keySet().iterator(); iter.hasNext();) {
-			String name = iter.next();
-			String value = request.getParameter(name);
-			if (StringUtil.isNotBlank(value)) {
-				params.put(name, value);
-			}
-		}
-		return params;
-	}
-
 	@RequestMapping(value = "/list/{queryName}", method = RequestMethod.GET)
 	public PageResult list(HttpServletRequest request, @PathVariable String queryName, PageVo pageVo) {
 		try {
 			String requestUri = request.getRequestURI();
-			Map<String, Object> params = getSearchParams(request);
+			Map<String, Object> params = PageUtil.getSearchParams(request);
 			log.debug("requestUri = {}, params = {}", requestUri, params);
 			return ejbQueryService.selectData(queryName, params, null, pageVo.getOffset(), pageVo.getLimit(), null);
 		} catch (Exception e) {
