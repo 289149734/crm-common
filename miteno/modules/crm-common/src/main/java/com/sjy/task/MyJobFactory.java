@@ -3,6 +3,8 @@
  */
 package com.sjy.task;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
  * @e-mail 289149734@qq.com
  * 
  */
+@Slf4j
 @Component
 public class MyJobFactory extends AdaptableJobFactory {
 	@Autowired
@@ -23,12 +26,17 @@ public class MyJobFactory extends AdaptableJobFactory {
 
 	@Override
 	protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
-		// 调用父类的方法
-		Object jobInstance = super.createJobInstance(bundle);
+		try {
+			// 调用父类的方法
+			Object jobInstance = super.createJobInstance(bundle);
 
-		// 进行注入
-		capableBeanFactory.autowireBean(jobInstance);
+			// 进行注入
+			capableBeanFactory.autowireBean(jobInstance);
 
-		return jobInstance;
+			return jobInstance;
+		} catch (Exception e) {
+			log.error("自动任务注入Bean失败", e);
+			return null;
+		}
 	}
 }
