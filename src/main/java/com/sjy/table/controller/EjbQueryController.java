@@ -3,6 +3,8 @@
  */
 package com.sjy.table.controller;
 
+import io.swagger.annotations.ApiOperation;
+
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sjy.model.PageUtil;
@@ -37,7 +40,9 @@ public class EjbQueryController {
 	@Resource
 	EjbQueryService ejbQueryService;
 
+	@ApiOperation(value = "查询列表信息", notes = "通过编号查询列表信息")
 	@RequestMapping(value = "/list/{queryName}", method = RequestMethod.GET)
+	@ResponseBody
 	public PageResult list(HttpServletRequest request, @PathVariable String queryName, PageVo pageVo) {
 		try {
 			String requestUri = request.getRequestURI();

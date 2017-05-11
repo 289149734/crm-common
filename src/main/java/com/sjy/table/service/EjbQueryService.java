@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.sjy.dict.service.DictService;
@@ -54,7 +55,7 @@ public class EjbQueryService {
 	private int MAXCOUNT = 10000; // 查询时返回最多的count
 
 	@Value("${spring.jpa.database}")
-	private String dialect = "oracle"; // 默认指定oracle
+	private String dialect = "mysql"; // 默认指定oracle
 
 	SqlConfig config = new SqlConfig();
 
@@ -541,6 +542,7 @@ public class EjbQueryService {
 		pr.content = contents;
 	}
 
+	@Scheduled(cron = "0/2 * * * * ? ")
 	public void checkSqlFiles() {
 		config.checkSqlFiles();
 	}
