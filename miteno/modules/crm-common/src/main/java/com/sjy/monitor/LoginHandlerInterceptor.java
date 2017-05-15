@@ -5,14 +5,12 @@ package com.sjy.monitor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.sjy.constant.SessionParamType;
 
 /**
  * 校验是否登录拦截器
@@ -24,6 +22,7 @@ import com.sjy.constant.SessionParamType;
  * 
  */
 @Slf4j
+@Aspect
 public class LoginHandlerInterceptor implements HandlerInterceptor {
 
 	/*
@@ -37,10 +36,11 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		// TODO HttpSession session = request.getSession();
-		//Long orgId = (Long) session.getAttribute(SessionParamType.ORGID);
-		//Long userId = (Long) session.getAttribute(SessionParamType.USERID);
-		//log.debug("[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", request.getRequestURI(), orgId, userId);
-		//if (orgId == null || userId == null) return false;
+		// Long orgId = (Long) session.getAttribute(SessionParamType.ORGID);
+		// Long userId = (Long) session.getAttribute(SessionParamType.USERID);
+		// log.debug("[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", request.getRequestURI(),
+		// orgId, userId);
+		// if (orgId == null || userId == null) return false;
 		return true;
 	}
 
