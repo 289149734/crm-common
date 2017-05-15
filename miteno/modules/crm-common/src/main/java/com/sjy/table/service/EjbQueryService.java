@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -51,11 +51,7 @@ public class EjbQueryService {
 	@Resource
 	DictService dictService;
 
-	// @Value("${list.maxcount}")
 	private int MAXCOUNT = 10000; // 查询时返回最多的count
-
-	@Value("${spring.jpa.database}")
-	private String dialect = "mysql"; // 默认指定oracle
 
 	SqlConfig config = new SqlConfig();
 
@@ -72,7 +68,9 @@ public class EjbQueryService {
 	private boolean isOracle = false;
 	private boolean isMySql = false;
 
-	public EjbQueryService() {
+	public EjbQueryService(Environment env) {
+		String dialect = env.getProperty("spring.jpa.database", "MYSQL");
+		MAXCOUNT = Integer.parseInt(env.getProperty("application.list.maxcount", "50000"));
 		checkSqlFiles();
 		isOracle = dialect.equalsIgnoreCase("oracle");
 		isMySql = dialect.equalsIgnoreCase("mysql");
