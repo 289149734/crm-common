@@ -1,7 +1,5 @@
 package com.sjy.table.service;
 
-import groovy.lang.Script;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +13,6 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-
-import lombok.extern.slf4j.Slf4j;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
@@ -38,9 +34,12 @@ import com.sjy.table.util.QueryUtil;
 import com.sjy.util.DateUtils;
 import com.sjy.util.StringUtil;
 
+import groovy.lang.Script;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
-@Component
-public class EjbQueryService {
+@Component("dataQueryService")
+public class DataQueryService {
 
 	@Resource
 	SessionFactory sessionFactory;
@@ -68,7 +67,7 @@ public class EjbQueryService {
 	private boolean isOracle = false;
 	private boolean isMySql = false;
 
-	public EjbQueryService(Environment env) {
+	public DataQueryService(Environment env) {
 		String dialect = env.getProperty("spring.jpa.database", "MYSQL");
 		MAXCOUNT = Integer.parseInt(env.getProperty("application.list.maxcount", "50000"));
 		checkSqlFiles();
@@ -149,19 +148,23 @@ public class EjbQueryService {
 			orderBy = orderBy.trim();
 			int i = orderBy.indexOf('.');
 			String token = orderBy;
-			if (i > 0) token = orderBy.substring(0, i);
+			if (i > 0)
+				token = orderBy.substring(0, i);
 			else {
 				i = orderBy.indexOf(' ');
-				if (i > 0) token = orderBy.substring(0, i);
+				if (i > 0)
+					token = orderBy.substring(0, i);
 			}
 			try {
 				int j = Integer.parseInt(token);
 				if (query.columns != null && query.columns.size() > j && query.columns.get(j).field != null) {
 					sb.append(" order by ");
 					sb.append(query.columns.get(j).field);
-					if (i > 0) sb.append(orderBy.substring(i));
+					if (i > 0)
+						sb.append(orderBy.substring(i));
 
-				} else log.warn("not support order by :" + query.stmt + "," + orderBy);
+				} else
+					log.warn("not support order by :" + query.stmt + "," + orderBy);
 			} catch (NumberFormatException nfe) {
 				log.warn("not support order by :" + query.stmt + "," + orderBy);
 			}
@@ -181,8 +184,8 @@ public class EjbQueryService {
 	 * @param maxResult
 	 * @return
 	 */
-	public PageResult selectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult, String showFields)
-			throws Exception {
+	public PageResult selectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult,
+			String showFields) throws Exception {
 		return internalSelectData(queryName, params, orderBy, start, maxResult, showFields, false);
 	}
 
@@ -206,8 +209,10 @@ public class EjbQueryService {
 
 		if (isOracle) {
 			// 不允许超过5000
-			if (countStmt.lastIndexOf(" where ") >= 0) sb.append(" and rownum<");
-			else sb.append(" where rownum<");
+			if (countStmt.lastIndexOf(" where ") >= 0)
+				sb.append(" and rownum<");
+			else
+				sb.append(" where rownum<");
 			sb.append(MAXCOUNT + 1);
 		} else if (isMySql) {
 			sb.append(" limit ");
@@ -229,7 +234,8 @@ public class EjbQueryService {
 		return stmt;
 	}
 
-	private Object[] compileStmt(SqlQuery query, String fromStmt, String orderStmt, Map<String, Object> params, PageResult pr) {
+	private Object[] compileStmt(SqlQuery query, String fromStmt, String orderStmt, Map<String, Object> params,
+			PageResult pr) {
 		StringBuffer sb = new StringBuffer();
 		appendField(sb, query, params);
 		sb.append(fromStmt);
@@ -244,7 +250,8 @@ public class EjbQueryService {
 		int start = pr.start;
 		int maxResult = pr.maxResult;
 		if (isOracle) {
-			if (start > 0) sb.append("select * from (");
+			if (start > 0)
+				sb.append("select * from (");
 			sb.append("select ");
 			sb.append(QueryUtil.getHint(query, null));
 			sb.append("x.*, rownum as rownum_ from (");
@@ -280,19 +287,22 @@ public class EjbQueryService {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked" })
-	private PageResult internalSelectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult,
-			String showFields, boolean export) throws Exception {
+	private PageResult internalSelectData(String queryName, Map<String, Object> params, String orderBy, int start,
+			int maxResult, String showFields, boolean export) throws Exception {
 		PageResult pr = new PageResult();
 		paramLocal.set(params);
 		pageResultLocal.set(pr);
 		try {
-			if (params == null) params = Collections.EMPTY_MAP;
+			if (params == null)
+				params = Collections.EMPTY_MAP;
 			SqlQuery query = getQuery(queryName);
-			if (query == null) throw new CrmException("Unknown query " + queryName);
+			if (query == null)
+				throw new CrmException("Unknown query " + queryName);
 
 			columIndexMapLocal.set(query.columnIndexMap);
 
-			if (start < 0) start = 0;
+			if (start < 0)
+				start = 0;
 			if (maxResult < 1) {
 				maxResult = 20;
 			}
@@ -335,7 +345,8 @@ public class EjbQueryService {
 								stats[0] = pr.totalElements;
 								for (int k = 1; k < stats.length; k++) {
 									stats[k] = rs1.getObject(k);
-									if (stats[k] == null) stats[k] = 0;
+									if (stats[k] == null)
+										stats[k] = 0;
 								}
 								pr.stats = stats;
 							}
@@ -349,7 +360,8 @@ public class EjbQueryService {
 						if (isOracle || isMySql) {
 							st = conn.createStatement();
 							rs = st.executeQuery(stmt);
-							results = QueryUtil.parseSqlResult(sessionFactory, rs, query.columns.size(), maxResult, translator);
+							results = QueryUtil.parseSqlResult(sessionFactory, rs, query.columns.size(), maxResult,
+									translator);
 						}
 					}
 
@@ -358,28 +370,33 @@ public class EjbQueryService {
 				} catch (Exception ce) {
 					throw new CrmException(ce);
 				} finally {
-					if (rs != null) try {
-						rs.close();
-					} catch (Exception e) {
-					}
+					if (rs != null)
+						try {
+							rs.close();
+						} catch (Exception e) {
+						}
 
-					if (rs1 != null) try {
-						rs1.close();
-					} catch (Exception e) {
-					}
+					if (rs1 != null)
+						try {
+							rs1.close();
+						} catch (Exception e) {
+						}
 
-					if (st != null) try {
-						st.close();
-					} catch (Exception e) {
-					}
+					if (st != null)
+						try {
+							st.close();
+						} catch (Exception e) {
+						}
 
-					if (st1 != null) try {
-						st1.close();
-					} catch (Exception e) {
-					}
+					if (st1 != null)
+						try {
+							st1.close();
+						} catch (Exception e) {
+						}
 				}
 			}
-			if (results == null) results = Collections.EMPTY_LIST;
+			if (results == null)
+				results = Collections.EMPTY_LIST;
 
 			toColumnValues(pr, query, results, showFields, export);
 			pr.title = QueryUtil.getTitle(query, pr.locale);
@@ -414,8 +431,10 @@ public class EjbQueryService {
 		}
 	}
 
-	private void toColumnValues(PageResult pr, SqlQuery query, List<Object[]> results, String showFields, boolean export) {
-		if (query.columns == null || query.columns.size() == 0) return;
+	private void toColumnValues(PageResult pr, SqlQuery query, List<Object[]> results, String showFields,
+			boolean export) {
+		if (query.columns == null || query.columns.size() == 0)
+			return;
 
 		List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>(results.size());
 
@@ -440,7 +459,8 @@ public class EjbQueryService {
 							throw new CrmException("解析动态title出错:" + column.title, e);
 						}
 
-					} else columns.add(column);
+					} else
+						columns.add(column);
 					dataColIndex.add(i);
 				}
 			}
@@ -452,7 +472,8 @@ public class EjbQueryService {
 				String s = st.nextToken();
 				try {
 					int f = Integer.parseInt(s);
-					if (f >= 0 && f < query.columns.size()) fList.add(f);
+					if (f >= 0 && f < query.columns.size())
+						fList.add(f);
 				} catch (Exception e) {
 
 				}
@@ -472,7 +493,8 @@ public class EjbQueryService {
 							throw new CrmException("解析动态title出错:" + column.title, e);
 						}
 
-					} else columns.add(column);
+					} else
+						columns.add(column);
 					dataColIndex.add(i);
 				}
 			}
@@ -491,24 +513,27 @@ public class EjbQueryService {
 				for (int i = 0; i < columns.size(); i++) {
 					column = columns.get(i);
 					if (result instanceof Object[]) {
-						if (((Object[]) result).length > dataColIndexArray[i]) rowData[i] = ((Object[]) result)[dataColIndexArray[i]];
+						if (((Object[]) result).length > dataColIndexArray[i])
+							rowData[i] = ((Object[]) result)[dataColIndexArray[i]];
 					} else if (dataColIndexArray[i] == 0) {
 						rowData[i] = result;
 					}
-					if (column.value != null) try {
-						valueLocal.set(rowData[i]);
-						rowData[i] = column.dynaValue.run();
-					} catch (Exception e) {
-						throw new CrmException("parse column value error:" + column.value, e);
-					}
+					if (column.value != null)
+						try {
+							valueLocal.set(rowData[i]);
+							rowData[i] = column.dynaValue.run();
+						} catch (Exception e) {
+							throw new CrmException("parse column value error:" + column.value, e);
+						}
 					if (rowData[i] != null) {
 						if (rowData[i] instanceof String) {
 							rowData[i] = ((String) rowData[i]).trim();
 						}
 						if (column.dict != null) {
 							try {
-								Integer dictValue = (Integer) (rowData[i] == null ? 0 : (rowData[i] instanceof Integer ? rowData[i] : Integer
-										.parseInt(rowData[i] + "")));
+								Integer dictValue = (Integer) (rowData[i] == null ? 0
+										: (rowData[i] instanceof Integer ? rowData[i]
+												: Integer.parseInt(rowData[i] + "")));
 								rowData[i] = dictService.getText(column.dict, dictValue);
 							} catch (Exception e) {
 								throw new CrmException("parse column value error:" + column.value, e);
@@ -549,7 +574,8 @@ public class EjbQueryService {
 		paramLocal.set(params);
 		try {
 			SqlQuery query = getQuery(queryName);
-			if (query == null) throw new CrmException("Unknown query " + queryName);
+			if (query == null)
+				throw new CrmException("Unknown query " + queryName);
 			TableMeta meta = new TableMeta();
 			meta.setTitle(QueryUtil.getTitle(query, (String) params.get("_c_locale")));
 
@@ -557,13 +583,14 @@ public class EjbQueryService {
 			SqlColumn column, newColumn;
 			for (int i = 0; i < meta.getColumns().size(); i++) {
 				column = meta.getColumns().get(i);
-				if (column.dynaTitle != null) try {
-					newColumn = column.clone();
-					newColumn.title = column.dynaTitle.run().toString();
-					meta.getColumns().set(i, newColumn);
-				} catch (Exception e) {
-					throw new CrmException("解析动态title出错:" + column.title, e);
-				}
+				if (column.dynaTitle != null)
+					try {
+						newColumn = column.clone();
+						newColumn.title = column.dynaTitle.run().toString();
+						meta.getColumns().set(i, newColumn);
+					} catch (Exception e) {
+						throw new CrmException("解析动态title出错:" + column.title, e);
+					}
 
 			}
 			return meta;
@@ -573,12 +600,14 @@ public class EjbQueryService {
 	}
 
 	private void checkInject(String value) {
-		if (value.indexOf(" or ") >= 0 || value.indexOf(")or(") >= 0) throw new CrmException("dubious parameter: " + value);
+		if (value.indexOf(" or ") >= 0 || value.indexOf(")or(") >= 0)
+			throw new CrmException("dubious parameter: " + value);
 	}
 
 	public Object parseHardValue(String value, String type) {
 		Object trueValue = null;
-		if (value == null) throw new CrmException("value cant be null");
+		if (value == null)
+			throw new CrmException("value cant be null");
 
 		if (type == null || type.equals(SqlConfig.STRING)) {
 			checkInject(value);
@@ -586,11 +615,17 @@ public class EjbQueryService {
 		} else if (type.equals(SqlConfig.INTEGER)) {
 			trueValue = Integer.parseInt(value);
 		} else if (type.equals(SqlConfig.DATE)) {
-			if (isOracle) trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT) + "','yyyymmddhh24miss')";
-			else trueValue = "'" + value + "'";
+			if (isOracle)
+				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
+						+ "','yyyymmddhh24miss')";
+			else
+				trueValue = "'" + value + "'";
 		} else if (type.equals(SqlConfig.ENDDATE)) {
-			if (isOracle) trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT) + "','yyyymmddhh24miss')";
-			else trueValue = "'" + FormatUtil.formatDate(FormatUtil.parseDateEnd(value)) + "'";
+			if (isOracle)
+				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT)
+						+ "','yyyymmddhh24miss')";
+			else
+				trueValue = "'" + FormatUtil.formatDate(FormatUtil.parseDateEnd(value)) + "'";
 
 		} else if (type.equals(SqlConfig.LONG)) {
 			trueValue = Long.parseLong(value);
@@ -603,18 +638,22 @@ public class EjbQueryService {
 		} else if (type.equals(SqlConfig.LIKE)) {
 			checkInject(value);
 			trueValue = value;
-			if (!value.startsWith("%")) trueValue = "%" + trueValue;
-			if (!value.endsWith("%")) trueValue = trueValue + "%";
+			if (!value.startsWith("%"))
+				trueValue = "%" + trueValue;
+			if (!value.endsWith("%"))
+				trueValue = trueValue + "%";
 			trueValue = "'" + trueValue + "'";
 		} else if (type.equals(SqlConfig.LEFTLIKE)) {
 			checkInject(value);
 			trueValue = value;
-			if (!value.endsWith("%")) trueValue = trueValue + "%";
+			if (!value.endsWith("%"))
+				trueValue = trueValue + "%";
 			trueValue = "'" + trueValue + "'";
 		} else if (type.equals(SqlConfig.RIGHTLIKE)) {
 			checkInject(value);
 			trueValue = value;
-			if (!value.startsWith("%")) trueValue = "%" + trueValue;
+			if (!value.startsWith("%"))
+				trueValue = "%" + trueValue;
 			trueValue = "'" + trueValue + "'";
 		}
 		return trueValue;
@@ -643,8 +682,10 @@ public class EjbQueryService {
 			trueValue = Double.parseDouble(value);
 		} else if (type.equals(SqlConfig.LIKE)) {
 			trueValue = value;
-			if (!value.startsWith("%")) trueValue = "%" + trueValue;
-			if (!value.endsWith("%")) trueValue = trueValue + "%";
+			if (!value.startsWith("%"))
+				trueValue = "%" + trueValue;
+			if (!value.endsWith("%"))
+				trueValue = trueValue + "%";
 		}
 		return trueValue;
 	}
