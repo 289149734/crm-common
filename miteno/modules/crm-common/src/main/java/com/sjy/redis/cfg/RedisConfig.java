@@ -33,14 +33,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Configuration
 @EnableCaching
-// session失效时间5分钟
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 5 * 60)
+@EnableRedisHttpSession
 public class RedisConfig extends CachingConfigurerSupport {
+
 	@Bean
 	public KeyGenerator wiselyKeyGenerator() {
 		return new KeyGenerator() {
 			@Override
-			public Object generate(Object target, Method method, Object... params) {
+			public Object generate(Object target, Method method,
+					Object... params) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(target.getClass().getName());
 				sb.append(method.getName());
@@ -54,14 +55,17 @@ public class RedisConfig extends CachingConfigurerSupport {
 	}
 
 	@Bean
-	public CacheManager cacheManager(@SuppressWarnings("rawtypes") RedisTemplate redisTemplate) {
+	public CacheManager cacheManager(
+			@SuppressWarnings("rawtypes") RedisTemplate redisTemplate) {
 		return new RedisCacheManager(redisTemplate);
 	}
 
 	@Bean
-	public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
+	public RedisTemplate<String, String> redisTemplate(
+			RedisConnectionFactory factory) {
 		StringRedisTemplate template = new StringRedisTemplate(factory);
-		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
+		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(
+				Object.class);
 		ObjectMapper om = new ObjectMapper();
 		om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 		om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
