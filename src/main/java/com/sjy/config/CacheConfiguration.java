@@ -3,6 +3,7 @@ package com.sjy.config;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,12 @@ public class CacheConfiguration {
 	 * @param bean
 	 * @return
 	 */
-	// @Bean("cacheManager")
-	// public EhCacheCacheManager ehCacheCacheManager(
-	// EhCacheManagerFactoryBean bean) {
-	// log.debug("---------------EhCacheCacheManager Init------------------------");
-	// return new EhCacheCacheManager(bean.getObject());
-	// }
+	@Bean("cacheManager")
+	public EhCacheCacheManager ehCacheCacheManager(
+			EhCacheManagerFactoryBean bean) {
+		log.debug("---------------EhCacheCacheManager Init------------------------");
+		return new EhCacheCacheManager(bean.getObject());
+	}
 
 	/**
 	 * 
