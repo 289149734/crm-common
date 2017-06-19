@@ -132,6 +132,11 @@
 			<artifactId>jaxen</artifactId>
 		</dependency>
 
+		<!-- swagger-api -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -142,6 +147,7 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
+		<!-- swagger-api -->
 
 		<dependency>
 			<groupId>org.liquibase</groupId>
@@ -165,15 +171,11 @@
 
 		<!-- log配置：Log4j2 + Slf4j -->
 		<!-- 桥接：告诉commons logging使用Log4j2 -->
-		<!-- <dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-jcl</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-jcl</artifactId> 
+			</dependency> -->
 		<!-- 桥接：告诉log4j-1.x使用Log4j2 -->
-		<!-- <dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-1.2-api</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-1.2-api</artifactId> 
+			</dependency> -->
 		<!-- log配置：Log4j2 + Slf4j -->
 		<dependency>
 			<!-- spring依赖日志 -->
