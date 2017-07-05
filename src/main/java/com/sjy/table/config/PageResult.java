@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @SuppressWarnings("serial")
 public class PageResult implements Serializable {
-	public int start, maxResult, totalElements;
+	public int start, maxResult, totalElements, total;
 	public List<Object[]> objects;
 	public List<Map<String, Object>> content;
 	public String title;

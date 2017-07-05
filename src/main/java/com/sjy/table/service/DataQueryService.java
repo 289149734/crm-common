@@ -14,6 +14,8 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
 import org.springframework.core.env.Environment;
@@ -33,9 +35,6 @@ import com.sjy.table.util.FormatUtil;
 import com.sjy.table.util.QueryUtil;
 import com.sjy.util.DateUtils;
 import com.sjy.util.StringUtil;
-
-import groovy.lang.Script;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component("dataQueryService")
@@ -69,7 +68,8 @@ public class DataQueryService {
 
 	public DataQueryService(Environment env) {
 		String dialect = env.getProperty("spring.jpa.database", "MYSQL");
-		MAXCOUNT = Integer.parseInt(env.getProperty("application.list.maxcount", "50000"));
+		MAXCOUNT = Integer.parseInt(env.getProperty(
+				"application.list.maxcount", "50000"));
 		checkSqlFiles();
 		isOracle = dialect.equalsIgnoreCase("oracle");
 		isMySql = dialect.equalsIgnoreCase("mysql");
@@ -79,15 +79,12 @@ public class DataQueryService {
 		return config.getQuery(queryName);
 	}
 
-	public Map<String, Script> getScriptMap() {
-		return config.getScriptMap();
-	}
-
 	public Dimension getSharedDimension(String dimName) {
 		return config.getSharedDimension(dimName);
 	}
 
-	public void appendField(StringBuffer sb, SqlQuery query, Map<String, Object> params) {
+	public void appendField(StringBuffer sb, SqlQuery query,
+			Map<String, Object> params) {
 		if (query.fieldStr != null) {
 			sb.append("select ");
 			sb.append(query.fieldStr);
@@ -95,11 +92,12 @@ public class DataQueryService {
 		}
 	}
 
-	public void appendStatment(StringBuffer sb, SqlQuery query, Map<String, Object> params) {
+	public void appendStatment(StringBuffer sb, SqlQuery query,
+			Map<String, Object> params) {
 		String stmt = query.stmt;
 		if (query.dynaStmt != null) {
 			try {
-				stmt = query.dynaStmt.run().toString();
+				stmt = FormatUtil.replaceAll(query.stmt, params);// query.dynaStmt.run().toString();
 			} catch (Exception e) {
 				throw new CrmException("解析动态sql出错:" + query.stmt, e);
 			}
@@ -111,7 +109,8 @@ public class DataQueryService {
 		appendCond(sb, query, params, hasWhere);
 	}
 
-	public boolean appendCond(StringBuffer sb, SqlQuery query, Map<String, Object> params, boolean hasWhere) {
+	public boolean appendCond(StringBuffer sb, SqlQuery query,
+			Map<String, Object> params, boolean hasWhere) {
 		String value;
 		String cond;
 		Object v;
@@ -123,10 +122,10 @@ public class DataQueryService {
 					sb.append(" where 1=1");
 					hasWhere = true;
 				}
-				sb.append(" and ");
-				if (opt.dynaCond != null) {
+				if (opt.dynaCond) {
 					try {
-						cond = opt.dynaCond.run().toString();
+						// cond = opt.dynaCond.run().toString();
+						cond = FormatUtil.replaceAll(opt.cond, params);
 					} catch (Exception e) {
 						throw new CrmException("解析动态sql出错:" + opt.cond, e);
 					}
@@ -134,10 +133,13 @@ public class DataQueryService {
 					cond = opt.cond;
 				}
 
-				cond = cond.replaceAll("\\?", "" + parseHardValue(value, opt.type));
-
-				sb.append(cond);
-
+				if (cond != null) {
+					sb.append(" and ");
+					log.debug("{}-{}", cond, parseHardValue(value, opt.type));
+					cond = cond.replaceAll("\\?",
+							"" + parseHardValue(value, opt.type));
+					sb.append(cond);
+				}
 			}
 		}
 		return hasWhere;
@@ -157,14 +159,16 @@ public class DataQueryService {
 			}
 			try {
 				int j = Integer.parseInt(token);
-				if (query.columns != null && query.columns.size() > j && query.columns.get(j).field != null) {
+				if (query.columns != null && query.columns.size() > j
+						&& query.columns.get(j).field != null) {
 					sb.append(" order by ");
 					sb.append(query.columns.get(j).field);
 					if (i > 0)
 						sb.append(orderBy.substring(i));
 
 				} else
-					log.warn("not support order by :" + query.stmt + "," + orderBy);
+					log.warn("not support order by :" + query.stmt + ","
+							+ orderBy);
 			} catch (NumberFormatException nfe) {
 				log.warn("not support order by :" + query.stmt + "," + orderBy);
 			}
@@ -184,9 +188,11 @@ public class DataQueryService {
 	 * @param maxResult
 	 * @return
 	 */
-	public PageResult selectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult,
-			String showFields) throws Exception {
-		return internalSelectData(queryName, params, orderBy, start, maxResult, showFields, false);
+	public PageResult selectData(String queryName, Map<String, Object> params,
+			String orderBy, int start, int maxResult, String showFields)
+			throws Exception {
+		return internalSelectData(queryName, params, orderBy, start, maxResult,
+				showFields, false);
 	}
 
 	private String compileCountStmt(SqlQuery query, String fromStmt) {
@@ -195,7 +201,8 @@ public class DataQueryService {
 		sb.append(fromStmt);
 		String countStmt = sb.toString();
 
-		countStmt = query.isNative ? countStmt : QueryUtil.compileSql(sessionFactory, countStmt).getSQLString();
+		countStmt = query.isNative ? countStmt : QueryUtil.compileSql(
+				sessionFactory, countStmt).getSQLString();
 		sb = new StringBuffer();
 		sb.append("select count(*) from (");
 
@@ -222,7 +229,8 @@ public class DataQueryService {
 		return sb.toString();
 	}
 
-	private String compileStatStmt(String stat, String fromStmt, String orderStmt, boolean isNative) {
+	private String compileStatStmt(String stat, String fromStmt,
+			String orderStmt, boolean isNative) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("select ");
 		sb.append(stat);
@@ -230,12 +238,13 @@ public class DataQueryService {
 		sb.append(fromStmt);
 
 		String stmt = sb.toString();
-		stmt = isNative ? stmt : QueryUtil.compileSql(sessionFactory, stmt).getSQLString();
+		stmt = isNative ? stmt : QueryUtil.compileSql(sessionFactory, stmt)
+				.getSQLString();
 		return stmt;
 	}
 
-	private Object[] compileStmt(SqlQuery query, String fromStmt, String orderStmt, Map<String, Object> params,
-			PageResult pr) {
+	private Object[] compileStmt(SqlQuery query, String fromStmt,
+			String orderStmt, Map<String, Object> params, PageResult pr) {
 		StringBuffer sb = new StringBuffer();
 		appendField(sb, query, params);
 		sb.append(fromStmt);
@@ -287,7 +296,8 @@ public class DataQueryService {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked" })
-	private PageResult internalSelectData(String queryName, Map<String, Object> params, String orderBy, int start,
+	private PageResult internalSelectData(String queryName,
+			Map<String, Object> params, String orderBy, int start,
 			int maxResult, String showFields, boolean export) throws Exception {
 		PageResult pr = new PageResult();
 		paramLocal.set(params);
@@ -328,14 +338,16 @@ public class DataQueryService {
 					log.debug("countStmt : {}", countStmt);
 					rs1 = st1.executeQuery(countStmt);
 					if (rs1.next()) {
-						pr.totalElements = ((Number) rs1.getObject(1)).intValue();
+						pr.totalElements = ((Number) rs1.getObject(1))
+								.intValue();
 					}
 
 					if (pr.totalElements > 0) {
 						// 2. total>=5000,算统计值
 						if (query.stat != null && pr.totalElements < MAXCOUNT) {
 							rs1.close();
-							String statStmt = compileStatStmt(query.stat, fromStmt, orderStmt, query.isNative);
+							String statStmt = compileStatStmt(query.stat,
+									fromStmt, orderStmt, query.isNative);
 							log.debug("statStmt : ");
 							log.debug(statStmt);
 							rs1 = st1.executeQuery(statStmt);
@@ -353,14 +365,16 @@ public class DataQueryService {
 						}
 
 						// 2.查明细
-						Object[] ss = compileStmt(query, fromStmt, orderStmt, params, pr);
+						Object[] ss = compileStmt(query, fromStmt, orderStmt,
+								params, pr);
 						String stmt = (String) ss[0];
 						log.debug("stmt : {}", stmt);
 						QueryTranslatorImpl translator = (QueryTranslatorImpl) ss[1];
 						if (isOracle || isMySql) {
 							st = conn.createStatement();
 							rs = st.executeQuery(stmt);
-							results = QueryUtil.parseSqlResult(sessionFactory, rs, query.columns.size(), maxResult,
+							results = QueryUtil.parseSqlResult(sessionFactory,
+									rs, query.columns.size(), maxResult,
 									translator);
 						}
 					}
@@ -393,6 +407,11 @@ public class DataQueryService {
 							st1.close();
 						} catch (Exception e) {
 						}
+					if (conn != null)
+						try {
+							conn.close();
+						} catch (Exception e) {
+						}
 				}
 			}
 			if (results == null)
@@ -401,28 +420,32 @@ public class DataQueryService {
 			toColumnValues(pr, query, results, showFields, export);
 			pr.title = QueryUtil.getTitle(query, pr.locale);
 			if (query.dynaStatTitle != null && pr.stats != null) {
-				try {
-					pr.statTitle = query.dynaStatTitle.run().toString();
-				} catch (Exception e) { // not throw
-					throw new CrmException("解析动态statTitle出错:" + query.statTitle, e);
-				}
+				// try {
+				// pr.statTitle = query.dynaStatTitle.run().toString();
+				// } catch (Exception e) { // not throw
+				// throw new CrmException(
+				// "解析动态statTitle出错:" + query.statTitle, e);
+				// }
 			}
 			if (query.dynaStatOper != null) {
-				try {
-					pr.statOper = query.dynaStatOper.run().toString();
-				} catch (Exception e) { // not throw
-					throw new CrmException("解析动态statOper出错:" + query.statTitle, e);
-				}
+				// try {
+				// pr.statOper = query.dynaStatOper.run().toString();
+				// } catch (Exception e) { // not throw
+				// throw new CrmException("解析动态statOper出错:" + query.statTitle,
+				// e);
+				// }
 			}
 			if (query.dynaStatDateTime != null) {
-				try {
-					pr.statDateTime = query.dynaStatDateTime.run().toString();
-				} catch (Exception e) { // not throw
-					throw new CrmException("解析动态statDateTime出错:" + query.statTitle, e);
-				}
+				// try {
+				// pr.statDateTime = query.dynaStatDateTime.run().toString();
+				// } catch (Exception e) { // not throw
+				// throw new CrmException("解析动态statDateTime出错:"
+				// + query.statTitle, e);
+				// }
 			}
 			pr.template = query.template;
 			pr.oversize = pr.totalElements == MAXCOUNT;
+			pr.total = pr.totalElements;
 			return pr;
 		} finally {
 			columIndexMapLocal.set(null);
@@ -431,12 +454,13 @@ public class DataQueryService {
 		}
 	}
 
-	private void toColumnValues(PageResult pr, SqlQuery query, List<Object[]> results, String showFields,
-			boolean export) {
+	private void toColumnValues(PageResult pr, SqlQuery query,
+			List<Object[]> results, String showFields, boolean export) {
 		if (query.columns == null || query.columns.size() == 0)
 			return;
 
-		List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>(results.size());
+		List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>(
+				results.size());
 
 		List<Object[]> columnValues = new ArrayList<Object[]>(results.size());
 		Object[] rowData = null;
@@ -446,21 +470,11 @@ public class DataQueryService {
 
 		if (showFields == null) {
 			columns = new ArrayList<SqlColumn>(query.columns.size());
-			SqlColumn column, newColumn = null;
+			SqlColumn column = null;
 			for (int i = 0; i < query.columns.size(); i++) {
 				column = query.columns.get(i);
 				if (!export || !column.hidden) {
-					if (column.dynaTitle != null) {
-						try {
-							newColumn = column.clone();
-							newColumn.title = column.dynaTitle.run().toString();
-							columns.add(newColumn);
-						} catch (Exception e) {
-							throw new CrmException("解析动态title出错:" + column.title, e);
-						}
-
-					} else
-						columns.add(column);
+					columns.add(column);
 					dataColIndex.add(i);
 				}
 			}
@@ -480,21 +494,11 @@ public class DataQueryService {
 			}
 
 			columns = new ArrayList<SqlColumn>(fList.size());
-			SqlColumn column, newColumn = null;
+			SqlColumn column = null;
 			for (int i = 0; i < fList.size(); i++) {
 				column = query.columns.get(fList.get(i));
 				if (!export || !column.hidden) {
-					if (column.dynaTitle != null) {
-						try {
-							newColumn = column.clone();
-							newColumn.title = column.dynaTitle.run().toString();
-							columns.add(newColumn);
-						} catch (Exception e) {
-							throw new CrmException("解析动态title出错:" + column.title, e);
-						}
-
-					} else
-						columns.add(column);
+					columns.add(column);
 					dataColIndex.add(i);
 				}
 			}
@@ -521,9 +525,10 @@ public class DataQueryService {
 					if (column.value != null)
 						try {
 							valueLocal.set(rowData[i]);
-							rowData[i] = column.dynaValue.run();
+							// rowData[i] = column.dynaValue.run();
 						} catch (Exception e) {
-							throw new CrmException("parse column value error:" + column.value, e);
+							throw new CrmException("parse column value error:"
+									+ column.value, e);
 						}
 					if (rowData[i] != null) {
 						if (rowData[i] instanceof String) {
@@ -533,14 +538,19 @@ public class DataQueryService {
 							try {
 								Integer dictValue = (Integer) (rowData[i] == null ? 0
 										: (rowData[i] instanceof Integer ? rowData[i]
-												: Integer.parseInt(rowData[i] + "")));
-								rowData[i] = dictService.getText(column.dict, dictValue);
+												: Integer.parseInt(rowData[i]
+														+ "")));
+								rowData[i] = dictService.getText(column.dict,
+										dictValue);
 							} catch (Exception e) {
-								throw new CrmException("parse column value error:" + column.value, e);
+								throw new CrmException(
+										"parse column value error:"
+												+ column.value, e);
 							}
 						}
 						if (column.format != null) {
-							rowData[i] = DateUtils.format(rowData[i], column.format);
+							rowData[i] = DateUtils.format(rowData[i],
+									column.format);
 						}
 					}
 
@@ -577,22 +587,22 @@ public class DataQueryService {
 			if (query == null)
 				throw new CrmException("Unknown query " + queryName);
 			TableMeta meta = new TableMeta();
-			meta.setTitle(QueryUtil.getTitle(query, (String) params.get("_c_locale")));
+			meta.setTitle(QueryUtil.getTitle(query,
+					(String) params.get("_c_locale")));
 
-			meta.setColumns(new ArrayList<SqlColumn>(query.columns));
-			SqlColumn column, newColumn;
-			for (int i = 0; i < meta.getColumns().size(); i++) {
-				column = meta.getColumns().get(i);
-				if (column.dynaTitle != null)
-					try {
-						newColumn = column.clone();
-						newColumn.title = column.dynaTitle.run().toString();
-						meta.getColumns().set(i, newColumn);
-					} catch (Exception e) {
-						throw new CrmException("解析动态title出错:" + column.title, e);
-					}
-
+			List<SqlColumn> columns = new ArrayList<SqlColumn>(
+					query.columns.size());
+			for (SqlColumn column : query.columns) {
+				column.setField(column.name);
+				if (column.align == null) {
+					column.setAlign("center");
+				}
+				if (!column.hidden) {
+					columns.add(column.clone());
+				}
 			}
+
+			meta.setColumns(columns);
 			return meta;
 		} finally {
 			paramLocal.set(null);
@@ -616,16 +626,20 @@ public class DataQueryService {
 			trueValue = Integer.parseInt(value);
 		} else if (type.equals(SqlConfig.DATE)) {
 			if (isOracle)
-				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
-						+ "','yyyymmddhh24miss')";
+				trueValue = "to_date('"
+						+ DateUtils.format(FormatUtil.parseDate(value),
+								DB_DATEFORMAT) + "','yyyymmddhh24miss')";
 			else
 				trueValue = "'" + value + "'";
 		} else if (type.equals(SqlConfig.ENDDATE)) {
 			if (isOracle)
-				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT)
-						+ "','yyyymmddhh24miss')";
+				trueValue = "to_date('"
+						+ DateUtils.format(FormatUtil.parseDateEnd(value),
+								DB_DATEFORMAT) + "','yyyymmddhh24miss')";
 			else
-				trueValue = "'" + FormatUtil.formatDate(FormatUtil.parseDateEnd(value)) + "'";
+				trueValue = "'"
+						+ FormatUtil.formatDate(FormatUtil.parseDateEnd(value))
+						+ "'";
 
 		} else if (type.equals(SqlConfig.LONG)) {
 			trueValue = Long.parseLong(value);

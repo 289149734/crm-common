@@ -1,5 +1,6 @@
 package com.sjy.dict.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -46,13 +47,15 @@ public class DictService {
 	public String getText(String category, int code) {
 		try {
 			category = category.toUpperCase();
-			String key = DICT_CACHE + "." + category + "." + code;
+			String key = DICT_CACHE + ":" + category + ":" + code;
 			String text = (String) redisService.get(key.toUpperCase());
-			if (StringUtil.isNotBlank(text)) return text.trim();
+			if (StringUtil.isNotBlank(text))
+				return text.trim();
 
-			List<Dictionary> list = dictionaryRepository.findByCategory(category);
+			List<Dictionary> list = dictionaryRepository
+					.findByCategory(category);
 			for (Dictionary obj : list) {
-				key = DICT_CACHE + "." + category + "." + obj.getCode();
+				key = DICT_CACHE + ":" + category + ":" + obj.getCode();
 				redisService.set(key.toUpperCase(), obj.getText());
 				if (code == obj.getCode()) {
 					text = obj.getText();
@@ -62,5 +65,22 @@ public class DictService {
 		} catch (Exception e) {
 			return "" + code;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Dictionary> findAll(String category) {
+		List<Dictionary> dicts = null;
+		category = category.toUpperCase();
+		String key = DICT_CACHE + ":" + category;
+		if (redisService.exists(key)) {
+			dicts = (List<Dictionary>) redisService.get(key);
+		} else {
+			dicts = dictionaryRepository.findByCategory(category);
+			redisService.set(key, dicts);
+		}
+		if (dicts == null) {
+			dicts = Collections.EMPTY_LIST;
+		}
+		return dicts;
 	}
 }
