@@ -6,6 +6,7 @@ package com.sjy.dict.dao;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 import com.sjy.dict.domain.Dictionary;
@@ -20,6 +21,7 @@ import com.sjy.dict.domain.Dictionary;
 @Component
 public interface DictionaryRepository extends JpaRepository<Dictionary, String> {
 
+	@Query("from Dictionary as o where o.category = ?1 order by o.code asc")
 	List<Dictionary> findByCategory(String category);
 
 }

@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.sjy.exception.CrmException;
 
@@ -61,7 +65,8 @@ public abstract class FormatUtil {
 	 * @param cal
 	 */
 	public static Date getMinuteOfTime(Date datetime) {
-		return new Date(((datetime.getTime()) / MINUTEMILISECONDS) * MINUTEMILISECONDS);
+		return new Date(((datetime.getTime()) / MINUTEMILISECONDS)
+				* MINUTEMILISECONDS);
 	}
 
 	/**
@@ -70,7 +75,8 @@ public abstract class FormatUtil {
 	 * @param cal
 	 */
 	public static Date getHourOfTime(Date datetime) {
-		return new Date(((datetime.getTime()) / HOURMILISECONDS) * HOURMILISECONDS);
+		return new Date(((datetime.getTime()) / HOURMILISECONDS)
+				* HOURMILISECONDS);
 	}
 
 	/**
@@ -79,13 +85,18 @@ public abstract class FormatUtil {
 	 * @param cal
 	 */
 	public static Date getDayOfTime(Date datetime) {
-		return new Date(((datetime.getTime() + DAYMILISECONDS / 3) / DAYMILISECONDS) * DAYMILISECONDS - DAYMILISECONDS / 3);
+		return new Date(
+				((datetime.getTime() + DAYMILISECONDS / 3) / DAYMILISECONDS)
+						* DAYMILISECONDS - DAYMILISECONDS / 3);
 	}
 
 	public static String format(String format, Object obj) {
-		if (obj == null) return null;
-		if (obj instanceof Date) return formatDate(format, (Date) obj);
-		if (obj instanceof Number) return formatNumber(format, ((Number) obj).doubleValue());
+		if (obj == null)
+			return null;
+		if (obj instanceof Date)
+			return formatDate(format, (Date) obj);
+		if (obj instanceof Number)
+			return formatNumber(format, ((Number) obj).doubleValue());
 		return obj.toString();
 	}
 
@@ -128,7 +139,8 @@ public abstract class FormatUtil {
 	 * @return
 	 */
 	public static String formatDate(String format, Date date) {
-		if (date == null) return null;
+		if (date == null)
+			return null;
 		SimpleDateFormat formatter = getDateFormatter(format);
 
 		return formatter.format(date);
@@ -151,7 +163,8 @@ public abstract class FormatUtil {
 	 * @return
 	 */
 	public static String longToCurrency(long longValue) {
-		if (longValue == 0) return "0";
+		if (longValue == 0)
+			return "0";
 		return formatDouble(longValue / 100.0);
 	}
 
@@ -195,7 +208,8 @@ public abstract class FormatUtil {
 
 			return formatDate(dateFormat, cal.getTime());
 
-		} else throw new CrmException("不能识别的时段" + duration);
+		} else
+			throw new CrmException("不能识别的时段" + duration);
 	}
 
 	/**
@@ -229,7 +243,8 @@ public abstract class FormatUtil {
 
 			return formatDate(dateFormat, cal.getTime());
 
-		} else throw new CrmException("不能识别的时段" + duration);
+		} else
+			throw new CrmException("不能识别的时段" + duration);
 	}
 
 	public static String formatTime(Date date) {
@@ -271,7 +286,8 @@ public abstract class FormatUtil {
 			result.append("秒");
 		}
 
-		if (result.length() == 0) result.append("0秒");
+		if (result.length() == 0)
+			result.append("0秒");
 
 		return result.toString();
 	}
@@ -302,7 +318,8 @@ public abstract class FormatUtil {
 	 * @return
 	 */
 	public static Date getDayBeginTime(Date date) {
-		if (date == null) return null;
+		if (date == null)
+			return null;
 		else {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
@@ -331,7 +348,8 @@ public abstract class FormatUtil {
 	 * @return
 	 */
 	public static Date getDayEndTime(Date date) {
-		if (date == null) return null;
+		if (date == null)
+			return null;
 		else {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
@@ -366,8 +384,10 @@ public abstract class FormatUtil {
 	 * @return
 	 */
 	public static String getLikeString(String s) {
-		if (s == null) return "%";
-		else return "%" + s.trim() + "%";
+		if (s == null)
+			return "%";
+		else
+			return "%" + s.trim() + "%";
 	}
 
 	/**
@@ -378,9 +398,12 @@ public abstract class FormatUtil {
 	 * @return
 	 */
 	public static boolean getOgnlBool(Object value) {
-		if (value instanceof Boolean) return ((Boolean) value).booleanValue();
-		else if (value != null) return true;
-		else return false;
+		if (value instanceof Boolean)
+			return ((Boolean) value).booleanValue();
+		else if (value != null)
+			return true;
+		else
+			return false;
 
 	}
 
@@ -406,17 +429,20 @@ public abstract class FormatUtil {
 	}
 
 	public static Date parseDate(String s) {
-		if (s == null || s.trim().equals("")) return null;
+		if (s == null || s.trim().equals(""))
+			return null;
 		s = s.trim();
 
 		if (s.indexOf(" ") > 0) {
 			return parseDate(timeFormat, s);
-		} else return parseDate(dateFormat, s);
+		} else
+			return parseDate(dateFormat, s);
 
 	}
 
 	public static Date parseDate(String format, String s) {
-		if (s == null || s.trim().equals("")) return null;
+		if (s == null || s.trim().equals(""))
+			return null;
 		s = s.trim();
 
 		SimpleDateFormat formatter = getDateFormatter(format);
@@ -429,7 +455,8 @@ public abstract class FormatUtil {
 	}
 
 	public static Date parseDateBegin(String s) {
-		if (s == null || s.trim().equals("")) return null;
+		if (s == null || s.trim().equals(""))
+			return null;
 		try {
 			s = s + " 00:00:00";
 			return parseDate(timeFormat, s);
@@ -439,7 +466,8 @@ public abstract class FormatUtil {
 	}
 
 	public static Date parseDateEnd(String s) {
-		if (s == null || s.trim().equals("")) return null;
+		if (s == null || s.trim().equals(""))
+			return null;
 
 		Date date = parseDate(dateFormat, s);
 		Calendar cal = Calendar.getInstance();
@@ -465,13 +493,15 @@ public abstract class FormatUtil {
 	 * @param text
 	 */
 	public static String shrinkStr(String text) {
-		if (text == null) return null;
+		if (text == null)
+			return null;
 		text = text.trim();
 
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
-			if (!Character.isSpaceChar(c)) sb.append(c);
+			if (!Character.isSpaceChar(c))
+				sb.append(c);
 		}
 
 		return sb.toString();
@@ -494,17 +524,20 @@ public abstract class FormatUtil {
 		len = cvtCurrency.length();
 		int dotLen = len - nendInner - 1;
 		if (dotLen == 0) {
-			cvtCurrency = String.valueOf(String.valueOf(cvtCurrency)).concat(".00");
+			cvtCurrency = String.valueOf(String.valueOf(cvtCurrency)).concat(
+					".00");
 			dotLen = 2;
 			len += 3;
 		}
 		if (dotLen == 1) {
-			cvtCurrency = String.valueOf(String.valueOf(cvtCurrency)).concat("0");
+			cvtCurrency = String.valueOf(String.valueOf(cvtCurrency)).concat(
+					"0");
 			dotLen = 2;
 			len++;
 		}
 		if (dotLen > 2) {
-			cvtCurrency = String.valueOf((double) Math.round(smallCurrency * 100D) / 100D);
+			cvtCurrency = String.valueOf((double) Math
+					.round(smallCurrency * 100D) / 100D);
 			dotLen = 2;
 			len = cvtCurrency.length();
 		}
@@ -512,7 +545,8 @@ public abstract class FormatUtil {
 		if (len > 0) {
 			int exNumber = 0;
 			for (int i = len - 2 - dotLen; i > -dotLen - 1; i--) {
-				if (i == -1) nn++;
+				if (i == -1)
+					nn++;
 				int num = Integer.parseInt(cvtCurrency.substring(nn, nn + 1));
 				switch (num) {
 				case 1: // '\001'
@@ -619,9 +653,11 @@ public abstract class FormatUtil {
 				}
 				if (num != 0) {
 					bigStr = String.valueOf(String.valueOf(bigStr))
-							+ String.valueOf(String.valueOf(String.valueOf(String.valueOf(numChr)).concat(lctChr)));
+							+ String.valueOf(String.valueOf(String.valueOf(
+									String.valueOf(numChr)).concat(lctChr)));
 				} else if (exNumber != 0) {
-					bigStr = String.valueOf(String.valueOf(bigStr)) + String.valueOf(numChr);
+					bigStr = String.valueOf(String.valueOf(bigStr))
+							+ String.valueOf(numChr);
 				}
 				numChr = "";
 				lctChr = "";
@@ -637,7 +673,33 @@ public abstract class FormatUtil {
 	}
 
 	public static String trimToMin(Date date) {
-		if (date == null) return null;
+		if (date == null)
+			return null;
 		return formatDate(minFormat, date);
+	}
+
+	/**
+	 * 替换${}
+	 * 
+	 * @param template
+	 * @param params
+	 * @return
+	 */
+	public static String replaceAll(String template, Map<String, Object> params) {
+		// 生成匹配模式的正则表达式
+		String patternString = "\\$\\{("
+				+ StringUtils.join(params.keySet(), "|") + ")\\}";
+
+		Pattern pattern = Pattern.compile(patternString);
+		Matcher matcher = pattern.matcher(template);
+
+		// 两个方法：appendReplacement, appendTail
+		StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			matcher.appendReplacement(sb, params.get(matcher.group(1))
+					.toString());
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
 	}
 }

@@ -1,7 +1,5 @@
 package com.sjy.table.config;
 
-import groovy.lang.Script;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +9,13 @@ import lombok.Data;
 @Data
 public class SqlQuery {
 	public String summary;
-	public String name, stmt, template, stat, title, statTitle, statOper, statDateTime;
+	public String name, stmt, template, stat, title, statTitle, statOper,
+			statDateTime;
 	// 李炎 2012-06-07
 	public boolean isCollect = true;
 	public String method;
-	public Script dynaStmt, dynaTitle, dynaStatTitle, dynaStatOper, dynaStatDateTime, dynaHint;
+	public Boolean dynaStmt = false, dynaTitle = false, dynaStatTitle = false,
+			dynaStatOper = false, dynaStatDateTime = false, dynaHint = false;
 	public List<SqlOpt> options;
 	public List<MethodParam> params;
 	public List<SqlColumn> columns;

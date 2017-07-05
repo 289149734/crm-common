@@ -1,7 +1,5 @@
 package com.sjy.table.config;
 
-import groovy.lang.Script;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
@@ -42,7 +40,6 @@ public class SqlConfig {
 	Map<String, Long> fileUpdates = new HashMap<String, Long>();
 	File root;
 
-	Map<String, Script> scriptMap = new HashMap<String, Script>();
 	SAXReader saxReader = new SAXReader();
 
 	public SqlConfig() {
@@ -58,23 +55,23 @@ public class SqlConfig {
 		return querys.get(queryName);
 	}
 
-	public Map<String, Script> getScriptMap() {
-		return scriptMap;
-	}
-
 	public Dimension getSharedDimension(String dimName) {
 		return sharedDimensions.get(dimName);
 	}
 
 	public void checkSqlFiles() {
-		if (root == null || !root.exists()) return;
+		if (root == null || !root.exists())
+			return;
 
 		for (File f : root.listFiles()) {
-			if (f.isDirectory()) continue;
+			if (f.isDirectory())
+				continue;
 			String name = f.getName();
-			if (!name.endsWith(".xml")) continue;
+			if (!name.endsWith(".xml"))
+				continue;
 			Long update = fileUpdates.get(name);
-			if (update != null && f.lastModified() == update) continue;
+			if (update != null && f.lastModified() == update)
+				continue;
 			log.debug("load sql file " + f.getName());
 			fileUpdates.put(f.getName(), f.lastModified());
 
@@ -89,7 +86,8 @@ public class SqlConfig {
 	 */
 	private void processUnion(Map<String, SqlQuery> map) {
 		for (SqlQuery query : map.values()) {
-			if (query.union == null) continue;
+			if (query.union == null)
+				continue;
 
 			for (String part : query.union) {
 				SqlQuery partQ = map.get(part);
@@ -101,7 +99,8 @@ public class SqlConfig {
 
 				if (query.options != null) {
 					List<SqlOpt> myOptions = partQ.options;
-					Map<String, SqlOpt> myMap = new HashMap<String, SqlOpt>(myOptions.size());
+					Map<String, SqlOpt> myMap = new HashMap<String, SqlOpt>(
+							myOptions.size());
 					for (SqlOpt opt : myOptions) {
 						myMap.put(opt.name, opt);
 					}
@@ -109,7 +108,8 @@ public class SqlConfig {
 					List<SqlOpt> myNewOpts = new ArrayList<SqlOpt>();
 					for (SqlOpt opt : query.options) {
 
-						myNewOpts.add((SqlOpt) extend(opt, myMap.get(opt.name)));
+						myNewOpts
+								.add((SqlOpt) extend(opt, myMap.get(opt.name)));
 					}
 					partQ.options = myNewOpts; // 产生覆盖后的options
 				}
@@ -119,7 +119,8 @@ public class SqlConfig {
 
 	}
 
-	private void parseDimension(File f, Element root, Map<String, SqlColumn> refColumns) {
+	private void parseDimension(File f, Element root,
+			Map<String, SqlColumn> refColumns) {
 		Dimension dimension = null;
 		@SuppressWarnings("unchecked")
 		List<Element> sharedDimNodes = root.selectNodes("dimension");
@@ -134,7 +135,8 @@ public class SqlConfig {
 			dimension.name = dimNode.attributeValue("name");
 
 			dimension.primaryKey = dimNode.attributeValue("primaryKey");
-			if (dimension.primaryKey == null) dimension.primaryKey = "id";
+			if (dimension.primaryKey == null)
+				dimension.primaryKey = "id";
 			if (dimension.name == null) {
 				log.error("****************************************");
 				log.error("<dimension>的name属性不能为空");
@@ -150,7 +152,8 @@ public class SqlConfig {
 			// 在本文件中检查
 			if (map.containsKey(dimension.name)) {
 				log.error("****************************************");
-				log.error("在" + f.getName() + "中重复定义了dimension:" + dimension.name);
+				log.error("在" + f.getName() + "中重复定义了dimension:"
+						+ dimension.name);
 				log.error("****************************************");
 				continue;
 			}
@@ -158,7 +161,8 @@ public class SqlConfig {
 			Dimension ad = sharedDimensions.get(dimension.name);
 			if (ad != null && !ad.srcFile.equals(f)) {
 				log.error("****************************************");
-				log.error("已经在" + ad.srcFile.getName() + "中定义了dimension:" + dimension.name);
+				log.error("已经在" + ad.srcFile.getName() + "中定义了dimension:"
+						+ dimension.name);
 				log.error("****************************************");
 				continue;
 			}
@@ -176,7 +180,8 @@ public class SqlConfig {
 			SqlColumn level = null;
 			for (Element levelNode : levelNodes) {
 				level = parseColumn(levelNode, refColumns);
-				if (level.name == null) level.name = level.field;
+				if (level.name == null)
+					level.name = level.field;
 				if (level.dimensionUsage != null) {
 					log.error("****************************************");
 					log.error("<level>的不能设置dimensionUsage");
@@ -192,7 +197,8 @@ public class SqlConfig {
 		sharedDimensions.putAll(map);
 	}
 
-	private void parseQuery(File f, Element root, Map<String, SqlColumn> refColumns) {
+	private void parseQuery(File f, Element root,
+			Map<String, SqlColumn> refColumns) {
 		@SuppressWarnings("unchecked")
 		List<Element> sqlNodes = root.selectNodes("sql");
 		SqlQuery q = null;
@@ -229,7 +235,8 @@ public class SqlConfig {
 			// 李炎2013-07-07
 			q.isCollect = !"false".equals(sqlNode.attributeValue("isCollect"));
 			q.stmt = sqlNode.attributeValue("stmt");
-			q.isNative = Boolean.parseBoolean(sqlNode.attributeValue("isNative", "false"));
+			q.isNative = Boolean.parseBoolean(sqlNode.attributeValue(
+					"isNative", "false"));
 			q.template = sqlNode.attributeValue("template");
 			q.orderby = sqlNode.attributeValue("orderby");
 			q.method = sqlNode.attributeValue("method");
@@ -257,7 +264,7 @@ public class SqlConfig {
 			q.hint = sqlNode.attributeValue("hint");
 			if (q.hint != null && q.hint.indexOf('$') >= 0) {
 				try {
-					q.dynaHint = createScript('"' + q.hint + '"');
+					q.dynaHint = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
 					log.error("<sql>的hint属性解析出错:" + q.hint, e);
@@ -267,7 +274,7 @@ public class SqlConfig {
 			q.title = sqlNode.attributeValue("title");
 			if (q.title != null && q.title.indexOf('$') >= 0) {
 				try {
-					q.dynaTitle = createScript('"' + q.title + '"');
+					q.dynaTitle = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
 					log.error("<sql>的title属性解析出错:" + q.title, e);
@@ -283,11 +290,17 @@ public class SqlConfig {
 							i = i + 4;
 							int j = q.stmt.indexOf(",", i);
 							int k = q.stmt.indexOf(" ", i);
-							if (j < 0) j = k;
-							else if (k > 0 && j > k) j = k;
+							if (j < 0)
+								j = k;
+							else if (k > 0 && j > k)
+								j = k;
 
-							if (j > 0) q.orderby = q.stmt.substring(i, j).trim() + ".id asc";
-							else q.orderby = q.stmt.substring(i).trim() + ".id asc";
+							if (j > 0)
+								q.orderby = q.stmt.substring(i, j).trim()
+										+ ".id asc";
+							else
+								q.orderby = q.stmt.substring(i).trim()
+										+ ".id asc";
 						}
 					}
 				}
@@ -315,12 +328,12 @@ public class SqlConfig {
 							opt.cond = '(' + opt.cond + ')';
 						}
 						// 判断是否为like, 当传入参数时，在parseValue方法中会补充%%
-						if (opt.cond.indexOf(" like ") >= 0 && opt.type == null) opt.type = LIKE;
+						if (opt.cond.indexOf(" like ") >= 0 && opt.type == null)
+							opt.type = LIKE;
 
 						if (opt.cond.indexOf('$') >= 0) {
 							try {
-								opt.dynaCond = createScript('"' + opt.cond + '"');
-
+								opt.dynaCond = true;
 							} catch (Throwable e) {
 								log.error("****************************************");
 								log.error("<option>的cond属性解析出错:" + opt.cond, e);
@@ -349,7 +362,7 @@ public class SqlConfig {
 					}
 
 					try {
-						param.dynaValue = createScript(param.value);
+						param.dynaValue = true;
 					} catch (Throwable e) {
 						log.error("****************************************");
 						log.error("<param>的value属性解析出错:" + param.value, e);
@@ -366,15 +379,18 @@ public class SqlConfig {
 			SqlColumn column = null;
 			if (!columnNodes.isEmpty()) {
 
-				q.columnIndexMap = new HashMap<String, Integer>(columnNodes.size());
+				q.columnIndexMap = new HashMap<String, Integer>(
+						columnNodes.size());
 				q.columns = new ArrayList<SqlColumn>(columnNodes.size());
 				StringBuffer sb = new StringBuffer();
 
 				for (Element columnNode : columnNodes) {
-					if (sb.length() > 0) sb.append(',');
+					if (sb.length() > 0)
+						sb.append(',');
 					column = parseColumn(columnNode, refColumns);
 
-					if (column.name != null) q.columnIndexMap.put(column.name, q.columns.size()); // column的索引
+					if (column.name != null)
+						q.columnIndexMap.put(column.name, q.columns.size()); // column的索引
 					q.columns.add(column);
 					sb.append(column.field != null ? column.field : 0);
 				}
@@ -405,7 +421,8 @@ public class SqlConfig {
 				// parse measureTitle first
 				@SuppressWarnings("unchecked")
 				List<Element> mtNodes = sqlNode.selectNodes("measureTitle");
-				Map<String, MeasureTitle> measureTitles = new HashMap<String, MeasureTitle>(mtNodes.size());
+				Map<String, MeasureTitle> measureTitles = new HashMap<String, MeasureTitle>(
+						mtNodes.size());
 
 				for (Element mtNode : mtNodes) {
 					parseMeasureTitle(measureTitles, null, mtNode);
@@ -422,7 +439,8 @@ public class SqlConfig {
 						log.error("****************************************");
 						continue;
 					}
-					String parentTitle = measureNode.attributeValue("parentTitle");
+					String parentTitle = measureNode
+							.attributeValue("parentTitle");
 					if (parentTitle != null) {
 						MeasureTitle mt = measureTitles.get(parentTitle);
 
@@ -435,7 +453,8 @@ public class SqlConfig {
 						column.parentTitle = mt;
 						int level = 1;
 						while (mt != null) {
-							if (mt.level < level) mt.level = level;
+							if (mt.level < level)
+								mt.level = level;
 							highestLevel = Math.max(highestLevel, level);
 							level = mt.level + 1;
 							mt = mt.parent;
@@ -459,7 +478,8 @@ public class SqlConfig {
 									mts[0] = mt.title;
 									break;
 								} else {
-									spans[highestLevel - mt.parent.level + 1] = mt.parent.level - mt.level;
+									spans[highestLevel - mt.parent.level + 1] = mt.parent.level
+											- mt.level;
 									mts[highestLevel - mt.parent.level + 1] = mt.title;
 								}
 								mt = mt.parent;
@@ -476,7 +496,7 @@ public class SqlConfig {
 			}
 			if (q.stmt != null && q.stmt.indexOf('$') >= 0) {
 				try {
-					q.dynaStmt = createScript('"' + q.stmt + '"');
+					q.dynaStmt = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
 					log.error("<sql>的stmt属性解析出错:" + q.stmt, e);
@@ -487,7 +507,7 @@ public class SqlConfig {
 			q.statTitle = sqlNode.attributeValue("statTitle");
 			if (q.statTitle != null) {
 				try {
-					q.dynaStatTitle = createScript('"' + q.statTitle + '"');
+					q.dynaStatTitle = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
 					log.error("<sql>的statTitle属性解析出错:" + q.statTitle, e);
@@ -498,7 +518,7 @@ public class SqlConfig {
 			q.statOper = sqlNode.attributeValue("statOper");
 			if (q.statOper != null) {
 				try {
-					q.dynaStatOper = createScript('"' + q.statOper + '"');
+					q.dynaStatOper = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
 					log.error("<sql>的statOper属性解析出错:" + q.statOper, e);
@@ -509,7 +529,7 @@ public class SqlConfig {
 			q.statDateTime = sqlNode.attributeValue("statDateTime");
 			if (q.statDateTime != null) {
 				try {
-					q.dynaStatDateTime = createScript('"' + q.statDateTime + '"');
+					q.dynaStatDateTime = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
 					log.error("<sql>的statDateTime属性解析出错:" + q.statDateTime, e);
@@ -541,13 +561,17 @@ public class SqlConfig {
 	 * @param parent
 	 */
 	private void extendQuery(SqlQuery child, SqlQuery parent) {
-		if (child.orderby == null && parent.orderby != null) child.orderby = parent.orderby;
-		if (child.hint == null && parent.hint != null) child.hint = parent.hint;
+		if (child.orderby == null && parent.orderby != null)
+			child.orderby = parent.orderby;
+		if (child.hint == null && parent.hint != null)
+			child.hint = parent.hint;
 
 		if (parent.options != null) {
 			@SuppressWarnings("unchecked")
-			List<SqlOpt> myList = child.options != null ? child.options : Collections.EMPTY_LIST;
-			Map<String, SqlOpt> myMap = new HashMap<String, SqlOpt>(myList.size());
+			List<SqlOpt> myList = child.options != null ? child.options
+					: Collections.EMPTY_LIST;
+			Map<String, SqlOpt> myMap = new HashMap<String, SqlOpt>(
+					myList.size());
 			for (SqlOpt opt : myList) {
 				myMap.put(opt.name, opt);
 			}
@@ -564,11 +588,13 @@ public class SqlConfig {
 
 		if (parent.dimensions != null) {
 			@SuppressWarnings("unchecked")
-			Map<String, SqlColumn> myMap = child.dimensions != null ? child.dimensions : Collections.EMPTY_MAP;
+			Map<String, SqlColumn> myMap = child.dimensions != null ? child.dimensions
+					: Collections.EMPTY_MAP;
 
 			Map<String, SqlColumn> myNewMap = new HashMap<String, SqlColumn>();
 			for (SqlColumn dim : parent.dimensions.values()) {
-				myNewMap.put(dim.name, (SqlColumn) extend(dim, myMap.remove(dim.name)));
+				myNewMap.put(dim.name,
+						(SqlColumn) extend(dim, myMap.remove(dim.name)));
 			}
 			for (SqlColumn dim : myMap.values()) {
 				myNewMap.put(dim.name, dim);
@@ -578,11 +604,13 @@ public class SqlConfig {
 
 		if (parent.measures != null) {
 			@SuppressWarnings("unchecked")
-			Map<String, SqlColumn> myMap = child.measures != null ? child.measures : Collections.EMPTY_MAP;
+			Map<String, SqlColumn> myMap = child.measures != null ? child.measures
+					: Collections.EMPTY_MAP;
 
 			Map<String, SqlColumn> myNewMap = new HashMap<String, SqlColumn>();
 			for (SqlColumn dim : parent.measures.values()) {
-				myNewMap.put(dim.name, (SqlColumn) extend(dim, myMap.remove(dim.name)));
+				myNewMap.put(dim.name,
+						(SqlColumn) extend(dim, myMap.remove(dim.name)));
 			}
 			for (SqlColumn dim : myMap.values()) {
 				myNewMap.put(dim.name, dim);
@@ -595,9 +623,11 @@ public class SqlConfig {
 	private Map<String, SqlColumn> parseSharedColumns(File f, Element root) {
 		List<Element> columnNodes = root.selectNodes("refColumn");
 
-		if (columnNodes.isEmpty()) return Collections.EMPTY_MAP;
+		if (columnNodes.isEmpty())
+			return Collections.EMPTY_MAP;
 
-		Map<String, SqlColumn> map = new HashMap<String, SqlColumn>(columnNodes.size());
+		Map<String, SqlColumn> map = new HashMap<String, SqlColumn>(
+				columnNodes.size());
 		SqlColumn column = null;
 		for (Element columnNode : columnNodes) {
 			column = parseColumn(columnNode, Collections.EMPTY_MAP);
@@ -631,13 +661,16 @@ public class SqlConfig {
 
 	}
 
-	private void parseMeasureTitle(Map<String, MeasureTitle> nameTitles, MeasureTitle parent, Element mtNode) {
+	private void parseMeasureTitle(Map<String, MeasureTitle> nameTitles,
+			MeasureTitle parent, Element mtNode) {
 		MeasureTitle mt = new MeasureTitle();
 		mt.name = mtNode.attributeValue("name");
 		mt.title = mtNode.attributeValue("title");
-		if (mt.title == null) mt.title = "";
+		if (mt.title == null)
+			mt.title = "";
 		String s = mtNode.attributeValue("level");
-		if (s != null) mt.level = Integer.parseInt(s);
+		if (s != null)
+			mt.level = Integer.parseInt(s);
 		mt.parent = parent;
 		if (mt.name != null) {
 			if (nameTitles.containsKey(mt.name)) {
@@ -657,7 +690,8 @@ public class SqlConfig {
 		}
 	}
 
-	private SqlColumn parseColumn(Element columnNode, Map<String, SqlColumn> refColumns) {
+	private SqlColumn parseColumn(Element columnNode,
+			Map<String, SqlColumn> refColumns) {
 		String ref = columnNode.attributeValue("ref");
 		SqlColumn refColumn = null;
 		if (ref != null && refColumns != null) {
@@ -671,78 +705,61 @@ public class SqlConfig {
 
 		SqlColumn column = new SqlColumn();
 		column.title = columnNode.attributeValue("title");
-		if (column.title == null && refColumn != null) column.title = refColumn.title;
-		if (column.title != null && column.title.indexOf('$') >= 0) {
-			try {
-				column.dynaTitle = createScript('"' + column.title + '"');
-			} catch (Throwable e) {
-				log.error("****************************************");
-				log.error("<column>的title属性解析出错:" + column.title, e);
-				log.error("****************************************");
-			}
-		}
-		if (column.title == null) column.title = "";
+		if (column.title == null && refColumn != null)
+			column.title = refColumn.title;
+		if (column.title == null)
+			column.title = "";
 		column.value = columnNode.attributeValue("value");
-		if (column.value == null && refColumn != null) column.value = refColumn.value;
-		if (column.value != null) {
-			try {
-				column.dynaValue = createScript(column.value);
-			} catch (Throwable e) {
-				log.error("****************************************");
-				log.error("<column>的value属性解析出错:" + column.value, e);
-				log.error("****************************************");
-			}
-		}
-
+		if (column.value == null && refColumn != null)
+			column.value = refColumn.value;
 		column.field = columnNode.attributeValue("field");
-		if (column.field == null && refColumn != null) column.field = refColumn.field;
+		if (column.field == null && refColumn != null)
+			column.field = refColumn.field;
 		if (column.field != null) {
 
 			int aI = column.field.lastIndexOf(" as ");
 			if (aI > 0) {
 				// column.field = column.field.substring(aI+4);
 				column.field = null;// TODO hibernate 'as' bug
-			} else {
-
-				if (column.field.indexOf('$') >= 0) {
-					try {
-						column.dynaField = createScript('"' + column.field + '"');
-					} catch (Throwable e) {
-						log.error("****************************************");
-						log.error("<column>的field属性解析出错:" + column.field, e);
-						log.error("****************************************");
-					}
-				}
 			}
 		}
 
 		column.name = columnNode.attributeValue("name");
-		if (column.name == null && refColumn != null) column.name = refColumn.name;
+		if (column.name == null && refColumn != null)
+			column.name = refColumn.name;
 
 		column.dimensionUsage = columnNode.attributeValue("dimensionUsage");
-		if (column.dimensionUsage == null && refColumn != null) column.dimensionUsage = refColumn.dimensionUsage;
+		if (column.dimensionUsage == null && refColumn != null)
+			column.dimensionUsage = refColumn.dimensionUsage;
 
 		column.dimensionJoin = columnNode.attributeValue("dimensionJoin");
-		if (column.dimensionJoin == null && refColumn != null) column.dimensionJoin = refColumn.dimensionJoin;
+		if (column.dimensionJoin == null && refColumn != null)
+			column.dimensionJoin = refColumn.dimensionJoin;
 
 		column.calculation = columnNode.attributeValue("calculation");
-		if (column.calculation == null && refColumn != null) column.calculation = refColumn.calculation;
+		if (column.calculation == null && refColumn != null)
+			column.calculation = refColumn.calculation;
 
 		column.width = columnNode.attributeValue("width");
-		if (column.width == null && refColumn != null) column.width = refColumn.width;
+		if (column.width == null && refColumn != null)
+			column.width = refColumn.width;
 
 		column.align = columnNode.attributeValue("align");
-		if (column.align == null && refColumn != null) column.align = refColumn.align;
+		if (column.align == null && refColumn != null)
+			column.align = refColumn.align;
 
-		if (columnNode.attributeValue("hidden") == null && refColumn != null) column.hidden = refColumn.hidden;
-		else column.hidden = "true".equals(columnNode.attributeValue("hidden"));
+		if (columnNode.attributeValue("hidden") == null && refColumn != null)
+			column.hidden = refColumn.hidden;
+		else
+			column.hidden = "true".equals(columnNode.attributeValue("hidden"));
 
-		column.ignore = "true".equals(columnNode.attributeValue("ignore"));
 		column.format = columnNode.attributeValue("format");
-		if (column.format == null && refColumn != null) column.format = refColumn.format;
+		if (column.format == null && refColumn != null)
+			column.format = refColumn.format;
 
 		column.dict = columnNode.attributeValue("dict");
-		if (column.dict == null && refColumn != null) column.dict = refColumn.dict;
+		if (column.dict == null && refColumn != null)
+			column.dict = refColumn.dict;
 
 		column.type = columnNode.attributeValue("type");
 		if (column.type == null && refColumn != null) {
@@ -751,26 +768,14 @@ public class SqlConfig {
 		return column;
 	}
 
-	private Script createScript(String text) {
-		Script script = scriptMap.get(text);
-		// TODO 执行groovy脚本解析
-		// if (script == null) {
-		// script = groovyService.createScriptObj(text);
-		// Class<?> c = script.getMetaClass().getTheClass();
-		// EjbQueryMetaClass smc = new EjbQueryMetaClass(c);
-		// script.setMetaClass(smc);
-		// scriptMap.put(text, script);
-		// }
-		return script;
-	}
-
 	private Object extend(Object parent, Object childParam) {
 		Class<?> c = parent.getClass();
 		try {
 			Object clone = c.newInstance();
 			for (Field f : c.getDeclaredFields()) {
 				int modifies = f.getModifiers();
-				if (!Modifier.isPublic(modifies) || Modifier.isFinal(modifies)) continue;
+				if (!Modifier.isPublic(modifies) || Modifier.isFinal(modifies))
+					continue;
 				Object v = f.get(parent);
 				Object cv = childParam != null ? f.get(childParam) : null;
 				f.set(clone, cv != null ? cv : v);
