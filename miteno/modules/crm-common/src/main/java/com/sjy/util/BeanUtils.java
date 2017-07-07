@@ -69,6 +69,9 @@ public class BeanUtils extends BeanUtilsBean {
 					Object value = map.get(propertyName);
 					Class<?> valType = descriptor.getPropertyType();
 					value = convert(value, valType);
+					if (value instanceof String && value != null) {
+						value = ((String) value).trim();
+					}
 					descriptor.getWriteMethod().invoke(obj, value);
 				}
 			}
