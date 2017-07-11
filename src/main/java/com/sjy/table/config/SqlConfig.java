@@ -1,7 +1,6 @@
 package com.sjy.table.config;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -13,12 +12,12 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.Resource;
 
 import com.sjy.exception.CrmException;
+import com.sjy.util.ResourceUtil;
 
 @Slf4j
 public class SqlConfig {
@@ -38,17 +37,12 @@ public class SqlConfig {
 	Map<String, SqlQuery> querys = new HashMap<String, SqlQuery>();
 	Map<String, Dimension> sharedDimensions = new HashMap<String, Dimension>();
 	Map<String, Long> fileUpdates = new HashMap<String, Long>();
-	File root;
+	Resource[] sqlFiles;
 
 	SAXReader saxReader = new SAXReader();
 
 	public SqlConfig() {
-		try {
-			root = ResourceUtils.getFile("classpath*:sql");
-			log.debug("文件夹[sql]路径：{}", root.getAbsolutePath());
-		} catch (FileNotFoundException e) {
-			log.error("文件夹[sql]加载失败");
-		}
+		sqlFiles = ResourceUtil.getFiles("classpath*:sql/*.xml");
 	}
 
 	public SqlQuery getQuery(String queryName) {
@@ -60,22 +54,19 @@ public class SqlConfig {
 	}
 
 	public void checkSqlFiles() {
-		if (root == null || !root.exists())
-			return;
-
-		for (File f : root.listFiles()) {
-			if (f.isDirectory())
-				continue;
-			String name = f.getName();
-			if (!name.endsWith(".xml"))
-				continue;
-			Long update = fileUpdates.get(name);
-			if (update != null && f.lastModified() == update)
-				continue;
-			log.debug("load sql file " + f.getName());
-			fileUpdates.put(f.getName(), f.lastModified());
-
-			parseXml(f);
+		try {
+			if (sqlFiles == null)
+				return;
+			for (Resource sqlFile : sqlFiles) {
+				Long update = fileUpdates.get(sqlFile.getFilename());
+				if (update != null && sqlFile.lastModified() == update)
+					continue;
+				log.debug("load sql file {}", sqlFile.getFilename());
+				fileUpdates.put(sqlFile.getFilename(), sqlFile.lastModified());
+				parseXml(sqlFile);
+			}
+		} catch (IOException e) {
+			log.error("解析Sql文件失败", e);
 		}
 	}
 
@@ -92,7 +83,7 @@ public class SqlConfig {
 			for (String part : query.union) {
 				SqlQuery partQ = map.get(part);
 				if (partQ == null) {
-					log.error("Unknown sub query " + part);
+					log.error("Unknown sub query {}", part);
 					query.union = null;
 					break;
 				}
@@ -119,7 +110,7 @@ public class SqlConfig {
 
 	}
 
-	private void parseDimension(File f, Element root,
+	private void parseDimension(String fileName, Element root,
 			Map<String, SqlColumn> refColumns) {
 		Dimension dimension = null;
 		@SuppressWarnings("unchecked")
@@ -129,7 +120,7 @@ public class SqlConfig {
 		for (Element dimNode : sharedDimNodes) {
 			dimension = new Dimension();
 
-			dimension.srcFile = f;
+			dimension.srcFileName = fileName;
 
 			dimension.entity = dimNode.attributeValue("entity");
 			dimension.name = dimNode.attributeValue("name");
@@ -152,17 +143,16 @@ public class SqlConfig {
 			// 在本文件中检查
 			if (map.containsKey(dimension.name)) {
 				log.error("****************************************");
-				log.error("在" + f.getName() + "中重复定义了dimension:"
-						+ dimension.name);
+				log.error("在{}中重复定义了dimension:{}", fileName, dimension.name);
 				log.error("****************************************");
 				continue;
 			}
 			// 在其他文件中检查
 			Dimension ad = sharedDimensions.get(dimension.name);
-			if (ad != null && !ad.srcFile.equals(f)) {
+			if (ad != null && !ad.srcFileName.equals(fileName)) {
 				log.error("****************************************");
-				log.error("已经在" + ad.srcFile.getName() + "中定义了dimension:"
-						+ dimension.name);
+				log.error("已经在{}中定义了dimension: {}", ad.srcFileName,
+						dimension.name);
 				log.error("****************************************");
 				continue;
 			}
@@ -197,7 +187,7 @@ public class SqlConfig {
 		sharedDimensions.putAll(map);
 	}
 
-	private void parseQuery(File f, Element root,
+	private void parseQuery(String fileName, Element root,
 			Map<String, SqlColumn> refColumns) {
 		@SuppressWarnings("unchecked")
 		List<Element> sqlNodes = root.selectNodes("sql");
@@ -208,7 +198,7 @@ public class SqlConfig {
 
 			q = new SqlQuery();
 			q.name = sqlNode.attributeValue("name");
-			q.srcFile = f;
+			q.srcFileName = fileName;
 			if (q.name == null) {
 				log.error("****************************************");
 				log.error("<sql>的name属性不能为空");
@@ -219,15 +209,15 @@ public class SqlConfig {
 			// 在本文件中检查
 			if (map2.containsKey(q.name)) {
 				log.error("****************************************");
-				log.error("在" + f.getName() + "中重复定义了query:" + q.name);
+				log.error("在{}中重复定义了query:{}", fileName, q.name);
 				log.error("****************************************");
 				continue;
 			}
 			// 在其他文件中检查
 			SqlQuery ad = querys.get(q.name);
-			if (ad != null && !ad.srcFile.equals(f)) {
+			if (ad != null && !ad.srcFileName.equals(fileName)) {
 				log.error("****************************************");
-				log.error("已经在" + ad.srcFile.getName() + "中定义了query:" + q.name);
+				log.error("已经在{}中定义了query:{}", ad.srcFileName, q.name);
 				log.error("****************************************");
 				continue;
 			}
@@ -267,7 +257,7 @@ public class SqlConfig {
 					q.dynaHint = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
-					log.error("<sql>的hint属性解析出错:" + q.hint, e);
+					log.error("<sql>的hint属性解析出错:{}", q.hint, e);
 					log.error("****************************************");
 				}
 			}
@@ -277,7 +267,7 @@ public class SqlConfig {
 					q.dynaTitle = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
-					log.error("<sql>的title属性解析出错:" + q.title, e);
+					log.error("<sql>的title属性解析出错:{}", q.title, e);
 					log.error("****************************************");
 				}
 			}
@@ -336,7 +326,7 @@ public class SqlConfig {
 								opt.dynaCond = true;
 							} catch (Throwable e) {
 								log.error("****************************************");
-								log.error("<option>的cond属性解析出错:" + opt.cond, e);
+								log.error("<option>的cond属性解析出错:{}", opt.cond, e);
 								log.error("****************************************");
 							}
 						}
@@ -365,7 +355,7 @@ public class SqlConfig {
 						param.dynaValue = true;
 					} catch (Throwable e) {
 						log.error("****************************************");
-						log.error("<param>的value属性解析出错:" + param.value, e);
+						log.error("<param>的value属性解析出错:{}", param.value, e);
 						log.error("****************************************");
 					}
 					q.params.add(param);
@@ -446,7 +436,7 @@ public class SqlConfig {
 
 						if (mt == null) {
 							log.error("****************************************");
-							log.error("not found measureTitle " + parentTitle);
+							log.error("not found measureTitle {}", parentTitle);
 							log.error("****************************************");
 							continue;
 						}
@@ -499,7 +489,7 @@ public class SqlConfig {
 					q.dynaStmt = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
-					log.error("<sql>的stmt属性解析出错:" + q.stmt, e);
+					log.error("<sql>的stmt属性解析出错: {}", q.stmt, e);
 					log.error("****************************************");
 				}
 			}
@@ -510,7 +500,7 @@ public class SqlConfig {
 					q.dynaStatTitle = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
-					log.error("<sql>的statTitle属性解析出错:" + q.statTitle, e);
+					log.error("<sql>的statTitle属性解析出错: {}", q.statTitle, e);
 					log.error("****************************************");
 				}
 			}
@@ -521,7 +511,7 @@ public class SqlConfig {
 					q.dynaStatOper = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
-					log.error("<sql>的statOper属性解析出错:" + q.statOper, e);
+					log.error("<sql>的statOper属性解析出错: {}", q.statOper, e);
 					log.error("****************************************");
 				}
 			}
@@ -532,7 +522,7 @@ public class SqlConfig {
 					q.dynaStatDateTime = true;
 				} catch (Throwable e) {
 					log.error("****************************************");
-					log.error("<sql>的statDateTime属性解析出错:" + q.statDateTime, e);
+					log.error("<sql>的statDateTime属性解析出错: {}", q.statDateTime, e);
 					log.error("****************************************");
 				}
 			}
@@ -541,7 +531,7 @@ public class SqlConfig {
 			if (q.extend != null) {
 				if (!map2.containsKey(q.extend)) {
 					log.error("****************************************");
-					log.error("<sql>中没有发现继承的父sql:" + q.extend);
+					log.error("<sql>中没有发现继承的父sql: {}", q.extend);
 					log.error("****************************************");
 					continue;
 				}
@@ -620,7 +610,8 @@ public class SqlConfig {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, SqlColumn> parseSharedColumns(File f, Element root) {
+	private Map<String, SqlColumn> parseSharedColumns(String fileName,
+			Element root) {
 		List<Element> columnNodes = root.selectNodes("refColumn");
 
 		if (columnNodes.isEmpty())
@@ -632,11 +623,11 @@ public class SqlConfig {
 		for (Element columnNode : columnNodes) {
 			column = parseColumn(columnNode, Collections.EMPTY_MAP);
 
-			column.srcFile = f;
+			column.srcFileName = fileName;
 			// 在本文件中检查
 			if (map.containsKey(column.name)) {
 				log.error("****************************************");
-				log.error("在" + f.getName() + "中重复定义了refColumn:" + column.name);
+				log.error("在{}中重复定义了refColumn:{}", fileName, column.name);
 				log.error("****************************************");
 				continue;
 			}
@@ -647,16 +638,16 @@ public class SqlConfig {
 		return map;
 	}
 
-	private void parseXml(File f) {
+	private void parseXml(Resource f) {
 		try {
-			Document document = saxReader.read(f);
+			Document document = saxReader.read(f.getInputStream());
 			Element root = document.getRootElement();
-			Map<String, SqlColumn> refColumns = parseSharedColumns(f, root);
-			parseDimension(f, root, refColumns);
-			parseQuery(f, root, refColumns);
-
-		} catch (DocumentException de) {
-			log.error("解析" + f.getName() + "出错", de);
+			Map<String, SqlColumn> refColumns = parseSharedColumns(
+					f.getFilename(), root);
+			parseDimension(f.getFilename(), root, refColumns);
+			parseQuery(f.getFilename(), root, refColumns);
+		} catch (Exception de) {
+			log.error("解析{}出错", f.getFilename(), de);
 		}
 
 	}
@@ -675,7 +666,7 @@ public class SqlConfig {
 		if (mt.name != null) {
 			if (nameTitles.containsKey(mt.name)) {
 				log.error("****************************************");
-				log.error(">>measureTitle " + mt.name + " duplicated");
+				log.error(">>measureTitle {} duplicated", mt.name);
 				log.error("****************************************");
 				return;
 			}
@@ -698,7 +689,7 @@ public class SqlConfig {
 			refColumn = refColumns.get(ref);
 			if (refColumn == null) {
 				log.error("****************************************");
-				log.error("没有定义refColumn " + ref);
+				log.error("没有定义refColumn {}", ref);
 				log.error("****************************************");
 			}
 		}

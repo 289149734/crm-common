@@ -1,6 +1,5 @@
 package com.sjy.table.config;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -30,5 +29,5 @@ public class SqlQuery {
 	public String extend;
 	public String hint;
 
-	File srcFile; // 来源文件，用来判断是否重复定义
+	String srcFileName; // 来源文件，用来判断是否重复定义
 }
