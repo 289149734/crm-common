@@ -7,7 +7,9 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import com.sjy.util.ResourceUtil;
 
 /**
  * 缓存配置 --标注启动缓存.
@@ -28,7 +30,6 @@ public class CacheConfiguration {
 	@Bean("cacheManager")
 	public EhCacheCacheManager ehCacheCacheManager(
 			EhCacheManagerFactoryBean bean) {
-		log.debug("---------------EhCacheCacheManager Init------------------------");
 		return new EhCacheCacheManager(bean.getObject());
 	}
 
@@ -40,10 +41,15 @@ public class CacheConfiguration {
 	 */
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
-		log.debug("-----------------------EhCacheManagerFactoryBean Init-----------------------------------------");
 		EhCacheManagerFactoryBean cacheManagerFactoryBean = new EhCacheManagerFactoryBean();
-		cacheManagerFactoryBean.setConfigLocation(new ClassPathResource(
-				"ehcache.xml"));
+		Resource[] ehcacheFiles = ResourceUtil
+				.getFiles("classpath*:ehcache.xml");
+		if (ehcacheFiles != null && ehcacheFiles.length >= 0) {
+			log.debug(
+					"-----------------------EhCacheManagerFactoryBean Init {}-----------------------------------------",
+					ehcacheFiles[0].getFilename());
+			cacheManagerFactoryBean.setConfigLocation(ehcacheFiles[0]);
+		}
 		cacheManagerFactoryBean.setShared(true);
 		return cacheManagerFactoryBean;
 	}

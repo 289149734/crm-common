@@ -3,8 +3,6 @@
  */
 package com.sjy.task;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Properties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +12,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.Resource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.util.ResourceUtils;
+
+import com.sjy.util.ResourceUtil;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
@@ -39,9 +39,11 @@ public class SchedulerListener implements
 
 	public Properties quartzProperties() {
 		try {
-			File quartzFile = ResourceUtils.getFile(fileName);
+			Resource[] quartzFiles = ResourceUtil.getFiles(fileName);
+			if (quartzFiles == null || quartzFiles.length == 0)
+				return null;
 			Properties cfg = new Properties();
-			cfg.load(new FileInputStream(quartzFile));
+			cfg.load(quartzFiles[0].getInputStream());
 			log.debug("加载{}文件成功", fileName);
 			for (Object key : cfg.keySet()) {
 				log.debug("{} = {}", key, cfg.get(key));

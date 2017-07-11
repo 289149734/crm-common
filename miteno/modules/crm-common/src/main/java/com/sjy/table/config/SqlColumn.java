@@ -1,6 +1,5 @@
 package com.sjy.table.config;
 
-import java.io.File;
 import java.io.Serializable;
 
 import lombok.Data;
@@ -22,7 +21,7 @@ public class SqlColumn implements Serializable {
 	public Dimension parentDimension; // 如果此sqlcolumn是sharedDimension的一个level
 	public String name;
 	public String dimensionJoin;
-	File srcFile; // 来源文件，用来判断是否重复定义 ,refColumn用
+	String srcFileName; // 来源文件，用来判断是否重复定义 ,refColumn用
 	public MeasureTitle parentTitle; // measure的parentTitle
 	public String[] parentTitles;
 	public int[] parentTitlesSpans; // 纵向span
