@@ -3,6 +3,8 @@
  */
 package com.sjy.task;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +14,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.util.ResourceUtils;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
@@ -24,9 +26,10 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  */
 @Slf4j
 @Configuration
-public class SchedulerListener implements ApplicationListener<ContextRefreshedEvent> {
+public class SchedulerListener implements
+		ApplicationListener<ContextRefreshedEvent> {
 
-	public final static String fileName = "quartz.properties";
+	public final static String fileName = "classpath*:quartz.properties";
 
 	@Autowired
 	public MyScheduler myScheduler;
@@ -36,9 +39,9 @@ public class SchedulerListener implements ApplicationListener<ContextRefreshedEv
 
 	public Properties quartzProperties() {
 		try {
-			ClassPathResource resource = new ClassPathResource(fileName);
+			File quartzFile = ResourceUtils.getFile(fileName);
 			Properties cfg = new Properties();
-			cfg.load(resource.getInputStream());
+			cfg.load(new FileInputStream(quartzFile));
 			log.debug("加载{}文件成功", fileName);
 			for (Object key : cfg.keySet()) {
 				log.debug("{} = {}", key, cfg.get(key));
@@ -55,7 +58,8 @@ public class SchedulerListener implements ApplicationListener<ContextRefreshedEv
 		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 		schedulerFactoryBean.setJobFactory(myJobFactory);
 		Properties cfg = quartzProperties();
-		if (cfg != null) schedulerFactoryBean.setQuartzProperties(cfg);
+		if (cfg != null)
+			schedulerFactoryBean.setQuartzProperties(cfg);
 		return schedulerFactoryBean;
 	}
 

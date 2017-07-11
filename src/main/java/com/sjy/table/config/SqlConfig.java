@@ -44,7 +44,7 @@ public class SqlConfig {
 
 	public SqlConfig() {
 		try {
-			root = ResourceUtils.getFile("classpath:sql");
+			root = ResourceUtils.getFile("classpath*:sql");
 			log.debug("文件夹[sql]路径：{}", root.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			log.error("文件夹[sql]加载失败");
