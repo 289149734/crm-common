@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,7 +26,6 @@ import com.sjy.dict.service.DictService;
 import com.sjy.model.PageUtil;
 import com.sjy.model.PageVo;
 import com.sjy.table.config.PageResult;
-import com.sjy.table.config.SqlColumn;
 import com.sjy.table.config.TableMeta;
 import com.sjy.table.service.DataQueryService;
 import com.sjy.util.StringUtil;
@@ -53,14 +53,14 @@ public class DataQueryController {
 
 	@SuppressWarnings("unchecked")
 	@ApiOperation(value = "查询字典项", notes = "通过编号查询字典项信息")
-	@RequestMapping(value = "/dict/{dictName}")
+	@GetMapping(value = "/dict/{dictName}")
 	@ResponseBody
 	public List<Dictionary> listDict(HttpServletRequest request,
 			@PathVariable String dictName) {
 		try {
-			String requestUri = request.getRequestURI();
-			Map<String, Object> params = PageUtil.getSearchParams(request);
-			log.debug("requestUri = {}, params = {}", requestUri, params);
+			// String requestUri = request.getRequestURI();
+			// Map<String, Object> params = PageUtil.getSearchParams(request);
+			// log.debug("requestUri = {}, params = {}", requestUri, params);
 			return dictService.findAll(dictName);
 		} catch (Exception e) {
 			log.error("查询数据错误：", e);
@@ -69,18 +69,18 @@ public class DataQueryController {
 	}
 
 	@ApiOperation(value = "查询列表头", notes = "通过编号查询列表信息")
-	@RequestMapping(value = "/columns/{queryName}")
+	@GetMapping(value = "/columns/{queryName}")
 	@ResponseBody
 	public TableMeta listHeader(HttpServletRequest request,
 			@PathVariable String queryName) {
 		try {
-			String requestUri = request.getRequestURI();
+			// String requestUri = request.getRequestURI();
 			Map<String, Object> params = PageUtil.getSearchParams(request);
-			log.debug("requestUri = {}, params = {}", requestUri, params);
+			// log.debug("requestUri = {}, params = {}", requestUri, params);
 			TableMeta tm = dataQueryService.getTableMeta(queryName, params);
-			for (SqlColumn column : tm.getColumns()) {
-				log.debug("SqlColumn = {}", JSON.toJSONString(column, false));
-			}
+			// for (SqlColumn column : tm.getColumns()) {
+			// log.debug("SqlColumn = {}", JSON.toJSONString(column, false));
+			// }
 			return tm;
 		} catch (Exception e) {
 			log.error("查询数据错误：", e);
@@ -89,15 +89,15 @@ public class DataQueryController {
 	}
 
 	@ApiOperation(value = "查询列表信息", notes = "通过编号查询列表信息")
-	@RequestMapping(value = "/list/{queryName}")
+	@GetMapping(value = "/list/{queryName}")
 	@ResponseBody
 	public PageResult list(HttpServletRequest request,
 			@PathVariable String queryName, PageVo pageVo) {
 		try {
-			String requestUri = request.getRequestURI();
+			// String requestUri = request.getRequestURI();
 			Map<String, Object> params = PageUtil.getSearchParams(request);
-			log.debug("requestUri = {}, params = {}", requestUri,
-					JSON.toJSONString(params, false));
+			// log.debug("requestUri = {}, params = {}", requestUri,
+			// JSON.toJSONString(params, false));
 			log.debug("PageVo = {}", JSON.toJSONString(pageVo, false));
 			String orderBy = null;
 			if (StringUtil.isNotBlank(pageVo.getSort())) {
