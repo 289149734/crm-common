@@ -51,7 +51,8 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public void removePattern(final String pattern) {
 		Set<Serializable> keys = redisTemplate.keys(pattern);
-		if (keys.size() > 0) redisTemplate.delete(keys);
+		if (keys.size() > 0)
+			redisTemplate.delete(keys);
 	}
 
 	/**
@@ -86,7 +87,8 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public Object get(final String key) {
 		Object result = null;
-		ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+		ValueOperations<Serializable, Object> operations = redisTemplate
+				.opsForValue();
 		result = operations.get(key);
 		return result;
 	}
@@ -144,7 +146,8 @@ public class RedisServiceImpl implements RedisService {
 	public boolean pushObj(String key, Object value) {
 		boolean result = false;
 		try {
-			ListOperations<Serializable, Object> list = redisTemplate.opsForList();
+			ListOperations<Serializable, Object> list = redisTemplate
+					.opsForList();
 			list.rightPush(key, value);
 			result = true;
 		} catch (Exception e) {
@@ -157,7 +160,8 @@ public class RedisServiceImpl implements RedisService {
 	public boolean pushObjForSet(String key, Object value) {
 		boolean result = false;
 		try {
-			SetOperations<Serializable, Object> list = redisTemplate.opsForSet();
+			SetOperations<Serializable, Object> list = redisTemplate
+					.opsForSet();
 			list.add(key, value);
 			result = true;
 		} catch (Exception e) {
@@ -170,7 +174,8 @@ public class RedisServiceImpl implements RedisService {
 	public boolean pushObjAllForSet(String key, List<?> values) {
 		boolean result = false;
 		try {
-			SetOperations<Serializable, Object> list = redisTemplate.opsForSet();
+			SetOperations<Serializable, Object> list = redisTemplate
+					.opsForSet();
 			for (Object val : values) {
 				list.add(key, val);
 			}
@@ -185,7 +190,8 @@ public class RedisServiceImpl implements RedisService {
 	public boolean pushObjAll(String key, List<?> values) {
 		boolean result = false;
 		try {
-			ListOperations<Serializable, Object> list = redisTemplate.opsForList();
+			ListOperations<Serializable, Object> list = redisTemplate
+					.opsForList();
 			list.rightPushAll(key, values);
 			result = true;
 		} catch (Exception e) {
@@ -198,7 +204,8 @@ public class RedisServiceImpl implements RedisService {
 	public boolean pushObj(String key, Object value, Long expireTime) {
 		boolean result = false;
 		try {
-			ListOperations<Serializable, Object> list = redisTemplate.opsForList();
+			ListOperations<Serializable, Object> list = redisTemplate
+					.opsForList();
 			list.rightPush(key, value);
 			redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
 			result = true;
@@ -212,7 +219,8 @@ public class RedisServiceImpl implements RedisService {
 	public boolean pushObjAll(String key, List<?> values, Long expireTime) {
 		boolean result = false;
 		try {
-			ListOperations<Serializable, Object> list = redisTemplate.opsForList();
+			ListOperations<Serializable, Object> list = redisTemplate
+					.opsForList();
 			list.rightPushAll(key, values);
 			redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
 			result = true;
