@@ -2,7 +2,7 @@
 
 <magicSql>
 	
-	<sql name="system_dictionary_list" title="数据字典列表" stmt="from Dictionary as o">
+	<sql name="system_dictionary_list" title="数据字典列表" stmt="from Dictionary as o" orderby="o.category, o.code asc">
 		<option name="category" cond="o.category like ?" />
 		<option name="editable" cond="o.editable = ?" />
 		
