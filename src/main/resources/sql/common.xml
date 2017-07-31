@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<magicSql>
+	
+	<sql name="system_dictionary_list" title="数据字典列表" stmt="from Dictionary as o">
+		<option name="category" cond="o.category like ?" />
+		<option name="editable" cond="o.editable = ?" />
+		
+		<column name="id" field="o.id" hidden="true"/>
+		<column name="category" field="o.category" title="字典类型"/>
+		<column name="code" field="o.code" title="字典编码" />
+		<column name="text" field="o.text" title="字典数据" />
+		<column name="editable" field="o.editable" title="能否编辑" />
+	</sql>	
+
+</magicSql>
