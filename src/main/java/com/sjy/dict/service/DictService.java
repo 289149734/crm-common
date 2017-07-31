@@ -1,16 +1,20 @@
 package com.sjy.dict.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 
 import com.sjy.dict.dao.DictionaryRepository;
 import com.sjy.dict.domain.Dictionary;
 import com.sjy.redis.RedisService;
-import com.sjy.util.StringUtil;
 
 /**
  * 字典service类
@@ -19,10 +23,10 @@ import com.sjy.util.StringUtil;
  * @author gutianyang
  * @since 0.2
  */
+@Slf4j
 @Component
 public class DictService {
 
-	public final static String PRFIX_DICT = "DICT_";
 	public static final String DICT_CACHE = "DICTCACHE";
 
 	@Resource
@@ -45,26 +49,15 @@ public class DictService {
 	 * @return 字典项文本
 	 */
 	public String getText(String category, int code) {
-		try {
-			category = category.toUpperCase();
-			String key = DICT_CACHE + ":" + category + ":" + code;
-			String text = (String) redisService.get(key.toUpperCase());
-			if (StringUtil.isNotBlank(text))
-				return text.trim();
-
-			List<Dictionary> list = dictionaryRepository
-					.findByCategory(category);
-			for (Dictionary obj : list) {
-				key = DICT_CACHE + ":" + category + ":" + obj.getCode();
-				redisService.set(key.toUpperCase(), obj.getText());
-				if (code == obj.getCode()) {
-					text = obj.getText();
-				}
+		List<Dictionary> list = findAll(category);
+		String text = "" + code;
+		for (Dictionary dict : list) {
+			if (code == dict.getCode()) {
+				text = dict.getText();
+				break;
 			}
-			return text.trim();
-		} catch (Exception e) {
-			return "" + code;
 		}
+		return text.trim();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -82,5 +75,24 @@ public class DictService {
 			dicts = Collections.EMPTY_LIST;
 		}
 		return dicts;
+	}
+
+	public void initToRedis() {
+		Map<String, List<Dictionary>> map = new HashMap<String, List<Dictionary>>();
+		List<Dictionary> dicts = dictionaryRepository.findAll();
+		dicts.forEach(dict -> {
+			String key = DICT_CACHE + ":"
+					+ dict.getCategory().trim().toUpperCase();
+			List<Dictionary> list = map.get(key);
+			if (list == null)
+				list = new ArrayList<Dictionary>();
+			list.add(dict);
+			map.put(key, list);
+		});
+
+		map.forEach((k, v) -> {
+			redisService.set(k, v);
+		});
+		log.debug("-------加载字典[{}]项成功-------", map.size());
 	}
 }

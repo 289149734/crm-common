@@ -24,4 +24,6 @@ public interface DictionaryRepository extends JpaRepository<Dictionary, String> 
 	@Query("from Dictionary as o where o.category = ?1 order by o.code asc")
 	List<Dictionary> findByCategory(String category);
 
+	@Query("from Dictionary as o order by o.category, o.code asc")
+	List<Dictionary> findAll();
 }
