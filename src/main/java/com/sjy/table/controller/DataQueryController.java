@@ -55,12 +55,9 @@ public class DataQueryController {
 	@ApiOperation(value = "查询字典项", notes = "通过编号查询字典项信息")
 	@GetMapping(value = "/dict/{dictName}")
 	@ResponseBody
-	public List<Dictionary> listDict(HttpServletRequest request,
+	public List<Dictionary> getDict(HttpServletRequest request,
 			@PathVariable String dictName) {
 		try {
-			// String requestUri = request.getRequestURI();
-			// Map<String, Object> params = PageUtil.getSearchParams(request);
-			// log.debug("requestUri = {}, params = {}", requestUri, params);
 			return dictService.findAll(dictName);
 		} catch (Exception e) {
 			log.error("查询数据错误：", e);
@@ -74,13 +71,8 @@ public class DataQueryController {
 	public TableMeta listHeader(HttpServletRequest request,
 			@PathVariable String queryName) {
 		try {
-			// String requestUri = request.getRequestURI();
 			Map<String, Object> params = PageUtil.getSearchParams(request);
-			// log.debug("requestUri = {}, params = {}", requestUri, params);
 			TableMeta tm = dataQueryService.getTableMeta(queryName, params);
-			// for (SqlColumn column : tm.getColumns()) {
-			// log.debug("SqlColumn = {}", JSON.toJSONString(column, false));
-			// }
 			return tm;
 		} catch (Exception e) {
 			log.error("查询数据错误：", e);
@@ -94,10 +86,7 @@ public class DataQueryController {
 	public PageResult list(HttpServletRequest request,
 			@PathVariable String queryName, PageVo pageVo) {
 		try {
-			// String requestUri = request.getRequestURI();
 			Map<String, Object> params = PageUtil.getSearchParams(request);
-			// log.debug("requestUri = {}, params = {}", requestUri,
-			// JSON.toJSONString(params, false));
 			log.debug("PageVo = {}", JSON.toJSONString(pageVo, false));
 			String orderBy = null;
 			if (StringUtil.isNotBlank(pageVo.getSort())) {
@@ -107,8 +96,12 @@ public class DataQueryController {
 					pageVo.getOffset(), pageVo.getLimit(), null);
 		} catch (Exception e) {
 			log.error("查询数据错误：", e);
+			PageResult pr = new PageResult();
+			pr.start = pageVo.getOffset();
+			pr.maxResult = pageVo.getLimit();
+			pr.totalElements = 0;
+			return pr;
 		}
-		return null;
 	}
 
 }
