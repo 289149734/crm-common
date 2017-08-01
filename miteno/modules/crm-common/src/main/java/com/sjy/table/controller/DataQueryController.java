@@ -11,12 +11,18 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,14 +61,48 @@ public class DataQueryController {
 	@ApiOperation(value = "查询字典项", notes = "通过编号查询字典项信息")
 	@GetMapping(value = "/dict/{dictName}")
 	@ResponseBody
-	public List<Dictionary> getDict(HttpServletRequest request,
-			@PathVariable String dictName) {
+	public List<Dictionary> getDict(@PathVariable String dictName) {
 		try {
 			return dictService.findAll(dictName);
 		} catch (Exception e) {
 			log.error("查询数据错误：", e);
 		}
 		return Collections.EMPTY_LIST;
+	}
+
+	@ApiOperation(value = "删除字典项", notes = "删除字典项信息")
+	@DeleteMapping(value = "/dict")
+	@ResponseBody
+	public void deleteDicts(@RequestParam("dictIds") List<String> dictIds) {
+		try {
+			dictService.delete(dictIds);
+		} catch (Exception e) {
+			log.error("删除数据错误：", e);
+		}
+	}
+
+	@ApiOperation(value = "新增字典项", notes = "新增字典项信息")
+	@PostMapping(value = "/dict")
+	@ResponseBody
+	public Dictionary saveDicts(@Valid @RequestBody Dictionary dict) {
+		try {
+			return dictService.save(dict);
+		} catch (Exception e) {
+			log.error("删除数据错误：", e);
+		}
+		return null;
+	}
+
+	@ApiOperation(value = "更新字典项", notes = "更新字典项信息")
+	@PutMapping(value = "/dict")
+	@ResponseBody
+	public Dictionary updateDicts(@Valid @RequestBody Dictionary dict) {
+		try {
+			return dictService.save(dict);
+		} catch (Exception e) {
+			log.error("删除数据错误：", e);
+		}
+		return null;
 	}
 
 	@ApiOperation(value = "查询列表头", notes = "通过编号查询列表信息")
