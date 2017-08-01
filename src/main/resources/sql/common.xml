@@ -4,7 +4,7 @@
 	
 	<sql name="system_dictionary_list" title="数据字典列表" stmt="from Dictionary as o" orderby="o.category, o.code asc">
 		<option name="category" cond="o.category like ?" />
-		<option name="editable" cond="o.editable = ?" />
+		<option name="editable" cond="o.editable = ?" type="Boolean"/>
 		
 		<column name="id" field="o.id" hidden="true"/>
 		<column name="category" field="o.category" title="字典类型"/>

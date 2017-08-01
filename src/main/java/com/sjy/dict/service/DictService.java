@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import com.sjy.dict.dao.DictionaryRepository;
 import com.sjy.dict.domain.Dictionary;
 import com.sjy.redis.RedisService;
+import com.sjy.util.BeanUtils;
+import com.sjy.util.StringUtil;
 
 /**
  * 字典service类
@@ -37,6 +39,25 @@ public class DictService {
 
 	public void save(List<Dictionary> entities) {
 		dictionaryRepository.save(entities);
+		initToRedis();
+	}
+
+	public Dictionary save(Dictionary entity) {
+		Dictionary entityDb = entity;
+		if (StringUtil.isNotBlank(entity.getId())) {
+			entityDb = dictionaryRepository.findOne(entity.getId());
+			BeanUtils.copyBeanNotNull2Bean(entity, entityDb);
+		}
+		entity = dictionaryRepository.save(entityDb);
+		initToRedis();
+		return entity;
+	}
+
+	public void delete(List<String> dictIds) {
+		dictIds.forEach(dictId -> {
+			dictionaryRepository.delete(dictId);
+		});
+		initToRedis();
 	}
 
 	/**
@@ -78,6 +99,7 @@ public class DictService {
 	}
 
 	public void initToRedis() {
+		long t1 = System.currentTimeMillis();
 		Map<String, List<Dictionary>> map = new HashMap<String, List<Dictionary>>();
 		List<Dictionary> dicts = dictionaryRepository.findAll();
 		dicts.forEach(dict -> {
@@ -93,6 +115,7 @@ public class DictService {
 		map.forEach((k, v) -> {
 			redisService.set(k, v);
 		});
-		log.debug("-------加载字典[{}]项成功-------", map.size());
+		long t2 = System.currentTimeMillis();
+		log.debug("-------加载字典[{}]项成功,耗时:{}(ms)-------", map.size(), (t2 - t1));
 	}
 }
