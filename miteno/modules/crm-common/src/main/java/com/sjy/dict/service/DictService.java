@@ -1,5 +1,6 @@
 package com.sjy.dict.service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,15 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.sjy.annotation.Dict;
 import com.sjy.dict.dao.DictionaryRepository;
 import com.sjy.dict.domain.Dictionary;
 import com.sjy.redis.RedisService;
 import com.sjy.util.BeanUtils;
+import com.sjy.util.ResourceUtil;
 import com.sjy.util.StringUtil;
 
 /**
@@ -98,8 +104,56 @@ public class DictService {
 		return dicts;
 	}
 
+	@Transactional(value = TxType.REQUIRES_NEW)
+	public void loadFromConstant() {
+		List<Dictionary> dicts = new ArrayList<Dictionary>();
+
+		List<Class<?>> list = ResourceUtil
+				.getClassByScanPackage("com.sjy.constant");
+		list.forEach(cls -> {
+			if (cls.isAnnotationPresent(Dict.class)) {
+				log.debug("Class Name = {}", cls.getName());
+				Dict d = cls.getAnnotation(Dict.class);
+				log.debug("Dict name = {}", d.name());
+
+				Field[] fields = cls.getFields();
+				for (Field field : fields) {
+					if (field.isAnnotationPresent(Dict.class)) {
+						Dict df = field.getAnnotation(Dict.class);
+						int val = 0;
+						try {
+							val = field.getInt(cls);
+						} catch (Exception e) {
+							log.error("Dict text = {}[{}]", df.text(), "空");
+							continue;
+						}
+						log.debug("Dict text = {}[{}]", df.text(), val);
+
+						List<Dictionary> dictListInDb = dictionaryRepository
+								.findByCategoryAndCode(d.name().toUpperCase(),
+										val);
+						if (dictListInDb == null || dictListInDb.size() == 0) {
+							Dictionary dict = new Dictionary(d.name()
+									.toUpperCase(), val, df.text(), df
+									.editable());
+							dicts.add(dict);
+						}
+					}
+				}
+			}
+		});
+
+		log.debug(">>>>>>>>>{}", JSON.toJSONString(dicts, true));
+		if (dicts.size() > 0) {
+			dictionaryRepository.save(dicts);
+		}
+	}
+
 	public void initToRedis() {
 		long t1 = System.currentTimeMillis();
+		// 加载所有字典项
+		loadFromConstant();
+
 		Map<String, List<Dictionary>> map = new HashMap<String, List<Dictionary>>();
 		List<Dictionary> dicts = dictionaryRepository.findAll();
 		dicts.forEach(dict -> {
