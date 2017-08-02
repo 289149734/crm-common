@@ -1,5 +1,8 @@
 package com.sjy.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.core.io.Resource;
@@ -28,4 +31,34 @@ public class ResourceUtil {
 		}
 	}
 
+	/**
+	 * 扫描scanPackage返回包含的类
+	 * 
+	 * @param scanPackage
+	 *            : "com.sjy.constant"
+	 * @return
+	 */
+	public static List<Class<?>> getClassByScanPackage(String scanPackage) {
+		log.debug("{}", "classpath*:" + scanPackage.replace(".", "/")
+				+ "/*.class");
+		org.springframework.core.io.Resource[] resources = ResourceUtil
+				.getFiles("classpath*:" + scanPackage.replace(".", "/")
+						+ "/*.class");
+		log.debug("数量：{}", resources.length);
+		List<Class<?>> list = new ArrayList<Class<?>>(resources.length);
+		for (org.springframework.core.io.Resource resource : resources) {
+			String clsName = scanPackage + "." + resource.getFilename();
+			// log.debug("{}", clsName.replace(".class", ""));
+			Class<?> cls;
+			try {
+				cls = Class.forName(clsName.replace(".class", ""));
+			} catch (ClassNotFoundException e) {
+				log.error("不存在类：{}", clsName);
+				continue;
+			}
+			// log.debug("{}", cls);
+			list.add(cls);
+		}
+		return list;
+	}
 }
