@@ -145,6 +145,13 @@
 			<artifactId>jaxen</artifactId>
 		</dependency>
 
+		<!-- http -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<!-- http -->
+
 		<!-- swagger-api -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
