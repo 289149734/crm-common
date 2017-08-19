@@ -13,10 +13,14 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -280,6 +284,47 @@ public class HttpClientUtils {
 				log.debug("--------------------------------------");
 			}
 			return returnStr;
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (closeableHttpClient != null) {
+				try {
+					closeableHttpClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static JSONObject sendHttpPost(String url, JSONObject json) {
+		// 创建HttpClientBuilder
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		// HttpClient
+		CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+		// 创建httppost
+		HttpPost httppost = new HttpPost(url);
+		httppost.setHeader("Content-type", "application/json; charset=utf-8");
+		httppost.addHeader("Accept", "application/json; charset=utf-8");
+
+		try {
+			StringEntity r_entity = new StringEntity(json.toString(), "UTF-8");// 解决中文乱码问题
+			httppost.setEntity(r_entity);
+			log.debug("executing request " + httppost.getURI());
+			HttpResponse response = closeableHttpClient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				String responseStr = EntityUtils.toString(entity, "UTF-8");
+				log.debug("--------------------------------------");
+				log.debug("Response content: {}", responseStr);
+				log.debug("--------------------------------------");
+				return JSON.parseObject(responseStr);
+			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e1) {
