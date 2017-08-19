@@ -12,9 +12,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
-import lombok.extern.slf4j.Slf4j;
-
 import com.alibaba.fastjson.JSON;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Title: AuthenticateWebFilter.java
@@ -35,26 +35,26 @@ public class AuthenticateWebFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		log.debug("请求路径 :{}, 请求方式:{}", httpRequest.getRequestURI(),
-				httpRequest.getMethod());
-
 		Map<String, String[]> requestParams = request.getParameterMap();
-		log.debug("请求参数:{}", JSON.toJSONString(requestParams, false));
+		log.debug("请求路径 :{}, 请求方式:{}, 请求参数:{}", httpRequest.getRequestURI(), httpRequest.getMethod(),
+				JSON.toJSONString(requestParams, false));
+		log.debug("ContentType[{}]==========Protocol[{}]", request.getContentType(), request.getProtocol());
 
-		ServletRequest requestWrapper = null;
-		if (request instanceof HttpServletRequest) {
-			requestWrapper = new BodyReaderHttpServletRequestWrapper(
-					(HttpServletRequest) request);
-		}
-
-		if (requestWrapper != null) {
-			chain.doFilter(requestWrapper, response);
-		} else {
+		if (request.getContentType() != null && request.getContentType().indexOf("multipart/form-data") >= 0) {
 			chain.doFilter(request, response);
+		} else {
+			ServletRequest requestWrapper = null;
+			if (request instanceof HttpServletRequest) {
+				requestWrapper = new BodyReaderHttpServletRequestWrapper(httpRequest);
+			}
+			if (requestWrapper != null) {
+				chain.doFilter(requestWrapper, response);
+			} else {
+				chain.doFilter(request, response);
+			}
 		}
 	}
 
