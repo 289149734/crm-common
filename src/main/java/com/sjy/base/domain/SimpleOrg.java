@@ -3,14 +3,12 @@
  */
 package com.sjy.base.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import com.sjy.util.SeqRootEntity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @Title: SimpleOrg.java
@@ -23,10 +21,13 @@ import lombok.EqualsAndHashCode;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "tbl_organization")
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class SimpleOrg extends SeqRootEntity {
+public class SimpleOrg implements Serializable {
+
+	@Column(unique = true, nullable = false)
+	Long id;
+
+	Integer version;
 
 	@Column(length = 128)
 	String name; // 名称
