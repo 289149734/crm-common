@@ -55,4 +55,13 @@ public class GlobalControllerExceptionHandler {
 		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
 	}
 
+	// 通用异常的处理，返回500
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR) // 500
+	@ExceptionHandler(Exception.class)
+	@ResponseBody
+	public RestServiceError handleException(Exception ex) {
+		log.debug("【异常类型】-------------------..{}", ex.toString());
+		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
+	}
+
 }
