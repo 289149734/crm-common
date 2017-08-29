@@ -40,4 +40,7 @@ public class SimpleOrg implements Serializable {
 	@Column(name = "parent_id")
 	Long parent; // parent_id //上级单位
 
+	@Column(length = 64, name = "orgAppId", unique = true)
+	String appId; // 微信公众号ID
+
 }
