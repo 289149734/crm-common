@@ -6,6 +6,8 @@ package com.sjy.base.service;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import com.sjy.base.dao.SimpleOperRepository;
 import com.sjy.base.domain.SimpleOper;
+import com.sjy.constant.SessionParamType;
+import com.sjy.exception.CrmException;
 
 /**
  * @Title: SimpleOperService.java
@@ -25,6 +29,11 @@ import com.sjy.base.domain.SimpleOper;
  */
 @Component
 public class SimpleOperService {
+	@Resource
+	private HttpSession session;
+
+	@Resource
+	private HttpServletRequest request;
 
 	@Resource
 	SimpleOperRepository simpleOperRepository;
@@ -36,5 +45,22 @@ public class SimpleOperService {
 		if (list != null)
 			return list.size();
 		return 0;
+	}
+
+	/**
+	 * 获取当前操作员
+	 * 
+	 * @return
+	 */
+	public SimpleOper currentOper() {
+		Long operId = (Long) session.getAttribute(SessionParamType.CURRENT_OPER);
+		if (operId == null) {
+			throw new CrmException("当前操作员不能为空");
+		}
+		SimpleOper oper = simpleOperRepository.findOne(operId);
+		if (oper == null) {
+			throw new CrmException("当前操作员不能为空");
+		}
+		return oper;
 	}
 }
