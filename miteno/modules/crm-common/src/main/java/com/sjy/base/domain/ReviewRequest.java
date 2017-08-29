@@ -31,6 +31,9 @@ public class ReviewRequest extends UuidRootEntity {
 	@Column(name = "audit_status")
 	Integer status = 0; // 审核状态
 
+	@Column(name = "audit_rule_type")
+	Integer ruleType; // 规则类型
+
 	Integer orgLevel; // 当前的审核机构级别
 
 	@Column(length = 36, nullable = false)
