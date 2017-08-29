@@ -11,12 +11,11 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
 import com.sjy.base.dao.ReviewRequestRepository;
-import com.sjy.base.dao.SimpleOperRepository;
-import com.sjy.base.dao.SimpleOrgRepository;
 import com.sjy.base.domain.ReviewRequest;
-import com.sjy.base.domain.SimpleOper;
-import com.sjy.base.domain.SimpleOrg;
 import com.sjy.constant.AuditStatus;
+import com.sjy.dict.service.DictService;
+import com.sjy.exception.CrmException;
+import com.sjy.util.SeqRootEntity;
 import com.sjy.util.UuidRootEntity;
 
 /**
@@ -36,30 +35,65 @@ public class ReviewRequestService {
 	ReviewRequestRepository reviewRequestRepository;
 
 	@Resource
-	SimpleOrgRepository simpleOrgRepository;
+	SimpleOperService simpleOperService;
 
 	@Resource
-	SimpleOperRepository simpleOperRepository;
+	SimpleOrgService simpleOrgService;
+
+	@Resource
+	DictService dictService;
 
 	/**
 	 * 创建审核请求
 	 * 
 	 * @param auditObj
 	 * @param auditObjId
-	 * @param createOrg
-	 * @param creator
+	 * @param ruleType
 	 * @return
 	 */
-	public ReviewRequest createRequest(UuidRootEntity entity, SimpleOrg createOrg, SimpleOper creator) {
+	public ReviewRequest createRequest(UuidRootEntity entity, Integer ruleType) {
 		String auditObj = entity.getClass().getSimpleName();
 		String auditObjId = entity.getId();
-		ReviewRequest request = new ReviewRequest();
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndRuleTypeAndStatus(auditObj,
+				auditObjId, ruleType, AuditStatus.OPEN);
+		if (request != null) {
+			throw new CrmException("已经提交审核申请");
+		}
+		request = new ReviewRequest();
 		request.setAuditObjId(auditObjId);
 		request.setAuditObj(auditObj);
-		request.setCreateOrg(createOrg);
-		request.setCreator(creator);
+		request.setCreateOrg(simpleOrgService.currentOrg());
+		request.setCreator(simpleOperService.currentOper());
 		request.setRecordTime(new Date());
 		request.setStatus(AuditStatus.OPEN);
+		request.setRuleType(ruleType);
+		return reviewRequestRepository.save(request);
+	}
+
+	/**
+	 * 创建审核请求
+	 * 
+	 * @param auditObj
+	 * @param auditObjId
+	 * @param ruleType
+	 * @return
+	 */
+	public ReviewRequest createRequest(SeqRootEntity entity, Integer ruleType) {
+		String auditObj = entity.getClass().getSimpleName();
+		String auditObjId = "" + entity.getId();
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndRuleTypeAndStatus(auditObj,
+				auditObjId, ruleType, AuditStatus.OPEN);
+		if (request != null) {
+			throw new CrmException("已经提交审核申请");
+		}
+		request = new ReviewRequest();
+		request.setAuditObjId(auditObjId);
+		request.setAuditObj(auditObj);
+		request.setCreateOrg(simpleOrgService.currentOrg());
+		request.setCreator(simpleOperService.currentOper());
+		request.setRecordTime(new Date());
+		request.setStatus(AuditStatus.OPEN);
+		request.setRuleType(ruleType);
 		return reviewRequestRepository.save(request);
 	}
 
@@ -67,15 +101,16 @@ public class ReviewRequestService {
 	 * 通过审核
 	 * 
 	 * @param auditId
-	 * @param auditOrg
-	 * @param auditor
 	 * @param comments
 	 * @return
 	 */
-	public ReviewRequest passRequest(String auditId, SimpleOrg auditOrg, SimpleOper auditor, String comments) {
+	public ReviewRequest passRequest(String auditId, String comments) {
 		ReviewRequest request = reviewRequestRepository.findOne(auditId);
-		request.setAuditOrg(auditOrg);
-		request.setAuditor(auditor);
+		if (request.getStatus() != AuditStatus.OPEN) {
+			throw new CrmException("审核状态【{0}】才用允许审核操作", dictService.getText(AuditStatus.CATEGORY, AuditStatus.OPEN));
+		}
+		request.setAuditOrg(simpleOrgService.currentOrg());
+		request.setAuditor(simpleOperService.currentOper());
 		request.setAuditTime(new Date());
 		request.setComments(comments);
 		request.setStatus(AuditStatus.REALPASSED);
@@ -86,15 +121,16 @@ public class ReviewRequestService {
 	 * 未通过审核
 	 * 
 	 * @param auditId
-	 * @param auditOrg
-	 * @param auditor
 	 * @param comments
 	 * @return
 	 */
-	public ReviewRequest rejectRequest(String auditId, SimpleOrg auditOrg, SimpleOper auditor, String comments) {
+	public ReviewRequest rejectRequest(String auditId, String comments) {
 		ReviewRequest request = reviewRequestRepository.findOne(auditId);
-		request.setAuditOrg(auditOrg);
-		request.setAuditor(auditor);
+		if (request.getStatus() != AuditStatus.OPEN) {
+			throw new CrmException("审核状态【{0}】才用允许审核操作", dictService.getText(AuditStatus.CATEGORY, AuditStatus.OPEN));
+		}
+		request.setAuditOrg(simpleOrgService.currentOrg());
+		request.setAuditor(simpleOperService.currentOper());
 		request.setAuditTime(new Date());
 		request.setComments(comments);
 		request.setStatus(AuditStatus.REJECTED);
@@ -105,17 +141,36 @@ public class ReviewRequestService {
 	 * 撤销审核
 	 * 
 	 * @param auditId
-	 * @param auditOrg
-	 * @param auditor
 	 * @param comments
 	 * @return
 	 */
-	public ReviewRequest cancelRequest(String auditId, SimpleOrg auditOrg, SimpleOper auditor, String comments) {
-		ReviewRequest request = reviewRequestRepository.findOne(auditId);
-		request.setAuditOrg(auditOrg);
-		request.setAuditor(auditor);
-		request.setAuditTime(new Date());
-		request.setComments(comments);
+	public ReviewRequest cancelRequest(UuidRootEntity entity) {
+		String auditObj = entity.getClass().getSimpleName();
+		String auditObjId = entity.getId();
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndStatus(auditObj, auditObjId,
+				AuditStatus.OPEN);
+		if (request == null) {
+			throw new CrmException("审核状态【{0}】才用允许撤销审核操作", dictService.getText(AuditStatus.CATEGORY, AuditStatus.OPEN));
+		}
+		request.setStatus(AuditStatus.CANCELED);
+		return reviewRequestRepository.save(request);
+	}
+
+	/**
+	 * 撤销审核
+	 * 
+	 * @param auditId
+	 * @param comments
+	 * @return
+	 */
+	public ReviewRequest cancelRequest(SeqRootEntity entity) {
+		String auditObj = entity.getClass().getSimpleName();
+		String auditObjId = "" + entity.getId();
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndStatus(auditObj, auditObjId,
+				AuditStatus.OPEN);
+		if (request == null) {
+			throw new CrmException("审核状态【{0}】才用允许撤销审核操作", dictService.getText(AuditStatus.CATEGORY, AuditStatus.OPEN));
+		}
 		request.setStatus(AuditStatus.CANCELED);
 		return reviewRequestRepository.save(request);
 	}

@@ -3,8 +3,11 @@
  */
 package com.sjy.exception;
 
+import java.text.MessageFormat;
+
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2017年1月10日
  * @author liyan
  * @e-mail 289149734@qq.com
@@ -28,6 +31,16 @@ public class CrmException extends RuntimeException {
 	 */
 	public CrmException(String message) {
 		super(message);
+	}
+
+	/**
+	 * Constructor for MagicException.
+	 * 
+	 * @param message
+	 * @param objs
+	 */
+	public CrmException(String message, Object... objs) {
+		super(MessageFormat.format(message, objs));
 	}
 
 	/**
@@ -59,8 +72,10 @@ public class CrmException extends RuntimeException {
 	}
 
 	public String getMessage() {
-		if (super.getMessage() == null) return cause == null ? "" : "原因:" + cause.getMessage();
-		else return super.getMessage();
+		if (super.getMessage() == null)
+			return cause == null ? "" : "原因:" + cause.getMessage();
+		else
+			return super.getMessage();
 
 	}
 
