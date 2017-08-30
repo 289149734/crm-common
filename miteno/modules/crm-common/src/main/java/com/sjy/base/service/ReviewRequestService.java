@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.sjy.base.service;
 
 import java.util.Date;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.sjy.base.dao.ReviewRequestRepository;
 import com.sjy.base.domain.ReviewRequest;
+import com.sjy.constant.AuditRuleType;
 import com.sjy.constant.AuditStatus;
 import com.sjy.dict.service.DictService;
 import com.sjy.exception.CrmException;
@@ -21,7 +19,7 @@ import com.sjy.util.UuidRootEntity;
 /**
  * @Title: AuditRequestService.java
  * @Package com.sjy.base.service
- * @Description: TODO(用一句话描述该文件做什么)
+ * @Description: 审核请求服务
  * @author liyan
  * @email 289149734@qq.com
  * @date 2017年8月28日 下午7:10:06
@@ -54,10 +52,10 @@ public class ReviewRequestService {
 	public ReviewRequest createRequest(UuidRootEntity entity, Integer ruleType) {
 		String auditObj = entity.getClass().getSimpleName();
 		String auditObjId = entity.getId();
-		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndRuleTypeAndStatus(auditObj,
-				auditObjId, ruleType, AuditStatus.OPEN);
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndStatus(auditObj, auditObjId,
+				AuditStatus.OPEN);
 		if (request != null) {
-			throw new CrmException("已经提交审核申请");
+			throw new CrmException("已经提交【{0}】审核申请", dictService.getText(AuditRuleType.CATEGORY, request.getRuleType()));
 		}
 		request = new ReviewRequest();
 		request.setAuditObjId(auditObjId);
@@ -81,10 +79,10 @@ public class ReviewRequestService {
 	public ReviewRequest createRequest(SeqRootEntity entity, Integer ruleType) {
 		String auditObj = entity.getClass().getSimpleName();
 		String auditObjId = "" + entity.getId();
-		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndRuleTypeAndStatus(auditObj,
-				auditObjId, ruleType, AuditStatus.OPEN);
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndStatus(auditObj, auditObjId,
+				AuditStatus.OPEN);
 		if (request != null) {
-			throw new CrmException("已经提交审核申请");
+			throw new CrmException("已经提交【{0}】审核申请", dictService.getText(AuditRuleType.CATEGORY, request.getRuleType()));
 		}
 		request = new ReviewRequest();
 		request.setAuditObjId(auditObjId);

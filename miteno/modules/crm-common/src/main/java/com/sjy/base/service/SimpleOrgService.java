@@ -12,6 +12,8 @@ import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Component;
 
 import com.sjy.base.dao.SimpleOrgRepository;
@@ -37,6 +39,9 @@ public class SimpleOrgService {
 	private HttpServletRequest request;
 
 	@Resource
+	SessionRepository<Session> sessionRepository;
+
+	@Resource
 	SimpleOrgRepository simpleOrgRepository;
 
 	@Transactional(TxType.REQUIRES_NEW)
@@ -53,7 +58,8 @@ public class SimpleOrgService {
 	 * @return
 	 */
 	public SimpleOrg currentOrg() {
-		Long orgId = (Long) session.getAttribute(SessionParamType.CURRENT_ORG);
+		Session sess = sessionRepository.getSession(session.getId());
+		Long orgId = (Long) sess.getAttribute(SessionParamType.CURRENT_ORG);
 		if (orgId == null) {
 			throw new CrmException("当前机构不能为空");
 		}
