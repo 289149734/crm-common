@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HttpClientUtils {
-	public String getUrl(String url, Map<String, String> map) {
+	public static String getUrl(String url, Map<String, String> map) {
 		if (map == null)
 			return url;
 		try {
@@ -42,7 +42,7 @@ public class HttpClientUtils {
 		return url;
 	}
 
-	public String postForm(String url, Map<String, String> params) {
+	public static String postForm(String url, Map<String, String> params) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		// HttpClient
@@ -93,7 +93,7 @@ public class HttpClientUtils {
 		return null;
 	}
 
-	public String postForm(String url, String contentType, Map<String, String> params) {
+	public static String postForm(String url, String contentType, Map<String, String> params) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		// HttpClient
@@ -142,7 +142,7 @@ public class HttpClientUtils {
 		return null;
 	}
 
-	public String putForm(String url, String contentType, Map<String, String> params) {
+	public static String putForm(String url, String contentType, Map<String, String> params) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		// HttpClient
@@ -191,7 +191,7 @@ public class HttpClientUtils {
 		return null;
 	}
 
-	public String getForm(String url, Map<String, String> params) {
+	public static String getForm(String url, Map<String, String> params) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		// HttpClient
@@ -227,7 +227,7 @@ public class HttpClientUtils {
 		return null;
 	}
 
-	public String getForm(String url) {
+	public static String getForm(String url) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		// HttpClient
@@ -263,7 +263,7 @@ public class HttpClientUtils {
 		return null;
 	}
 
-	public String getForm(String url, String contentType, Map<String, String> params) {
+	public static String getForm(String url, String contentType, Map<String, String> params) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		// HttpClient
