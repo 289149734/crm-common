@@ -14,16 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.DynaProperty;
 import org.apache.commons.beanutils.PropertyUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2016年12月19日
  * @author liyan
  * @e-mail 289149734@qq.com
@@ -60,8 +61,7 @@ public class BeanUtils extends BeanUtilsBean {
 		try {
 			T obj = type.newInstance();
 			BeanInfo beanInfo = Introspector.getBeanInfo(type);
-			PropertyDescriptor[] propertyDescriptors = beanInfo
-					.getPropertyDescriptors();
+			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 			for (int i = 0; i < propertyDescriptors.length; i++) {
 				PropertyDescriptor descriptor = propertyDescriptors[i];
 				String propertyName = descriptor.getName();
@@ -99,8 +99,7 @@ public class BeanUtils extends BeanUtilsBean {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
-			PropertyDescriptor[] propertyDescriptors = beanInfo
-					.getPropertyDescriptors();
+			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 			for (int i = 0; i < propertyDescriptors.length; i++) {
 				PropertyDescriptor descriptor = propertyDescriptors[i];
 				String propertyName = descriptor.getName();
@@ -129,26 +128,22 @@ public class BeanUtils extends BeanUtilsBean {
 	}
 
 	public static Map<String, String> bean2Map(Object obj)
-			throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		BeanUtilsBean2 bub2 = new BeanUtilsBean2();
 		return bub2.describe(obj);
 	}
 
 	public static void copyBeanNotNull2Bean(Object databean, Object tobean) {
-		PropertyDescriptor origDescriptors[] = PropertyUtils
-				.getPropertyDescriptors(databean);
+		PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(databean);
 		for (int i = 0; i < origDescriptors.length; i++) {
 			String name = origDescriptors[i].getName();
 			// String type = origDescriptors[i].getPropertyType().toString();
 			if ("class".equals(name)) {
 				continue; // No point in trying to set an object's class
 			}
-			if (PropertyUtils.isReadable(databean, name)
-					&& PropertyUtils.isWriteable(tobean, name)) {
+			if (PropertyUtils.isReadable(databean, name) && PropertyUtils.isWriteable(tobean, name)) {
 				try {
-					Object value = PropertyUtils.getSimpleProperty(databean,
-							name);
+					Object value = PropertyUtils.getSimpleProperty(databean, name);
 					if (value != null) {
 						// copyProperty(tobean, name, value);
 						PropertyUtils.setProperty(tobean, name, value);
@@ -163,8 +158,7 @@ public class BeanUtils extends BeanUtilsBean {
 		}
 	}
 
-	public void clearAllProperties(final Object obj)
-			throws IllegalAccessException, InvocationTargetException {
+	public void clearAllProperties(final Object obj) throws IllegalAccessException, InvocationTargetException {
 
 		// Validate existence of the specified beans
 		if (obj == null) {
@@ -176,8 +170,7 @@ public class BeanUtils extends BeanUtilsBean {
 
 		// Copy the properties, converting as necessary
 		if (obj instanceof DynaBean) {
-			final DynaProperty[] origDescriptors = ((DynaBean) obj)
-					.getDynaClass().getDynaProperties();
+			final DynaProperty[] origDescriptors = ((DynaBean) obj).getDynaClass().getDynaProperties();
 			for (DynaProperty origDescriptor : origDescriptors) {
 				final String name = origDescriptor.getName();
 				// Need to check isReadable() for WrapDynaBean
@@ -196,9 +189,8 @@ public class BeanUtils extends BeanUtilsBean {
 					copyProperty(obj, name, null);
 				}
 			}
-		} else /* if (orig is a standard JavaBean) */{
-			final PropertyDescriptor[] origDescriptors = getPropertyUtils()
-					.getPropertyDescriptors(obj);
+		} else /* if (orig is a standard JavaBean) */ {
+			final PropertyDescriptor[] origDescriptors = getPropertyUtils().getPropertyDescriptors(obj);
 			for (PropertyDescriptor origDescriptor : origDescriptors) {
 				final String name = origDescriptor.getName();
 				if ("class".equals(name)) {
