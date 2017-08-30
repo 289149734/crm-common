@@ -69,4 +69,13 @@ public class SimpleOperService {
 		}
 		return oper;
 	}
+	
+	/**
+	 * 根据operId获取操作员
+	 * 
+	 * @return
+	 */
+	public SimpleOper findOne(Long operId) {
+		return simpleOperRepository.findOne(operId);
+	}
 }
