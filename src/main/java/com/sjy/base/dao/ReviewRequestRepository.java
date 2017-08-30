@@ -20,9 +20,6 @@ import com.sjy.base.domain.ReviewRequest;
 @Component
 public interface ReviewRequestRepository extends JpaRepository<ReviewRequest, String> {
 
-	ReviewRequest findByAuditObjAndAuditObjIdAndRuleTypeAndStatus(String auditObj, String auditObjId, Integer ruleType,
-			Integer status);
-
 	ReviewRequest findByAuditObjAndAuditObjIdAndStatus(String auditObj, String auditObjId, Integer status);
 
 }

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Component;
 
 import com.sjy.base.dao.SimpleOperRepository;
@@ -36,6 +38,9 @@ public class SimpleOperService {
 	private HttpServletRequest request;
 
 	@Resource
+	SessionRepository<Session> sessionRepository;
+	
+	@Resource
 	SimpleOperRepository simpleOperRepository;
 
 	@Transactional(TxType.REQUIRES_NEW)
@@ -53,7 +58,8 @@ public class SimpleOperService {
 	 * @return
 	 */
 	public SimpleOper currentOper() {
-		Long operId = (Long) session.getAttribute(SessionParamType.CURRENT_OPER);
+		Session sess = sessionRepository.getSession(session.getId());
+		Long operId = (Long) sess.getAttribute(SessionParamType.CURRENT_OPER);
 		if (operId == null) {
 			throw new CrmException("当前操作员不能为空");
 		}
