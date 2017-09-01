@@ -8,6 +8,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Data;
 
@@ -22,6 +23,7 @@ import lombok.Data;
  */
 @SuppressWarnings("serial")
 @Entity
+@Table(name = "tbl_organization")
 @Data
 public class SimpleOrg implements Serializable {
 
