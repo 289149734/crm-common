@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.sjy.util.UuidRootEntity;
 
@@ -25,6 +26,7 @@ import lombok.EqualsAndHashCode;
  */
 @SuppressWarnings("serial")
 @Entity
+@Table(name = "tbl_organizationtree")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SimpleOrgTree extends UuidRootEntity {
