@@ -91,6 +91,16 @@ public class SimpleOrgService {
 	}
 
 	/**
+	 * 通过orgLevel查询机构
+	 * 
+	 * @param orgLevel
+	 * @return
+	 */
+	public List<SimpleOrg> findByOrgLevel(Integer orgLevel) {
+		return simpleOrgRepository.findByOrgLevel(orgLevel);
+	}
+
+	/**
 	 * 通过orgId获取机构
 	 * 
 	 * @param orgId
