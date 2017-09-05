@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.sjy.base.dao.SimpleOrgRepository;
 import com.sjy.base.dao.SimpleOrgTreeRepository;
@@ -26,7 +26,7 @@ import com.sjy.base.domain.SimpleOrgTree;
  * @version V1.0
  */
 @Transactional
-@Component
+@Service
 public class SimpleOrgTreeService {
 
 	@Resource

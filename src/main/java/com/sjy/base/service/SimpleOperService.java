@@ -13,7 +13,7 @@ import javax.transaction.Transactional.TxType;
 
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.sjy.base.dao.SimpleOperRepository;
 import com.sjy.base.domain.SimpleOper;
@@ -29,7 +29,7 @@ import com.sjy.exception.CrmException;
  * @date 2017年8月24日 下午9:00:18
  * @version V1.0
  */
-@Component
+@Service
 public class SimpleOperService {
 	@Resource
 	private HttpSession session;
@@ -39,7 +39,7 @@ public class SimpleOperService {
 
 	@Resource
 	SessionRepository<Session> sessionRepository;
-	
+
 	@Resource
 	SimpleOperRepository simpleOperRepository;
 
@@ -69,7 +69,7 @@ public class SimpleOperService {
 		}
 		return oper;
 	}
-	
+
 	/**
 	 * 根据operId获取操作员
 	 * 

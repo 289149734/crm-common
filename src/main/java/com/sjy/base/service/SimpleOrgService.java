@@ -14,7 +14,7 @@ import javax.transaction.Transactional.TxType;
 
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.sjy.base.dao.SimpleOrgRepository;
 import com.sjy.base.domain.SimpleOrg;
@@ -30,7 +30,7 @@ import com.sjy.exception.CrmException;
  * @date 2017年8月24日 下午8:41:46
  * @version V1.0
  */
-@Component
+@Service
 public class SimpleOrgService {
 	@Resource
 	private HttpSession session;
