@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.sjy.base.dao.ReviewRequestRepository;
 import com.sjy.base.domain.ReviewRequest;
@@ -26,7 +26,7 @@ import com.sjy.util.UuidRootEntity;
  * @version V1.0
  */
 @Transactional
-@Component
+@Service
 public class ReviewRequestService {
 
 	@Resource
