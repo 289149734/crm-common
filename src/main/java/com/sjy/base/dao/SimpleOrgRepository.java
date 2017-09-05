@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.sjy.base.domain.SimpleOrg;
 
@@ -21,7 +21,7 @@ import com.sjy.base.domain.SimpleOrg;
  * @date 2017年8月24日 下午8:32:17
  * @version V1.0
  */
-@Component
+@Repository
 public interface SimpleOrgRepository extends JpaRepository<SimpleOrg, Long> {
 
 	SimpleOrg findByAppId(String appId);
