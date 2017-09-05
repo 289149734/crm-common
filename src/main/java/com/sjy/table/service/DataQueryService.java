@@ -14,13 +14,11 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.sjy.dict.service.DictService;
 import com.sjy.exception.CrmException;
@@ -36,8 +34,10 @@ import com.sjy.table.util.QueryUtil;
 import com.sjy.util.DateUtils;
 import com.sjy.util.StringUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
-@Component("dataQueryService")
+@Service("dataQueryService")
 public class DataQueryService {
 
 	@Resource
@@ -68,8 +68,7 @@ public class DataQueryService {
 
 	public DataQueryService(Environment env) {
 		String dialect = env.getProperty("spring.jpa.database", "MYSQL");
-		MAXCOUNT = Integer.parseInt(env.getProperty(
-				"application.list.maxcount", "50000"));
+		MAXCOUNT = Integer.parseInt(env.getProperty("application.list.maxcount", "50000"));
 		checkSqlFiles();
 		isOracle = dialect.equalsIgnoreCase("oracle");
 		isMySql = dialect.equalsIgnoreCase("mysql");
@@ -83,8 +82,7 @@ public class DataQueryService {
 		return config.getSharedDimension(dimName);
 	}
 
-	public void appendField(StringBuffer sb, SqlQuery query,
-			Map<String, Object> params) {
+	public void appendField(StringBuffer sb, SqlQuery query, Map<String, Object> params) {
 		if (query.fieldStr != null) {
 			sb.append("select ");
 			sb.append(query.fieldStr);
@@ -92,8 +90,7 @@ public class DataQueryService {
 		}
 	}
 
-	public void appendStatment(StringBuffer sb, SqlQuery query,
-			Map<String, Object> params) {
+	public void appendStatment(StringBuffer sb, SqlQuery query, Map<String, Object> params) {
 		String stmt = query.stmt;
 		if (query.dynaStmt != null) {
 			try {
@@ -109,8 +106,7 @@ public class DataQueryService {
 		appendCond(sb, query, params, hasWhere);
 	}
 
-	public boolean appendCond(StringBuffer sb, SqlQuery query,
-			Map<String, Object> params, boolean hasWhere) {
+	public boolean appendCond(StringBuffer sb, SqlQuery query, Map<String, Object> params, boolean hasWhere) {
 		String value;
 		String cond;
 		Object v;
@@ -136,8 +132,7 @@ public class DataQueryService {
 				if (cond != null) {
 					sb.append(" and ");
 					log.debug("{}-{}", cond, parseHardValue(value, opt.type));
-					cond = cond.replaceAll("\\?",
-							"" + parseHardValue(value, opt.type));
+					cond = cond.replaceAll("\\?", "" + parseHardValue(value, opt.type));
 					sb.append(cond);
 				}
 			}
@@ -159,16 +154,14 @@ public class DataQueryService {
 			}
 			try {
 				int j = Integer.parseInt(token);
-				if (query.columns != null && query.columns.size() > j
-						&& query.columns.get(j).field != null) {
+				if (query.columns != null && query.columns.size() > j && query.columns.get(j).field != null) {
 					sb.append(" order by ");
 					sb.append(query.columns.get(j).field);
 					if (i > 0)
 						sb.append(orderBy.substring(i));
 
 				} else
-					log.warn("not support order by :" + query.stmt + ","
-							+ orderBy);
+					log.warn("not support order by :" + query.stmt + "," + orderBy);
 			} catch (NumberFormatException nfe) {
 				log.warn("not support order by :" + query.stmt + "," + orderBy);
 			}
@@ -188,11 +181,9 @@ public class DataQueryService {
 	 * @param maxResult
 	 * @return
 	 */
-	public PageResult selectData(String queryName, Map<String, Object> params,
-			String orderBy, int start, int maxResult, String showFields)
-			throws Exception {
-		return internalSelectData(queryName, params, orderBy, start, maxResult,
-				showFields, false);
+	public PageResult selectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult,
+			String showFields) throws Exception {
+		return internalSelectData(queryName, params, orderBy, start, maxResult, showFields, false);
 	}
 
 	private String compileCountStmt(SqlQuery query, String fromStmt) {
@@ -201,8 +192,7 @@ public class DataQueryService {
 		sb.append(fromStmt);
 		String countStmt = sb.toString();
 
-		countStmt = query.isNative ? countStmt : QueryUtil.compileSql(
-				sessionFactory, countStmt).getSQLString();
+		countStmt = query.isNative ? countStmt : QueryUtil.compileSql(sessionFactory, countStmt).getSQLString();
 		sb = new StringBuffer();
 		sb.append("select count(*) from (");
 
@@ -229,8 +219,7 @@ public class DataQueryService {
 		return sb.toString();
 	}
 
-	private String compileStatStmt(String stat, String fromStmt,
-			String orderStmt, boolean isNative) {
+	private String compileStatStmt(String stat, String fromStmt, String orderStmt, boolean isNative) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("select ");
 		sb.append(stat);
@@ -238,13 +227,12 @@ public class DataQueryService {
 		sb.append(fromStmt);
 
 		String stmt = sb.toString();
-		stmt = isNative ? stmt : QueryUtil.compileSql(sessionFactory, stmt)
-				.getSQLString();
+		stmt = isNative ? stmt : QueryUtil.compileSql(sessionFactory, stmt).getSQLString();
 		return stmt;
 	}
 
-	private Object[] compileStmt(SqlQuery query, String fromStmt,
-			String orderStmt, Map<String, Object> params, PageResult pr) {
+	private Object[] compileStmt(SqlQuery query, String fromStmt, String orderStmt, Map<String, Object> params,
+			PageResult pr) {
 		StringBuffer sb = new StringBuffer();
 		appendField(sb, query, params);
 		sb.append(fromStmt);
@@ -296,8 +284,7 @@ public class DataQueryService {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked" })
-	private PageResult internalSelectData(String queryName,
-			Map<String, Object> params, String orderBy, int start,
+	private PageResult internalSelectData(String queryName, Map<String, Object> params, String orderBy, int start,
 			int maxResult, String showFields, boolean export) throws Exception {
 		PageResult pr = new PageResult();
 		paramLocal.set(params);
@@ -338,16 +325,14 @@ public class DataQueryService {
 					log.debug("countStmt : {}", countStmt);
 					rs1 = st1.executeQuery(countStmt);
 					if (rs1.next()) {
-						pr.totalElements = ((Number) rs1.getObject(1))
-								.intValue();
+						pr.totalElements = ((Number) rs1.getObject(1)).intValue();
 					}
 
 					if (pr.totalElements > 0) {
 						// 2. total>=5000,算统计值
 						if (query.stat != null && pr.totalElements < MAXCOUNT) {
 							rs1.close();
-							String statStmt = compileStatStmt(query.stat,
-									fromStmt, orderStmt, query.isNative);
+							String statStmt = compileStatStmt(query.stat, fromStmt, orderStmt, query.isNative);
 							log.debug("statStmt : ");
 							log.debug(statStmt);
 							rs1 = st1.executeQuery(statStmt);
@@ -365,16 +350,14 @@ public class DataQueryService {
 						}
 
 						// 2.查明细
-						Object[] ss = compileStmt(query, fromStmt, orderStmt,
-								params, pr);
+						Object[] ss = compileStmt(query, fromStmt, orderStmt, params, pr);
 						String stmt = (String) ss[0];
 						log.debug("stmt : {}", stmt);
 						QueryTranslatorImpl translator = (QueryTranslatorImpl) ss[1];
 						if (isOracle || isMySql) {
 							st = conn.createStatement();
 							rs = st.executeQuery(stmt);
-							results = QueryUtil.parseSqlResult(sessionFactory,
-									rs, query.columns.size(), maxResult,
+							results = QueryUtil.parseSqlResult(sessionFactory, rs, query.columns.size(), maxResult,
 									translator);
 						}
 					}
@@ -454,13 +437,12 @@ public class DataQueryService {
 		}
 	}
 
-	private void toColumnValues(PageResult pr, SqlQuery query,
-			List<Object[]> results, String showFields, boolean export) {
+	private void toColumnValues(PageResult pr, SqlQuery query, List<Object[]> results, String showFields,
+			boolean export) {
 		if (query.columns == null || query.columns.size() == 0)
 			return;
 
-		List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>(
-				results.size());
+		List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>(results.size());
 
 		List<Object[]> columnValues = new ArrayList<Object[]>(results.size());
 		Object[] rowData = null;
@@ -527,8 +509,7 @@ public class DataQueryService {
 							valueLocal.set(rowData[i]);
 							// rowData[i] = column.dynaValue.run();
 						} catch (Exception e) {
-							throw new CrmException("parse column value error:"
-									+ column.value, e);
+							throw new CrmException("parse column value error:" + column.value, e);
 						}
 					if (rowData[i] != null) {
 						if (rowData[i] instanceof String) {
@@ -538,19 +519,14 @@ public class DataQueryService {
 							try {
 								Integer dictValue = (Integer) (rowData[i] == null ? 0
 										: (rowData[i] instanceof Integer ? rowData[i]
-												: Integer.parseInt(rowData[i]
-														+ "")));
-								rowData[i] = dictService.getText(column.dict,
-										dictValue);
+												: Integer.parseInt(rowData[i] + "")));
+								rowData[i] = dictService.getText(column.dict, dictValue);
 							} catch (Exception e) {
-								throw new CrmException(
-										"parse column value error:"
-												+ column.value, e);
+								throw new CrmException("parse column value error:" + column.value, e);
 							}
 						}
 						if (column.format != null) {
-							rowData[i] = DateUtils.format(rowData[i],
-									column.format);
+							rowData[i] = DateUtils.format(rowData[i], column.format);
 						}
 					}
 
@@ -587,11 +563,9 @@ public class DataQueryService {
 			if (query == null)
 				throw new CrmException("Unknown query " + queryName);
 			TableMeta meta = new TableMeta();
-			meta.setTitle(QueryUtil.getTitle(query,
-					(String) params.get("_c_locale")));
+			meta.setTitle(QueryUtil.getTitle(query, (String) params.get("_c_locale")));
 
-			List<SqlColumn> columns = new ArrayList<SqlColumn>(
-					query.columns.size());
+			List<SqlColumn> columns = new ArrayList<SqlColumn>(query.columns.size());
 			for (SqlColumn column : query.columns) {
 				column.setField(column.name);
 				if (column.align == null) {
@@ -626,20 +600,16 @@ public class DataQueryService {
 			trueValue = Integer.parseInt(value);
 		} else if (type.equals(SqlConfig.DATE)) {
 			if (isOracle)
-				trueValue = "to_date('"
-						+ DateUtils.format(FormatUtil.parseDate(value),
-								DB_DATEFORMAT) + "','yyyymmddhh24miss')";
+				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
+						+ "','yyyymmddhh24miss')";
 			else
 				trueValue = "'" + value + "'";
 		} else if (type.equals(SqlConfig.ENDDATE)) {
 			if (isOracle)
-				trueValue = "to_date('"
-						+ DateUtils.format(FormatUtil.parseDateEnd(value),
-								DB_DATEFORMAT) + "','yyyymmddhh24miss')";
+				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT)
+						+ "','yyyymmddhh24miss')";
 			else
-				trueValue = "'"
-						+ FormatUtil.formatDate(FormatUtil.parseDateEnd(value))
-						+ "'";
+				trueValue = "'" + FormatUtil.formatDate(FormatUtil.parseDateEnd(value)) + "'";
 
 		} else if (type.equals(SqlConfig.LONG)) {
 			trueValue = Long.parseLong(value);
