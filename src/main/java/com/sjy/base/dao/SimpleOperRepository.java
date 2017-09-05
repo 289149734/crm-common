@@ -4,7 +4,7 @@
 package com.sjy.base.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.sjy.base.domain.SimpleOper;
 
@@ -17,7 +17,7 @@ import com.sjy.base.domain.SimpleOper;
  * @date 2017年8月24日 下午8:32:29
  * @version V1.0
  */
-@Component
+@Repository
 public interface SimpleOperRepository extends JpaRepository<SimpleOper, Long> {
 
 }
