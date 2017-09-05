@@ -11,9 +11,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.sjy.annotation.Dict;
@@ -24,15 +22,18 @@ import com.sjy.util.BeanUtils;
 import com.sjy.util.ResourceUtil;
 import com.sjy.util.StringUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 字典service类
  * 
  * @copyright(c) Copyright GD Corporation 2007.
+ * 
  * @author gutianyang
  * @since 0.2
  */
 @Slf4j
-@Component
+@Service
 public class DictService {
 
 	public static final String DICT_CACHE = "DICTCACHE";
@@ -108,8 +109,7 @@ public class DictService {
 	public void loadFromConstant() {
 		List<Dictionary> dicts = new ArrayList<Dictionary>();
 
-		List<Class<?>> list = ResourceUtil
-				.getClassByScanPackage("com.sjy.constant");
+		List<Class<?>> list = ResourceUtil.getClassByScanPackage("com.sjy.constant");
 		list.forEach(cls -> {
 			if (cls.isAnnotationPresent(Dict.class)) {
 				log.debug("Class Name = {}", cls.getName());
@@ -130,12 +130,9 @@ public class DictService {
 						log.debug("Dict text = {}[{}]", df.text(), val);
 
 						List<Dictionary> dictListInDb = dictionaryRepository
-								.findByCategoryAndCode(d.name().toUpperCase(),
-										val);
+								.findByCategoryAndCode(d.name().toUpperCase(), val);
 						if (dictListInDb == null || dictListInDb.size() == 0) {
-							Dictionary dict = new Dictionary(d.name()
-									.toUpperCase(), val, df.text(), df
-									.editable());
+							Dictionary dict = new Dictionary(d.name().toUpperCase(), val, df.text(), df.editable());
 							dicts.add(dict);
 						}
 					}
@@ -157,8 +154,7 @@ public class DictService {
 		Map<String, List<Dictionary>> map = new HashMap<String, List<Dictionary>>();
 		List<Dictionary> dicts = dictionaryRepository.findAll();
 		dicts.forEach(dict -> {
-			String key = DICT_CACHE + ":"
-					+ dict.getCategory().trim().toUpperCase();
+			String key = DICT_CACHE + ":" + dict.getCategory().trim().toUpperCase();
 			List<Dictionary> list = map.get(key);
 			if (list == null)
 				list = new ArrayList<Dictionary>();
