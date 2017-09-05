@@ -4,7 +4,7 @@
 package com.sjy.base.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.sjy.base.domain.ReviewRequest;
 
@@ -17,7 +17,7 @@ import com.sjy.base.domain.ReviewRequest;
  * @date 2017年8月28日 下午7:09:07
  * @version V1.0
  */
-@Component
+@Repository
 public interface ReviewRequestRepository extends JpaRepository<ReviewRequest, String> {
 
 	ReviewRequest findByAuditObjAndAuditObjIdAndStatus(String auditObj, String auditObjId, Integer status);
