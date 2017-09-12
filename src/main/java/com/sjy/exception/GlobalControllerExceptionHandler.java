@@ -52,6 +52,7 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(CrmException.class)
 	@ResponseBody
 	public RestServiceError handleException(CrmException ex) {
+		log.error("【CrmException异常类型】-------------------", ex);
 		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
 	}
 
@@ -60,7 +61,7 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public RestServiceError handleException(Exception ex) {
-		log.debug("【异常类型】-------------------..{}", ex.toString());
+		log.error("【通用异常的处理】-------------------", ex);
 		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
 	}
 
