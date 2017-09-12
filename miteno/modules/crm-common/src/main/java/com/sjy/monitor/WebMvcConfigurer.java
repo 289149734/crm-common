@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -44,8 +45,10 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 	 */
 	@Bean
 	public ObjectMapper objectMapper() {
-		log.info("设置ObjectMapper【FAIL_ON_EMPTY_BEANS】 = false");
-		return new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		log.info(
+				"设置ObjectMapper-->>FAIL_ON_EMPTY_BEANS = false, DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES = false");
+		return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 	}
 
 }
