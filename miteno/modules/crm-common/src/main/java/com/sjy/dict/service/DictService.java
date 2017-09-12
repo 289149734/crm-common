@@ -122,7 +122,14 @@ public class DictService {
 						Dict df = field.getAnnotation(Dict.class);
 						int val = 0;
 						try {
-							val = field.getInt(cls);
+							Object obj = field.get(cls);
+							if (obj instanceof Integer) {
+								val = ((Integer) obj).intValue();
+							} else if (obj instanceof Long) {
+								val = ((Long) obj).intValue();
+							} else {
+								val = field.getInt(cls);
+							}
 						} catch (Exception e) {
 							log.error("Dict text = {}[{}]", df.text(), "空");
 							continue;
