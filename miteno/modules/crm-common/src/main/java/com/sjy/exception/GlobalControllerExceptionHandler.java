@@ -3,6 +3,7 @@
  */
 package com.sjy.exception;
 
+import java.sql.SQLException;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -62,6 +63,9 @@ public class GlobalControllerExceptionHandler {
 	@ResponseBody
 	public RestServiceError handleException(Exception ex) {
 		log.error("【通用异常的处理】-------------------", ex);
+		if (ex instanceof SQLException) {
+			return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, "数据库操作异常");
+		}
 		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
 	}
 
