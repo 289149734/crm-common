@@ -514,6 +514,8 @@ public class DataQueryService {
 					if (rowData[i] != null) {
 						if (rowData[i] instanceof String) {
 							rowData[i] = ((String) rowData[i]).trim();
+						} else if (rowData[i] instanceof Boolean) {
+							rowData[i] = ((Boolean) rowData[i]) ? "是" : "否";
 						}
 						if (column.dict != null) {
 							try {
@@ -521,6 +523,7 @@ public class DataQueryService {
 										: (rowData[i] instanceof Integer ? rowData[i]
 												: Integer.parseInt(rowData[i] + "")));
 								rowData[i] = dictService.getText(column.dict, dictValue);
+								log.info("{}-{}-{}", column.dict, dictValue, rowData[i]);
 							} catch (Exception e) {
 								throw new CrmException("parse column value error:" + column.value, e);
 							}
