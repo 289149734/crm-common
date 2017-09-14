@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,6 +66,8 @@ public class GlobalControllerExceptionHandler {
 		log.error("【通用异常的处理】-------------------", ex);
 		if (ex instanceof SQLException) {
 			return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, "数据库操作异常");
+		} else if (ex instanceof HttpRequestMethodNotSupportedException) {
+			return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, "该功能API不存在或者异常");
 		}
 		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
 	}
