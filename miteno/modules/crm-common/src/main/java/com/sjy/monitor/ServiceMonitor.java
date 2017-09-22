@@ -51,13 +51,13 @@ public class ServiceMonitor {
 		}
 	}
 
-	@AfterThrowing(throwing = "ex", value = "execution(public * com.sjy..*ServiceImpl.*(..))")
+	@AfterThrowing(throwing = "ex", value = "execution(public * com.sjy..*Service*.*(..))")
 	public void handlerException(JoinPoint joinPoint, Throwable ex) {
 		Signature signature = joinPoint.getSignature();
 		log.debug("执行{}_{}抛出异常：{}", signature.getDeclaringTypeName(), signature.getName(), ex);
 	}
 
-	@AfterReturning(value = "execution(public * com.sjy..*ServiceImpl.*(..))", argNames = "obj", returning = "obj")
+	@AfterReturning(value = "execution(public * com.sjy..*Service*.*(..))", argNames = "obj", returning = "obj")
 	public void logReturnValue(JoinPoint joinPoint, Object obj) {
 		Signature signature = joinPoint.getSignature();
 		log.debug("执行{}_{}返回参数：{}", signature.getDeclaringTypeName(), signature.getName(), obj);
@@ -75,7 +75,7 @@ public class ServiceMonitor {
 		long t1 = System.currentTimeMillis();
 		Object obj = joinPoint.proceed();
 		long t2 = System.currentTimeMillis();
-		log.debug("执行时间: {}>>>【Service】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
+		log.debug("执行时间: {}(ms)>>>【Service】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
 				joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
 		return obj;
 	}
@@ -92,7 +92,7 @@ public class ServiceMonitor {
 		long t1 = System.currentTimeMillis();
 		Object obj = joinPoint.proceed();
 		long t2 = System.currentTimeMillis();
-		log.debug("执行时间: {}>>>【Repository】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
+		log.debug("执行时间: {}(ms)>>>【Repository】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
 				joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
 		return obj;
 	}
