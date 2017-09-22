@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +50,7 @@ public class GlobalControllerExceptionHandler {
 			strBuilder.append(violation.getMessage() + "\n");
 		}
 		log.debug("错误信息：{}", strBuilder.toString());
-		return RestServiceError.build(RestServiceError.Type.VALIDATION_ERROR, strBuilder.toString());
+		return RestServiceError.build(CrmExceptionType.Customize_Error, strBuilder.toString());
 	}
 
 	// 通用异常的处理，返回500
@@ -55,7 +59,11 @@ public class GlobalControllerExceptionHandler {
 	@ResponseBody
 	public RestServiceError handleException(CrmException ex) {
 		log.error("【CrmException异常类型】-------------------", ex);
-		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
+		if (ex.getCode() == CrmExceptionType.Customize_Error) {
+			return RestServiceError.build(CrmExceptionType.Customize_Error, ex.getMessage());
+		} else {
+			return RestServiceError.build(ex.getCode());
+		}
 	}
 
 	// 通用异常的处理，返回500
@@ -63,13 +71,21 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public RestServiceError handleException(Exception ex) {
+		// log.debug("{}-{}-{}-{}", ex.getClass(), (ex instanceof
+		// InvalidFormatException),
+		// (ex instanceof JsonMappingException), (ex instanceof
+		// JsonProcessingException));
 		log.error("【通用异常的处理】-------------------", ex);
 		if (ex instanceof SQLException) {
-			return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, "数据库操作异常");
+			return RestServiceError.build(CrmExceptionType.Database_Error);
 		} else if (ex instanceof HttpRequestMethodNotSupportedException) {
-			return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, "该功能API不存在或者异常");
+			return RestServiceError.build(CrmExceptionType.Api_Not_Exist);
+		} else if ((ex instanceof HttpMessageConversionException) || (ex instanceof InvalidFormatException)
+				|| (ex instanceof JsonMappingException) || (ex instanceof JsonProcessingException)) {
+			return RestServiceError.build(CrmExceptionType.Api_Param_Error);
+		} else {
+			return RestServiceError.build(CrmExceptionType.System_Error);
 		}
-		return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
 	}
 
 }

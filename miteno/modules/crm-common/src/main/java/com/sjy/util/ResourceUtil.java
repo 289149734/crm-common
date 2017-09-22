@@ -1,13 +1,13 @@
 package com.sjy.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Title: ResourceUtil.java
@@ -38,14 +38,12 @@ public class ResourceUtil {
 	 *            : "com.sjy.constant"
 	 * @return
 	 */
-	public static List<Class<?>> getClassByScanPackage(String scanPackage) {
-		log.debug("{}", "classpath*:" + scanPackage.replace(".", "/")
-				+ "/*.class");
+	public static Set<Class<?>> getClassByScanPackage(String scanPackage) {
+		log.debug("{}", "classpath*:" + scanPackage.replace(".", "/") + "/*.class");
 		org.springframework.core.io.Resource[] resources = ResourceUtil
-				.getFiles("classpath*:" + scanPackage.replace(".", "/")
-						+ "/*.class");
+				.getFiles("classpath*:" + scanPackage.replace(".", "/") + "/*.class");
 		log.debug("数量：{}", resources.length);
-		List<Class<?>> list = new ArrayList<Class<?>>(resources.length);
+		Set<Class<?>> list = new HashSet<Class<?>>(resources.length);
 		for (org.springframework.core.io.Resource resource : resources) {
 			String clsName = scanPackage + "." + resource.getFilename();
 			// log.debug("{}", clsName.replace(".class", ""));

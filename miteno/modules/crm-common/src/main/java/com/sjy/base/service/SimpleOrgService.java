@@ -20,6 +20,7 @@ import com.sjy.base.dao.SimpleOrgRepository;
 import com.sjy.base.domain.SimpleOrg;
 import com.sjy.constant.SessionParamType;
 import com.sjy.exception.CrmException;
+import com.sjy.exception.CrmExceptionType;
 
 /**
  * @Title: SimpleOrgService.java
@@ -59,13 +60,16 @@ public class SimpleOrgService {
 	 */
 	public SimpleOrg currentOrg() {
 		Session sess = sessionRepository.getSession(session.getId());
+		if (sess == null) {
+			throw new CrmException(CrmExceptionType.Login_Timeoue);
+		}
 		Long orgId = (Long) sess.getAttribute(SessionParamType.CURRENT_ORG);
 		if (orgId == null) {
-			throw new CrmException("当前机构不能为空");
+			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
 		SimpleOrg org = simpleOrgRepository.findOne(orgId);
 		if (org == null) {
-			throw new CrmException("当前机构不能为空");
+			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
 		return org;
 	}
