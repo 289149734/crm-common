@@ -15,6 +15,7 @@ import java.text.MessageFormat;
  */
 @SuppressWarnings("serial")
 public class CrmException extends RuntimeException {
+	protected int code = CrmExceptionType.Customize_Error;
 	protected Throwable cause;
 
 	/**
@@ -26,11 +27,29 @@ public class CrmException extends RuntimeException {
 
 	/**
 	 * Constructor for MagicException.
+	 */
+	public CrmException(int code) {
+		super();
+		this.code = code;
+	}
+
+	/**
+	 * Constructor for MagicException.
 	 * 
 	 * @param message
 	 */
 	public CrmException(String message) {
 		super(message);
+	}
+
+	/**
+	 * Constructor for MagicException.
+	 * 
+	 * @param message
+	 */
+	public CrmException(int code, String message) {
+		super(message);
+		this.code = code;
 	}
 
 	/**
@@ -81,6 +100,14 @@ public class CrmException extends RuntimeException {
 
 	public String toString() {
 		return getClass().getSimpleName() + ": " + getMessage();
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
 	}
 
 }

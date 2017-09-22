@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -109,7 +110,7 @@ public class DictService {
 	public void loadFromConstant() {
 		List<Dictionary> dicts = new ArrayList<Dictionary>();
 
-		List<Class<?>> list = ResourceUtil.getClassByScanPackage("com.sjy.constant");
+		Set<Class<?>> list = ResourceUtil.getClassByScanPackage("com.sjy.constant");
 		list.forEach(cls -> {
 			if (cls.isAnnotationPresent(Dict.class)) {
 				log.debug("Class Name = {}", cls.getName());

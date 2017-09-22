@@ -19,6 +19,7 @@ import com.sjy.base.dao.SimpleOperRepository;
 import com.sjy.base.domain.SimpleOper;
 import com.sjy.constant.SessionParamType;
 import com.sjy.exception.CrmException;
+import com.sjy.exception.CrmExceptionType;
 
 /**
  * @Title: SimpleOperService.java
@@ -59,13 +60,16 @@ public class SimpleOperService {
 	 */
 	public SimpleOper currentOper() {
 		Session sess = sessionRepository.getSession(session.getId());
+		if (sess == null) {
+			throw new CrmException(CrmExceptionType.Login_Timeoue);
+		}
 		Long operId = (Long) sess.getAttribute(SessionParamType.CURRENT_OPER);
 		if (operId == null) {
-			throw new CrmException("当前操作员不能为空");
+			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
 		SimpleOper oper = simpleOperRepository.findOne(operId);
 		if (oper == null) {
-			throw new CrmException("当前操作员不能为空");
+			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
 		return oper;
 	}
