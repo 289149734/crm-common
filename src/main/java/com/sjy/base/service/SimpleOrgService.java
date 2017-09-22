@@ -22,6 +22,8 @@ import com.sjy.constant.SessionParamType;
 import com.sjy.exception.CrmException;
 import com.sjy.exception.CrmExceptionType;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @Title: SimpleOrgService.java
  * @Package com.sjy.base.service
@@ -31,6 +33,7 @@ import com.sjy.exception.CrmExceptionType;
  * @date 2017年8月24日 下午8:41:46
  * @version V1.0
  */
+@Slf4j
 @Service
 public class SimpleOrgService {
 	@Resource
@@ -59,7 +62,9 @@ public class SimpleOrgService {
 	 * @return
 	 */
 	public SimpleOrg currentOrg() {
-		Session sess = sessionRepository.getSession(session.getId());
+		String sessionId = session.getId();
+		log.debug("获取当前登录机构：{}", sessionId);
+		Session sess = sessionRepository.getSession(sessionId);
 		if (sess == null) {
 			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
@@ -67,9 +72,10 @@ public class SimpleOrgService {
 		if (orgId == null) {
 			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
+		log.debug("当前机构ID：{}", orgId);
 		SimpleOrg org = simpleOrgRepository.findOne(orgId);
 		if (org == null) {
-			throw new CrmException(CrmExceptionType.Login_Timeoue);
+			throw new CrmException(CrmExceptionType.Customize_Error, "机构信息不存在，请重新登录");
 		}
 		return org;
 	}

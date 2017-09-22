@@ -21,6 +21,8 @@ import com.sjy.constant.SessionParamType;
 import com.sjy.exception.CrmException;
 import com.sjy.exception.CrmExceptionType;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @Title: SimpleOperService.java
  * @Package com.sjy.base.service
@@ -30,6 +32,7 @@ import com.sjy.exception.CrmExceptionType;
  * @date 2017年8月24日 下午9:00:18
  * @version V1.0
  */
+@Slf4j
 @Service
 public class SimpleOperService {
 	@Resource
@@ -59,7 +62,9 @@ public class SimpleOperService {
 	 * @return
 	 */
 	public SimpleOper currentOper() {
-		Session sess = sessionRepository.getSession(session.getId());
+		String sessionId = session.getId();
+		log.debug("获取当前登录操作员：{}", sessionId);
+		Session sess = sessionRepository.getSession(sessionId);
 		if (sess == null) {
 			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
@@ -67,9 +72,10 @@ public class SimpleOperService {
 		if (operId == null) {
 			throw new CrmException(CrmExceptionType.Login_Timeoue);
 		}
+		log.debug("当前草走远ID：{}", operId);
 		SimpleOper oper = simpleOperRepository.findOne(operId);
 		if (oper == null) {
-			throw new CrmException(CrmExceptionType.Login_Timeoue);
+			throw new CrmException(CrmExceptionType.Customize_Error, "操作员信息不存在，请重新登录");
 		}
 		return oper;
 	}
