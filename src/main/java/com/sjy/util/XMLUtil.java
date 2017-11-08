@@ -1,6 +1,8 @@
 package com.sjy.util;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,10 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * xml工具类
@@ -20,11 +28,12 @@ import org.dom4j.Element;
  * @author miklchen
  * 
  */
+@Slf4j
 public class XMLUtil {
 
 	/*
-	 * public static void main(String[] args) throws JDOMException, IOException
-	 * { String s =
+	 * public static void main(String[] args) throws JDOMException, IOException {
+	 * String s =
 	 * "<?xml version=\"1.0\" encoding=\"utf-8\" ?><root><token_id>14c720994062372cddb305de7120a795</token_id></root>"
 	 * ; Map<String, String> m = XMLUtil.doXMLParse(s);
 	 * 
@@ -32,17 +41,16 @@ public class XMLUtil {
 	 * "<?xml version=\"1.0\" encoding=\"utf-8\" ?><root><err_info>[23500901]您的操作已提交，请确认是否已生效。</err_info></root>"
 	 * ;
 	 * 
-	 * String weixinPrepay =
-	 * "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
+	 * String weixinPrepay = "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
 	 * "<return_msg><![CDATA[OK]]></return_msg>" +
 	 * "<appid><![CDATA[wxb512901288a94943]]></appid>" +
 	 * "<mch_id><![CDATA[1220321501]]></mch_id>" +
 	 * "<nonce_str><![CDATA[Kg8ZgDGx3Lhs4uo1]]></nonce_str>" +
 	 * "<sign><![CDATA[4B26F5376CE8EFF690D68619E0A0EA61]]></sign>" +
 	 * "<result_code><![CDATA[SUCCESS]]></result_code>" +
-	 * "<prepay_id><![CDATA[wx201501182317239609f8cec70033211771]]></prepay_id>"
-	 * + "<trade_type><![CDATA[JSAPI]]></trade_type>" + "</xml>"; Map<String,
-	 * String> payMap = XMLUtil.doXMLParse(weixinPrepay);
+	 * "<prepay_id><![CDATA[wx201501182317239609f8cec70033211771]]></prepay_id>" +
+	 * "<trade_type><![CDATA[JSAPI]]></trade_type>" + "</xml>"; Map<String, String>
+	 * payMap = XMLUtil.doXMLParse(weixinPrepay);
 	 * 
 	 * Map<String, String> payMap2 = XMLUtil.doXMLParse(weixinPrepay); }
 	 */
@@ -83,8 +91,7 @@ public class XMLUtil {
 	 *            the data map
 	 * @return the string
 	 */
-	public static String converter(Map<Object, Object> dataMap,
-			String xmlRootStart, String xmlRootEnd) {
+	public static String converter(Map<Object, Object> dataMap, String xmlRootStart, String xmlRootEnd) {
 		synchronized (XMLUtil.class) {
 			StringBuilder strBuilder = new StringBuilder();
 			strBuilder.append(xmlRootStart);
@@ -107,8 +114,7 @@ public class XMLUtil {
 	public static String coverter(Object[] objects) {
 		StringBuilder strBuilder = new StringBuilder();
 		for (Object obj : objects) {
-			strBuilder.append("<item className=")
-					.append(obj.getClass().getName()).append(">\n");
+			strBuilder.append("<item className=").append(obj.getClass().getName()).append(">\n");
 			strBuilder.append(coverter(obj));
 			strBuilder.append("</item>\n");
 		}
@@ -118,8 +124,7 @@ public class XMLUtil {
 	public static String coverter(Collection<?> objects) {
 		StringBuilder strBuilder = new StringBuilder();
 		for (Object obj : objects) {
-			strBuilder.append("<item className=")
-					.append(obj.getClass().getName()).append(">\n");
+			strBuilder.append("<item className=").append(obj.getClass().getName()).append(">\n");
 			strBuilder.append(coverter(obj));
 			strBuilder.append("</item>\n");
 		}
@@ -156,9 +161,8 @@ public class XMLUtil {
 				} catch (IllegalAccessException e) {
 					continue;
 				}
-				strBuilder.append("<").append(fieldName)
-						.append(" className=\"")
-						.append(value.getClass().getName()).append("\">\n");
+				strBuilder.append("<").append(fieldName).append(" className=\"").append(value.getClass().getName())
+						.append("\">\n");
 				if (isObject(value)) {
 					strBuilder.append(coverter(value));
 				} else {
@@ -225,8 +229,7 @@ public class XMLUtil {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	public static Map<String, String> doXMLParse(String strxml)
-			throws IOException, DocumentException {
+	public static Map<String, String> doXMLParse(String strxml) throws IOException, DocumentException {
 		Map<String, String> m = new HashMap<String, String>();
 		if (null == strxml || "".equals(strxml)) {
 			return null;
@@ -291,10 +294,41 @@ public class XMLUtil {
 	 * @throws DocumentException
 	 * @throws JDOMException
 	 */
-	public static String getXMLEncoding(String strxml) throws IOException,
-			DocumentException {
+	public static String getXMLEncoding(String strxml) throws IOException, DocumentException {
 		Document doc = DocumentHelper.parseText(strxml);
 		return doc.getXMLEncoding();
 	}
 
+	public static String toXml(Object obj) {
+		// 创建输出流
+		StringWriter sw = new StringWriter();
+		try {
+			// 利用jdk中自带的转换类实现
+			JAXBContext context = JAXBContext.newInstance(obj.getClass());
+
+			Marshaller marshaller = context.createMarshaller();
+			// 省略头信息
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+			// 格式化xml输出的格式
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			// 将对象转换成输出流形式的xml
+			marshaller.marshal(obj, sw);
+		} catch (Exception e) {
+			log.error("Bean转换Xml失败", e);
+		}
+		return sw.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T toObject(Class<T> clsName, String xml) {
+		try {
+			// 利用jdk中自带的转换类实现
+			JAXBContext context = JAXBContext.newInstance(clsName);
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			return (T) unmarshaller.unmarshal(new StringReader(xml));
+		} catch (Exception e) {
+			log.error("Xml转换Bean失败", e);
+		}
+		return null;
+	}
 }

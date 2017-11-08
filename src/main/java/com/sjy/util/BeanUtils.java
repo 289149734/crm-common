@@ -130,9 +130,33 @@ public class BeanUtils extends BeanUtilsBean {
 	public static Map<String, String> bean2Map(Object obj)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		BeanUtilsBean2 bub2 = new BeanUtilsBean2();
-		return bub2.describe(obj);
+		Map<String, String> result = bub2.describe(obj);
+		result.remove("class");
+		return result;
 	}
 
+	public static Map<String, String> bean2Map(Object obj, boolean hasNull)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		BeanUtilsBean2 bub2 = new BeanUtilsBean2();
+		Map<String, String> result = bub2.describe(obj);
+		result.remove("class");
+		if (!hasNull) {
+			Map<String, String> resultNoNull = new HashMap<String, String>();
+			result.forEach((key, val) -> {
+				if (StringUtil.isNotBlank(val)) {
+					resultNoNull.put(key, val);
+				}
+			});
+			return resultNoNull;
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param databean
+	 * @param tobean
+	 */
 	public static void copyBeanNotNull2Bean(Object databean, Object tobean) {
 		PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(databean);
 		for (int i = 0; i < origDescriptors.length; i++) {

@@ -101,6 +101,16 @@ public class SimpleOrgService {
 	}
 
 	/**
+	 * 通过orgId查询直接子机构
+	 * 
+	 * @param orgId
+	 * @return
+	 */
+	public List<Map<String, Object>> findSelfAndChilds(Long orgId) {
+		return simpleOrgRepository.findSelfAndChilds(orgId);
+	}
+
+	/**
 	 * 通过orgLevel查询机构
 	 * 
 	 * @param orgLevel

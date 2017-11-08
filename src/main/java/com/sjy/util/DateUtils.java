@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2016年12月20日
  * @author liyan
  * @e-mail 289149734@qq.com
@@ -36,9 +37,12 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	}
 
 	public static String format(Object obj, String format) {
-		if (obj == null) return null;
-		if (obj instanceof Date) return formatDate(format, (Date) obj);
-		if (obj instanceof Number) return formatNumber(format, ((Number) obj).doubleValue());
+		if (obj == null)
+			return null;
+		if (obj instanceof Date)
+			return formatDate(format, (Date) obj);
+		if (obj instanceof Number)
+			return formatNumber(format, ((Number) obj).doubleValue());
 		return obj.toString();
 	}
 
@@ -68,7 +72,8 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	 * @return
 	 */
 	public static String formatDate(String format, Date date) {
-		if (date == null) return null;
+		if (date == null)
+			return null;
 		SimpleDateFormat formatter = getDateFormatter(format);
 		return formatter.format(date);
 	}
@@ -267,7 +272,8 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	 * @return
 	 */
 	public static Date getDayEndTime(Date date) {
-		if (date == null) return null;
+		if (date == null)
+			return null;
 		else {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
@@ -328,7 +334,8 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dt);
 		int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-		if (w < 0) w = 0;
+		if (w < 0)
+			w = 0;
 		return weekDays[w];
 	}
 
@@ -349,7 +356,8 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dt);
 		int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-		if (w < 0) w = 0;
+		if (w < 0)
+			w = 0;
 		return weekDays[w];
 	}
 
@@ -441,7 +449,8 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(nd);
 		System.out.println(format(cal.getTime(), "yyyyMMdd"));
-		if (cal.get(Calendar.DATE) == 1) return true;
+		if (cal.get(Calendar.DATE) == 1)
+			return true;
 		return false;
 	}
 
@@ -512,5 +521,22 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		}
 
 		return 0;
+	}
+
+	public static Date getNextTime(Date date, int type, int n) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		if (type == Calendar.DATE) {
+			c.set(Calendar.DATE, c.get(Calendar.DATE) + n);
+		} else if (type == Calendar.HOUR_OF_DAY) {
+			c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + n);
+		} else if (type == Calendar.MINUTE) {
+			c.set(Calendar.MINUTE, c.get(Calendar.MINUTE) + n);
+		} else if (type == Calendar.SECOND) {
+			c.set(Calendar.SECOND, c.get(Calendar.SECOND) + n);
+		} else if (type == Calendar.MILLISECOND) {
+			c.set(Calendar.MILLISECOND, c.get(Calendar.MILLISECOND) + n);
+		}
+		return c.getTime();
 	}
 }
