@@ -182,7 +182,7 @@ public class DataQueryService {
 	 * @return
 	 */
 	public PageResult selectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult,
-			String showFields) throws Exception {
+			String showFields) {
 		return internalSelectData(queryName, params, orderBy, start, maxResult, showFields, false);
 	}
 
@@ -285,7 +285,7 @@ public class DataQueryService {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private PageResult internalSelectData(String queryName, Map<String, Object> params, String orderBy, int start,
-			int maxResult, String showFields, boolean export) throws Exception {
+			int maxResult, String showFields, boolean export) {
 		PageResult pr = new PageResult();
 		paramLocal.set(params);
 		pageResultLocal.set(pr);
@@ -315,10 +315,12 @@ public class DataQueryService {
 				appendOrderBy(sb, query, orderBy);
 				String orderStmt = sb.toString();
 
-				Connection conn = dataSource.getConnection();
+				Connection conn = null;
 				ResultSet rs = null, rs1 = null;
 				Statement st = null, st1 = null;
 				try {
+					conn = dataSource.getConnection();
+
 					// 1 算总数
 					st1 = conn.createStatement();
 					String countStmt = compileCountStmt(query, fromStmt);

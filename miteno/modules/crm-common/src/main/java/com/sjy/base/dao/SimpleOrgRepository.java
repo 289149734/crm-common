@@ -26,8 +26,12 @@ public interface SimpleOrgRepository extends JpaRepository<SimpleOrg, Long> {
 
 	SimpleOrg findByAppId(String appId);
 
+	@Query("select new Map(o.id as id, trim(o.name) as name) from SimpleOrg as o where o.id = ?1 or o.parent = ?1")
+	List<Map<String, Object>> findSelfAndChilds(Long orgId);
+
 	@Query("select new Map(o.id as id, trim(o.name) as name) from SimpleOrg as o where o.parent = ?1")
 	List<Map<String, Object>> findChilds(Long orgId);
 
 	List<SimpleOrg> findByOrgLevel(Integer orgLevel);
+
 }
