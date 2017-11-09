@@ -17,6 +17,7 @@ import com.sjy.util.StringUtil;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2017年1月11日
  * @author liyan
  * @e-mail 289149734@qq.com
@@ -44,8 +45,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert a boolean expression, throwing {@code RpcException} if the test
-	 * result is {@code false}.
+	 * Assert a boolean expression, throwing {@code RpcException} if the test result
+	 * is {@code false}.
 	 * 
 	 * <pre class="code">
 	 * Assert.isTrue(i &gt; 0, &quot;The value must be greater than zero&quot;);
@@ -65,8 +66,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert a boolean expression, throwing {@code RpcException} if the test
-	 * result is {@code false}.
+	 * Assert a boolean expression, throwing {@code RpcException} if the test result
+	 * is {@code false}.
 	 * 
 	 * <pre class="code">
 	 * Assert.isTrue(i &gt; 0);
@@ -109,6 +110,18 @@ public class CrmAssert extends Assert {
 
 	public static void isNull(Long object, String message) {
 		if (object != null && object.longValue() != 0L) {
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
+		}
+	}
+
+	public static void notNull(Integer object, String message) {
+		if (object == null || object.intValue() == 0) {
+			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
+		}
+	}
+
+	public static void notNull(Long object, String message) {
+		if (object == null || object.longValue() == 0L) {
 			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
@@ -206,8 +219,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert that the given String has valid text content; that is, it must not
-	 * be {@code null} and must contain at least one non-whitespace character.
+	 * Assert that the given String has valid text content; that is, it must not be
+	 * {@code null} and must contain at least one non-whitespace character.
 	 * 
 	 * <pre class="code">
 	 * Assert.hasText(name, &quot;'name' must not be empty&quot;);
@@ -228,8 +241,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert that the given String has valid text content; that is, it must not
-	 * be {@code null} and must contain at least one non-whitespace character.
+	 * Assert that the given String has valid text content; that is, it must not be
+	 * {@code null} and must contain at least one non-whitespace character.
 	 * 
 	 * <pre class="code">
 	 * Assert.hasText(name, &quot;'name' must not be empty&quot;);
@@ -262,7 +275,8 @@ public class CrmAssert extends Assert {
 	 *             if the text contains the substring
 	 */
 	public static void doesNotContain(String textToSearch, String substring, String message) {
-		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring)
+				&& textToSearch.contains(substring)) {
 			throw new RpcException(RpcException.BIZ_EXCEPTION, message);
 		}
 	}
@@ -282,12 +296,13 @@ public class CrmAssert extends Assert {
 	 *             if the text contains the substring
 	 */
 	public static void doesNotContain(String textToSearch, String substring) {
-		doesNotContain(textToSearch, substring, "[Assertion failed] - this String argument must not contain the substring [" + substring + "]");
+		doesNotContain(textToSearch, substring,
+				"[Assertion failed] - this String argument must not contain the substring [" + substring + "]");
 	}
 
 	/**
-	 * Assert that an array has elements; that is, it must not be {@code null}
-	 * and must have at least one element.
+	 * Assert that an array has elements; that is, it must not be {@code null} and
+	 * must have at least one element.
 	 * 
 	 * <pre class="code">
 	 * Assert.notEmpty(array, &quot;The array must have elements&quot;);
@@ -307,8 +322,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert that an array has elements; that is, it must not be {@code null}
-	 * and must have at least one element.
+	 * Assert that an array has elements; that is, it must not be {@code null} and
+	 * must have at least one element.
 	 * 
 	 * <pre class="code">
 	 * Assert.notEmpty(array);
@@ -366,8 +381,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert that a collection has elements; that is, it must not be
-	 * {@code null} and must have at least one element.
+	 * Assert that a collection has elements; that is, it must not be {@code null}
+	 * and must have at least one element.
 	 * 
 	 * <pre class="code">
 	 * Assert.notEmpty(collection, &quot;Collection must have elements&quot;);
@@ -387,8 +402,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert that a collection has elements; that is, it must not be
-	 * {@code null} and must have at least one element.
+	 * Assert that a collection has elements; that is, it must not be {@code null}
+	 * and must have at least one element.
 	 * 
 	 * <pre class="code">
 	 * Assert.notEmpty(collection, &quot;Collection must have elements&quot;);
@@ -400,12 +415,13 @@ public class CrmAssert extends Assert {
 	 *             if the collection is {@code null} or has no elements
 	 */
 	public static void notEmpty(Collection<?> collection) {
-		notEmpty(collection, "[Assertion failed] - this collection must not be empty: it must contain at least 1 element");
+		notEmpty(collection,
+				"[Assertion failed] - this collection must not be empty: it must contain at least 1 element");
 	}
 
 	/**
-	 * Assert that a Map has entries; that is, it must not be {@code null} and
-	 * must have at least one entry.
+	 * Assert that a Map has entries; that is, it must not be {@code null} and must
+	 * have at least one entry.
 	 * 
 	 * <pre class="code">
 	 * Assert.notEmpty(map, &quot;Map must have entries&quot;);
@@ -425,8 +441,8 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert that a Map has entries; that is, it must not be {@code null} and
-	 * must have at least one entry.
+	 * Assert that a Map has entries; that is, it must not be {@code null} and must
+	 * have at least one entry.
 	 * 
 	 * <pre class="code">
 	 * Assert.notEmpty(map);
@@ -472,10 +488,10 @@ public class CrmAssert extends Assert {
 	 * @param obj
 	 *            the object to check
 	 * @param message
-	 *            a message which will be prepended to the message produced by
-	 *            the function itself, and which may be used to provide context.
-	 *            It should normally end in ":" or "." so that the generated
-	 *            message looks OK when appended to it.
+	 *            a message which will be prepended to the message produced by the
+	 *            function itself, and which may be used to provide context. It
+	 *            should normally end in ":" or "." so that the generated message
+	 *            looks OK when appended to it.
 	 * @throws RpcException
 	 *             if the object is not an instance of clazz
 	 * @see Class#isInstance
@@ -483,8 +499,9 @@ public class CrmAssert extends Assert {
 	public static void isInstanceOf(Class<?> type, Object obj, String message) {
 		notNull(type, "Type to check against must not be null");
 		if (!type.isInstance(obj)) {
-			throw new RpcException(RpcException.BIZ_EXCEPTION, (StringUtils.hasLength(message) ? message + " " : "") + "Object of class ["
-					+ (obj != null ? obj.getClass().getName() : "null") + "] must be an instance of " + type);
+			throw new RpcException(RpcException.BIZ_EXCEPTION,
+					(StringUtils.hasLength(message) ? message + " " : "") + "Object of class ["
+							+ (obj != null ? obj.getClass().getName() : "null") + "] must be an instance of " + type);
 		}
 	}
 
@@ -518,25 +535,25 @@ public class CrmAssert extends Assert {
 	 * @param subType
 	 *            the sub type to check
 	 * @param message
-	 *            a message which will be prepended to the message produced by
-	 *            the function itself, and which may be used to provide context.
-	 *            It should normally end in ":" or "." so that the generated
-	 *            message looks OK when appended to it.
+	 *            a message which will be prepended to the message produced by the
+	 *            function itself, and which may be used to provide context. It
+	 *            should normally end in ":" or "." so that the generated message
+	 *            looks OK when appended to it.
 	 * @throws RpcException
 	 *             if the classes are not assignable
 	 */
 	public static void isAssignable(Class<?> superType, Class<?> subType, String message) {
 		notNull(superType, "Type to check against must not be null");
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			throw new RpcException(RpcException.BIZ_EXCEPTION, (StringUtils.hasLength(message) ? message + " " : "") + subType
-					+ " is not assignable to " + superType);
+			throw new RpcException(RpcException.BIZ_EXCEPTION, (StringUtils.hasLength(message) ? message + " " : "")
+					+ subType + " is not assignable to " + superType);
 		}
 	}
 
 	/**
-	 * Assert a boolean expression, throwing {@code IllegalStateException} if
-	 * the test result is {@code false}. Call isTrue if you wish to throw
-	 * RpcException on an assertion failure.
+	 * Assert a boolean expression, throwing {@code IllegalStateException} if the
+	 * test result is {@code false}. Call isTrue if you wish to throw RpcException
+	 * on an assertion failure.
 	 * 
 	 * <pre class="code">
 	 * Assert.state(id == null, &quot;The id property must not already be initialized&quot;);
@@ -556,11 +573,11 @@ public class CrmAssert extends Assert {
 	}
 
 	/**
-	 * Assert a boolean expression, throwing {@link IllegalStateException} if
-	 * the test result is {@code false}.
+	 * Assert a boolean expression, throwing {@link IllegalStateException} if the
+	 * test result is {@code false}.
 	 * <p>
-	 * Call {@link #isTrue(boolean)} if you wish to throw {@link RpcException}
-	 * on an assertion failure.
+	 * Call {@link #isTrue(boolean)} if you wish to throw {@link RpcException} on an
+	 * assertion failure.
 	 * 
 	 * <pre class="code">
 	 * Assert.state(id == null);
