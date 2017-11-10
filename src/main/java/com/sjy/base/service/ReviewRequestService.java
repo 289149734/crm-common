@@ -68,6 +68,25 @@ public class ReviewRequestService {
 		return reviewRequestRepository.save(request);
 	}
 
+	public ReviewRequest createRequest(UuidRootEntity entity, Integer ruleType, Long orgId, Long operId) {
+		String auditObj = entity.getClass().getSimpleName();
+		String auditObjId = entity.getId();
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndStatus(auditObj, auditObjId,
+				AuditStatus.OPEN);
+		if (request != null) {
+			throw new CrmException("已经提交【{0}】审核申请", dictService.getText(AuditRuleType.CATEGORY, request.getRuleType()));
+		}
+		request = new ReviewRequest();
+		request.setAuditObjId(auditObjId);
+		request.setAuditObj(auditObj);
+		request.setCreateOrg(simpleOrgService.findOne(orgId));
+		request.setCreator(simpleOperService.findOne(operId));
+		request.setRecordTime(new Date());
+		request.setStatus(AuditStatus.OPEN);
+		request.setRuleType(ruleType);
+		return reviewRequestRepository.save(request);
+	}
+
 	/**
 	 * 创建审核请求
 	 * 
@@ -95,6 +114,25 @@ public class ReviewRequestService {
 		return reviewRequestRepository.save(request);
 	}
 
+	public ReviewRequest createRequest(SeqRootEntity entity, Integer ruleType, Long orgId, Long operId) {
+		String auditObj = entity.getClass().getSimpleName();
+		String auditObjId = "" + entity.getId();
+		ReviewRequest request = reviewRequestRepository.findByAuditObjAndAuditObjIdAndStatus(auditObj, auditObjId,
+				AuditStatus.OPEN);
+		if (request != null) {
+			throw new CrmException("已经提交【{0}】审核申请", dictService.getText(AuditRuleType.CATEGORY, request.getRuleType()));
+		}
+		request = new ReviewRequest();
+		request.setAuditObjId(auditObjId);
+		request.setAuditObj(auditObj);
+		request.setCreateOrg(simpleOrgService.findOne(orgId));
+		request.setCreator(simpleOperService.findOne(operId));
+		request.setRecordTime(new Date());
+		request.setStatus(AuditStatus.OPEN);
+		request.setRuleType(ruleType);
+		return reviewRequestRepository.save(request);
+	}
+
 	/**
 	 * 通过审核
 	 * 
@@ -115,6 +153,19 @@ public class ReviewRequestService {
 		return reviewRequestRepository.save(request);
 	}
 
+	public ReviewRequest passRequest(String auditId, String comments, Long orgId, Long operId) {
+		ReviewRequest request = reviewRequestRepository.findOne(auditId);
+		if (request.getStatus() != AuditStatus.OPEN) {
+			throw new CrmException("审核状态【{0}】才用允许审核操作", dictService.getText(AuditStatus.CATEGORY, AuditStatus.OPEN));
+		}
+		request.setAuditOrg(simpleOrgService.findOne(orgId));
+		request.setAuditor(simpleOperService.findOne(operId));
+		request.setAuditTime(new Date());
+		request.setComments(comments);
+		request.setStatus(AuditStatus.REALPASSED);
+		return reviewRequestRepository.save(request);
+	}
+
 	/**
 	 * 未通过审核
 	 * 
@@ -129,6 +180,19 @@ public class ReviewRequestService {
 		}
 		request.setAuditOrg(simpleOrgService.currentOrg());
 		request.setAuditor(simpleOperService.currentOper());
+		request.setAuditTime(new Date());
+		request.setComments(comments);
+		request.setStatus(AuditStatus.REJECTED);
+		return reviewRequestRepository.save(request);
+	}
+
+	public ReviewRequest rejectRequest(String auditId, String comments, Long orgId, Long operId) {
+		ReviewRequest request = reviewRequestRepository.findOne(auditId);
+		if (request.getStatus() != AuditStatus.OPEN) {
+			throw new CrmException("审核状态【{0}】才用允许审核操作", dictService.getText(AuditStatus.CATEGORY, AuditStatus.OPEN));
+		}
+		request.setAuditOrg(simpleOrgService.findOne(orgId));
+		request.setAuditor(simpleOperService.findOne(operId));
 		request.setAuditTime(new Date());
 		request.setComments(comments);
 		request.setStatus(AuditStatus.REJECTED);
