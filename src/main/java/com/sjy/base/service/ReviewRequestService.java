@@ -149,7 +149,7 @@ public class ReviewRequestService {
 		request.setAuditor(simpleOperService.currentOper());
 		request.setAuditTime(new Date());
 		request.setComments(comments);
-		request.setStatus(AuditStatus.REALPASSED);
+		request.setStatus(AuditStatus.PASSED);
 		return reviewRequestRepository.save(request);
 	}
 
@@ -162,7 +162,7 @@ public class ReviewRequestService {
 		request.setAuditor(simpleOperService.findOne(operId));
 		request.setAuditTime(new Date());
 		request.setComments(comments);
-		request.setStatus(AuditStatus.REALPASSED);
+		request.setStatus(AuditStatus.PASSED);
 		return reviewRequestRepository.save(request);
 	}
 

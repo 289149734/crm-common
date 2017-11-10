@@ -21,8 +21,8 @@ public class AuditStatus {
 	public static final int OPEN = 1;
 	@Dict(text = "审核通过")
 	public static final int PASSED = 2;
-	@Dict(text = "通过")
-	public static final int REALPASSED = 3;
+//	@Dict(text = "通过")
+//	public static final int REALPASSED = 3;
 	@Dict(text = "未通过")
 	public static final int REJECTED = 11;
 	@Dict(text = "撤销")
