@@ -182,6 +182,38 @@ public class BeanUtils extends BeanUtilsBean {
 		}
 	}
 
+	public static <T> T copyBeanNotNull2Bean(Object databean, Class<T> clsName) {
+		try {
+			T tobean = clsName.newInstance();
+			PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(databean);
+			for (int i = 0; i < origDescriptors.length; i++) {
+				String name = origDescriptors[i].getName();
+				// String type = origDescriptors[i].getPropertyType().toString();
+				if ("class".equals(name)) {
+					continue; // No point in trying to set an object's class
+				}
+				if (PropertyUtils.isReadable(databean, name) && PropertyUtils.isWriteable(tobean, name)) {
+					try {
+						Object value = PropertyUtils.getSimpleProperty(databean, name);
+						if (value != null) {
+							// copyProperty(tobean, name, value);
+							PropertyUtils.setProperty(tobean, name, value);
+						}
+					} catch (java.lang.IllegalArgumentException ie) {
+						; // Should not happen
+					} catch (Exception e) {
+						; // Should not happen
+					}
+
+				}
+			}
+			return tobean;
+		} catch (Exception e) {
+			log.error("", e);
+		}
+		return null;
+	}
+
 	public void clearAllProperties(final Object obj) throws IllegalAccessException, InvocationTargetException {
 
 		// Validate existence of the specified beans
