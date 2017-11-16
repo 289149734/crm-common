@@ -4,12 +4,11 @@ import java.net.InetAddress;
 
 /**
  * 
- * @author  张代浩
+ * @author 张代浩
  *
  */
 public class UUIDGenerator {
 
-	
 	/**
 	 * 产生一个32位的UUID
 	 * 
@@ -17,10 +16,9 @@ public class UUIDGenerator {
 	 */
 
 	public static String generate() {
-		return new StringBuilder(32).append(format(getIP())).append(
-				format(getJVM())).append(format(getHiTime())).append(
-				format(getLoTime())).append(format(getCount())).toString();
-		
+		return new StringBuilder(32).append(format(getIP())).append(format(getJVM())).append(format(getHiTime()))
+				.append(format(getLoTime())).append(format(getCount())).toString();
+
 	}
 
 	private static final int IP;

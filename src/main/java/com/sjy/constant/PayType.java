@@ -14,13 +14,13 @@ import com.sjy.annotation.Dict;
  * @date 2017年10月27日 下午9:19:27
  * @version V1.0
  */
-@Dict(name = "pay_type")
+@Dict(name = "pay_type", editable = true)
 public class PayType {
 
 	@Dict(text = "现金支付")
-	public static final int CASH_IN = 1;
+	public static final int CASH_PAY = 1;
 	@Dict(text = "银行卡支付")
-	public static final int BANK_IN = 3; // 银行卡支付
+	public static final int BANK_PAY = 3; // 银行卡支付
 	@Dict(text = "累积（后台自动充值）")
 	public static final int OTHER_PAY = 4; // 累积（后台自动充值）
 	@Dict(text = "充值返现")
