@@ -3,16 +3,30 @@ package com.sjy.constant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sjy.annotation.Dict;
+
 /**
  * 本类提供TradeType字典的常量定义
  * 
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2016年12月19日
  * @author liyan
  * @e-mail 289149734@qq.com
  * 
  */
+@Dict(name = "trade_type")
 public class TradeType {
+
+	@Dict(text = "充值[线下]")
+	public static final int RECAHRGE = 100;
+	@Dict(text = "充值[线上]")
+	public static final int RECAHRGE_ONLINE = 101;
+
+	@Dict(text = "消费[线下]")
+	public static final int CONSUME = 159;
+	@Dict(text = "消费[线上]")
+	public static final int CONSUME_ONLINE = 157;
 
 	public static final int CASH_IN = 100; // 柜面充值
 	public static final int WEB_IN = 101; // 网上充值
@@ -33,6 +47,7 @@ public class TradeType {
 	public static final int CASH_CONSUME = 152; // 现金消费
 	public static final int ALLIANCE_CONSUME = 149; // 营销联盟消费
 	public static final int BANK_CONSUME = 153; // 银行卡消费
+	public static final int ALI_CONSUME = 148; // 支付宝消费
 	public static final int WX_CONSUME = 154; // 微信消费
 	public static final int ONLINE_CONSUME = 157; // 消费[线上]
 	public static final int H5_CONSUME = 158; // 虚拟终端消费
@@ -62,14 +77,8 @@ public class TradeType {
 	 */
 	public static List<Integer> consume() {
 		List<Integer> list = new ArrayList<Integer>();
-		list.add(CARD_CONSUME);
-		list.add(CASH_CONSUME);
-		list.add(ALLIANCE_CONSUME);
-		list.add(BANK_CONSUME);
-		list.add(WX_CONSUME);
-		list.add(ONLINE_CONSUME);
-		list.add(H5_CONSUME);
-		list.add(COUNTER_CONSUME);
+		list.add(CONSUME);
+		list.add(CONSUME_ONLINE);
 		return list;
 	}
 
@@ -80,11 +89,8 @@ public class TradeType {
 	 */
 	public static List<Integer> topup() {
 		List<Integer> list = new ArrayList<Integer>();
-		list.add(CASH_IN);
-		list.add(WEB_IN);
-		list.add(BANK_IN);
-		list.add(WEI_XIN);
-		list.add(ALI_PAY);
+		list.add(RECAHRGE);
+		list.add(RECAHRGE_ONLINE);
 		return list;
 	}
 

@@ -38,4 +38,13 @@ public class SimpleOper implements Serializable {
 
 	@Column(name = "organization_id")
 	Long organization;
+
+	@Column(unique = true)
+	String loginName; // 登陆名
+
+	@Column(length = 24, unique = true)
+	String uniqueId; // 唯一编码
+
+	@Column(length = 40)
+	String password; // 密码（加密）
 }
