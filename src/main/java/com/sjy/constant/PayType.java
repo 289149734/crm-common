@@ -33,6 +33,8 @@ public class PayType {
 	public static final int MEMBER_CARD = 11; // 会员卡支付
 	@Dict(text = "联盟支付")
 	public static final int ALLIANCE = 5; // 联盟支付
+	@Dict(text = "易付宝支付")
+	public static final int SuNing = 10; // 易付宝支付
 
 	@Dict(text = "微信H5")
 	public static final int H5_POS = 12; // 微信H5
