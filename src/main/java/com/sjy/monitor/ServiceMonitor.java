@@ -3,8 +3,6 @@
  */
 package com.sjy.monitor;
 
-import java.util.Arrays;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -76,7 +74,7 @@ public class ServiceMonitor {
 		Object obj = joinPoint.proceed();
 		long t2 = System.currentTimeMillis();
 		log.debug("执行时间: {}(ms)>>>【Service】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
-				joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
+				joinPoint.getSignature().getName(), joinPoint.getArgs());
 		return obj;
 	}
 
@@ -93,7 +91,7 @@ public class ServiceMonitor {
 		Object obj = joinPoint.proceed();
 		long t2 = System.currentTimeMillis();
 		log.debug("执行时间: {}(ms)>>>【Repository】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
-				joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
+				joinPoint.getSignature().getName(), joinPoint.getArgs());
 		return obj;
 	}
 }
