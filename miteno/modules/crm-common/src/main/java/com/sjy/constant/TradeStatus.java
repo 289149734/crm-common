@@ -7,6 +7,7 @@ package com.sjy.constant;
  * 交易状态
  * 
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2017年1月12日
  * @author liyan
  * @e-mail 289149734@qq.com
@@ -23,4 +24,6 @@ public class TradeStatus {
 	public static final int INVALIDITY = 8; // 失效
 	public static final int CANCEL_TEMP = 9; // 临时撤销交易
 	public static final int REFUND = 10; // 退货
+	public static final int FAIL = 11; // 失败
+	public static final int CANCEL_FAIL = 12; // 撤销失败
 }

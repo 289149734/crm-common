@@ -52,6 +52,10 @@ public class TradeType {
 	public static final int ONLINE_CONSUME = 157; // 消费[线上]
 	public static final int H5_CONSUME = 158; // 虚拟终端消费
 	public static final int COUNTER_CONSUME = 159; // 柜面消费
+	@Dict(text = "APP消费")
+	public static final int CONSUME_APP = 182; 	//APP消费
+	@Dict(text = "传统POS消费")
+	public static final int CONSUME_POS = 183; 	//传统POS消费
 
 	public static final int REVERSE_CONSUME = 151; // 冲正
 
@@ -79,6 +83,8 @@ public class TradeType {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(CONSUME);
 		list.add(CONSUME_ONLINE);
+		list.add(CONSUME_APP);
+		list.add(CONSUME_POS);
 		return list;
 	}
 
