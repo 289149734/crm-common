@@ -185,6 +185,9 @@ public class BeanUtils extends BeanUtilsBean {
 	public static <T> T copyBeanNotNull2Bean(Object databean, Class<T> clsName) {
 		try {
 			T tobean = clsName.newInstance();
+			if (databean == null) {
+				return tobean;
+			}
 			PropertyDescriptor origDescriptors[] = PropertyUtils.getPropertyDescriptors(databean);
 			for (int i = 0; i < origDescriptors.length; i++) {
 				String name = origDescriptors[i].getName();
