@@ -34,7 +34,7 @@ public class PayType {
 	@Dict(text = "联盟支付")
 	public static final int ALLIANCE = 5; // 联盟支付
 	@Dict(text = "易付宝支付")
-	public static final int SuNing = 10; // 易付宝支付
+	public static final int SuNing = 17; // 易付宝支付
 
 	@Dict(text = "微信H5")
 	public static final int H5_POS = 12; // 微信H5
