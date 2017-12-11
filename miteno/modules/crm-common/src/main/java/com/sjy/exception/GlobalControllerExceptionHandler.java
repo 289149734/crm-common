@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import lombok.extern.slf4j.Slf4j;
+import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * @Title: GlobalControllerExceptionHandler.java
@@ -62,7 +64,7 @@ public class GlobalControllerExceptionHandler {
 		if (ex.getCode() == CrmExceptionType.Customize_Error) {
 			return RestServiceError.build(CrmExceptionType.Customize_Error, ex.getMessage());
 		} else {
-			return RestServiceError.build(ex.getCode());
+			return RestServiceError.build(ex.getCode(), "系统异常，请稍后再试");
 		}
 	}
 
@@ -76,7 +78,11 @@ public class GlobalControllerExceptionHandler {
 		// (ex instanceof JsonMappingException), (ex instanceof
 		// JsonProcessingException));
 		log.error("【通用异常的处理】-------------------", ex);
-		if (ex instanceof SQLException) {
+		if (ex instanceof RpcException) {
+			return RestServiceError.build(CrmExceptionType.Database_Error);
+		} else if (ex instanceof JedisException) {
+			return RestServiceError.build(CrmExceptionType.Database_Error);
+		} else if (ex instanceof SQLException) {
 			return RestServiceError.build(CrmExceptionType.Database_Error);
 		} else if (ex instanceof HttpRequestMethodNotSupportedException) {
 			return RestServiceError.build(CrmExceptionType.Api_Not_Exist);
