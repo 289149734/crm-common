@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 public class ServiceMonitor {
+	private final static int maxRetries = 3;
 
 	/**
 	 * 执行方法前打印所有参数
@@ -88,10 +90,23 @@ public class ServiceMonitor {
 	@Around("pointCutDaoMethod()")
 	public Object doAroundDao(ProceedingJoinPoint joinPoint) throws Throwable {
 		long t1 = System.currentTimeMillis();
-		Object obj = joinPoint.proceed();
+		int numAttempts = 0;
+		Throwable th = null;
+		do {
+			try {
+				return joinPoint.proceed();
+			} catch (OptimisticLockingFailureException e) {
+				log.error(e.getMessage());
+				th = e;
+				continue;
+			} catch (Throwable t) {
+				th = t;
+				break;
+			}
+		} while (numAttempts++ < maxRetries);
 		long t2 = System.currentTimeMillis();
 		log.debug("执行时间: {}(ms)>>>【Repository】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
 				joinPoint.getSignature().getName(), joinPoint.getArgs());
-		return obj;
+		throw th;
 	}
 }

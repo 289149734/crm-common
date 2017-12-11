@@ -31,6 +31,16 @@ public class ResourceUtil {
 		}
 	}
 
+	public static Resource getFile(String location) {
+		try {
+			ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+			return resourcePatternResolver.getResource(location);
+		} catch (Exception e) {
+			log.error("读文件失败", e);
+			return null;
+		}
+	}
+
 	/**
 	 * 扫描scanPackage返回包含的类
 	 * 
