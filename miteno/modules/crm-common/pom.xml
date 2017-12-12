@@ -15,14 +15,14 @@
 	<distributionManagement>
 		<repository>
 			<id>sjy-releases</id>
-			<!-- <url>http://111.160.124.226:9097/nexus/content/repositories/thirdparty/</url> -->
-			<url>http://192.168.1.208:8081/nexus/content/repositories/thirdparty/</url>
+			<url>http://111.160.124.226:9097/nexus/content/repositories/thirdparty/</url>
+			<!-- <url>http://192.168.1.208:8081/nexus/content/repositories/thirdparty/</url> -->
 		</repository>
 		<snapshotRepository>
 			<id>sjy-snapshots</id>
 			<name>nexus distribution snapshot repository</name>
-			<!-- <url>http://111.160.124.226:9097/nexus/content/repositories/snapshots/</url> -->
-			<url>http://192.168.1.208:8081/nexus/content/repositories/snapshots/</url>
+			<url>http://111.160.124.226:9097/nexus/content/repositories/snapshots/</url>
+			<!-- <url>http://192.168.1.208:8081/nexus/content/repositories/snapshots/</url> -->
 		</snapshotRepository>
 	</distributionManagement>
 
