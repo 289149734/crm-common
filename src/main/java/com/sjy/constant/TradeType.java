@@ -18,21 +18,16 @@ import com.sjy.annotation.Dict;
 @Dict(name = "trade_type")
 public class TradeType {
 
-	@Dict(text = "充值[线下]")
-	public static final int RECAHRGE = 100;
-	@Dict(text = "充值[线上]")
-	public static final int RECAHRGE_ONLINE = 101;
-
-	@Dict(text = "消费[线下]")
-	public static final int CONSUME = 159;
-	@Dict(text = "消费[线上]")
-	public static final int CONSUME_ONLINE = 157;
-
 	public static final int CASH_IN = 100; // 柜面充值
 	public static final int WEB_IN = 101; // 网上充值
 	public static final int BANK_IN = 102; // 银行卡充值
 	public static final int WEI_XIN = 168; // 微信支付充值
 	public static final int ALI_PAY = 169; // 支付宝支付充值
+	public static final int H5_IN = 162; // H5收银台充值
+	public static final int APP_IN = 163; // APP充值
+	public static final int POS_IN = 164; // 传统POS充值
+	public static final int PC_IN = 165; // PC收银台充值
+	public static final int ONLINE_WEIXIN_IN = 166; // 线上公众号充值
 
 	public static final int ACCUMULATE = 103; // 累积（后台自动充值）
 	public static final int RET_CLIENT = 104; // 其他//黑名单卡发生消费，中石油返还给客户
@@ -53,9 +48,11 @@ public class TradeType {
 	public static final int H5_CONSUME = 158; // 虚拟终端消费
 	public static final int COUNTER_CONSUME = 159; // 柜面消费
 	@Dict(text = "APP消费")
-	public static final int CONSUME_APP = 182; 	//APP消费
+	public static final int CONSUME_APP = 182; // APP消费
 	@Dict(text = "传统POS消费")
-	public static final int CONSUME_POS = 183; 	//传统POS消费
+	public static final int CONSUME_POS = 183; // 传统POS消费
+	public static final int CONSUME_PC = 184; // PC收银台消费
+	public static final int CONSUME_ONLINE_WEIXIN = 185; // 线上公众号消费
 
 	public static final int REVERSE_CONSUME = 151; // 冲正
 
@@ -81,10 +78,19 @@ public class TradeType {
 	 */
 	public static List<Integer> consume() {
 		List<Integer> list = new ArrayList<Integer>();
-		list.add(CONSUME);
-		list.add(CONSUME_ONLINE);
+		list.add(CARD_CONSUME);
+		list.add(CASH_CONSUME);
+		list.add(ALLIANCE_CONSUME);
+		list.add(BANK_CONSUME);
+		list.add(ALI_CONSUME);
+		list.add(WX_CONSUME);
+		list.add(ONLINE_CONSUME);
+		list.add(H5_CONSUME);
+		list.add(COUNTER_CONSUME);
 		list.add(CONSUME_APP);
 		list.add(CONSUME_POS);
+		list.add(CONSUME_PC);
+		list.add(CONSUME_ONLINE_WEIXIN);
 		return list;
 	}
 
@@ -95,8 +101,16 @@ public class TradeType {
 	 */
 	public static List<Integer> topup() {
 		List<Integer> list = new ArrayList<Integer>();
-		list.add(RECAHRGE);
-		list.add(RECAHRGE_ONLINE);
+		list.add(CASH_IN);
+		list.add(WEB_IN);
+		list.add(BANK_IN);
+		list.add(WEI_XIN);
+		list.add(ALI_PAY);
+		list.add(H5_IN);
+		list.add(APP_IN);
+		list.add(POS_IN);
+		list.add(PC_IN);
+		list.add(ONLINE_WEIXIN_IN);
 		return list;
 	}
 
