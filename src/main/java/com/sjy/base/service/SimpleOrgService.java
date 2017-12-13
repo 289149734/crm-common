@@ -143,4 +143,11 @@ public class SimpleOrgService {
 		}
 		return issuerOrg;
 	}
+	
+	/**
+	 * 获取当前机构及其下级机构
+	 */
+	public List<SimpleOrg> findSelfAndAllChilds(Long orgId,int orgLevel){
+		return simpleOrgRepository.findSelfAndAllChilds(orgId, orgLevel);
+	}
 }
