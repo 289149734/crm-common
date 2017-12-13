@@ -178,7 +178,9 @@ public class DataQueryService {
 	 * @param stmt
 	 * @param params
 	 * @param start
+	 *            起始位置
 	 * @param maxResult
+	 *            数量
 	 * @return
 	 */
 	public PageResult selectData(String queryName, Map<String, Object> params, String orderBy, int start, int maxResult,
@@ -280,7 +282,9 @@ public class DataQueryService {
 	 * @param stmt
 	 * @param params
 	 * @param start
+	 *            起始位置
 	 * @param maxResult
+	 *            数量
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked" })
