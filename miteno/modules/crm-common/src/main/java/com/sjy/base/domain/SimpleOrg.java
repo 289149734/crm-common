@@ -51,4 +51,15 @@ public class SimpleOrg implements Serializable {
 	@Column(name = "isIssuer")
 	boolean isIssuer = false; // 是否发卡
 
+	@Column(name = "photo_id")
+	Long photoId;
+	
+	@Column(name = "address")
+	String address;
+	
+	@Column(name = "phone")
+	String phone;
+	
+	@Column(name = "fullName")
+	String fullName;
 }

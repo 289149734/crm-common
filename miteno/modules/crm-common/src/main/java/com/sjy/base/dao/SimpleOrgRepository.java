@@ -34,4 +34,6 @@ public interface SimpleOrgRepository extends JpaRepository<SimpleOrg, Long> {
 
 	List<SimpleOrg> findByOrgLevel(Integer orgLevel);
 
+	@Query("select o from SimpleOrg as o,SimpleOrgTree as ot join ot.organization as org left join ot.parentTree as pt where org.id=o.id and (pt.organization.id =?1  or (ot.organization.id=?1 and (ot.parentOrgLevel=(?2 -100) or ot.parentOrgLevel is null))) ")
+	List<SimpleOrg> findSelfAndAllChilds(Long orgId,int orgLevel);
 }
