@@ -23,6 +23,7 @@ public class CrmExceptionType {
 	public final static int Api_Not_Exist = 102;
 	public final static int Api_Param_Error = 103;
 	public final static int Dubbo_Service_Error = 104;
+	public final static int Redis_Error = 105;
 	public final static int Customize_Error = 998;
 	public final static int System_Error = 999;
 
@@ -32,6 +33,7 @@ public class CrmExceptionType {
 		exceptionMap.put(Api_Not_Exist, "该功能API不存在或者异常");
 		exceptionMap.put(Api_Param_Error, "API参数格式错误");
 		exceptionMap.put(Dubbo_Service_Error, "系统服务异常");
+		exceptionMap.put(Redis_Error, "Redis服务异常");
 		exceptionMap.put(Customize_Error, "系统自定义异常");
 		exceptionMap.put(System_Error, "系统异常");
 	}
