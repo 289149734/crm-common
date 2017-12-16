@@ -79,9 +79,10 @@ public class GlobalControllerExceptionHandler {
 		// JsonProcessingException));
 		log.error("【通用异常的处理】-------------------", ex);
 		if (ex instanceof RpcException) {
-			return RestServiceError.build(CrmExceptionType.Database_Error);
+			RpcException rpcEx = (RpcException) ex;
+			return RestServiceError.build(CrmExceptionType.Dubbo_Service_Error, rpcEx.getMessage());
 		} else if (ex instanceof JedisException) {
-			return RestServiceError.build(CrmExceptionType.Database_Error);
+			return RestServiceError.build(CrmExceptionType.Redis_Error);
 		} else if (ex instanceof SQLException) {
 			return RestServiceError.build(CrmExceptionType.Database_Error);
 		} else if (ex instanceof HttpRequestMethodNotSupportedException) {
