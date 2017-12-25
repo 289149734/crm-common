@@ -22,12 +22,13 @@ public class TradeType {
 	public static final int WEB_IN = 101; // 网上充值
 	public static final int BANK_IN = 102; // 银行卡充值
 	public static final int WEI_XIN = 168; // 微信支付充值
-	public static final int ALI_PAY = 169; // 支付宝支付充值
-	public static final int H5_IN = 162; // H5收银台充值
-	public static final int APP_IN = 163; // APP充值
-	public static final int POS_IN = 164; // 传统POS充值
+
+	public static final int ALI_PAY = 169; // 支付宝收银台充值
+	public static final int H5_IN = 162; // 微信收银台充值
+	public static final int APP_IN = 163; // APP收银台充值
+	public static final int POS_IN = 164; // 传统POS收银台充值
 	public static final int PC_IN = 165; // PC收银台充值
-	public static final int ONLINE_WEIXIN_IN = 166; // 线上公众号充值
+	public static final int ONLINE_WEIXIN_IN = 166; // 微信公众号充值
 
 	public static final int ACCUMULATE = 103; // 累积（后台自动充值）
 	public static final int RET_CLIENT = 104; // 其他//黑名单卡发生消费，中石油返还给客户
@@ -44,15 +45,18 @@ public class TradeType {
 	public static final int BANK_CONSUME = 153; // 银行卡消费
 	public static final int ALI_CONSUME = 148; // 支付宝消费
 	public static final int WX_CONSUME = 154; // 微信消费
-	public static final int ONLINE_CONSUME = 157; // 消费[线上]
-	public static final int H5_CONSUME = 158; // 虚拟终端消费
+	@Dict(text = "微信商城消费")
+	public static final int ONLINE_CONSUME = 157; // 微信商城消费
+	public static final int H5_CONSUME = 158; // 虚拟终端消费[暂不用]
 	public static final int COUNTER_CONSUME = 159; // 柜面消费
-	@Dict(text = "APP消费")
-	public static final int CONSUME_APP = 182; // APP消费
-	@Dict(text = "传统POS消费")
-	public static final int CONSUME_POS = 183; // 传统POS消费
+	@Dict(text = "微信收银台消费")
+	public static final int CONSUME_H5 = 181; // 微信收银台消费
+	@Dict(text = "APP收银台消费")
+	public static final int CONSUME_APP = 182; // APP收银台消费
+	@Dict(text = "传统POS收银台消费")
+	public static final int CONSUME_POS = 183; // 传统POS收银台消费
 	public static final int CONSUME_PC = 184; // PC收银台消费
-	public static final int CONSUME_ONLINE_WEIXIN = 185; // 线上公众号消费
+	public static final int CONSUME_ONLINE_WEIXIN = 185; // 线上公众号消费[暂不用]
 
 	public static final int REVERSE_CONSUME = 151; // 冲正
 
@@ -86,6 +90,7 @@ public class TradeType {
 		list.add(WX_CONSUME);
 		list.add(ONLINE_CONSUME);
 		list.add(H5_CONSUME);
+		list.add(CONSUME_H5);
 		list.add(COUNTER_CONSUME);
 		list.add(CONSUME_APP);
 		list.add(CONSUME_POS);
