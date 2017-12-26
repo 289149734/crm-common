@@ -435,6 +435,11 @@ public class DataQueryService {
 			pr.template = query.template;
 			pr.oversize = pr.totalElements == MAXCOUNT;
 			pr.total = pr.totalElements;
+			if (pr.total % maxResult != 0) {
+				pr.pageSize = pr.total / maxResult + 1;
+			} else {
+				pr.pageSize = pr.total / maxResult;
+			}
 			return pr;
 		} finally {
 			columIndexMapLocal.set(null);

@@ -10,6 +10,7 @@ import lombok.Data;
 @SuppressWarnings("serial")
 public class PageResult implements Serializable {
 	public int start, maxResult, totalElements, total;
+	public int pageSize;// 总页数
 	public List<Object[]> objects;
 	public List<Map<String, Object>> content;
 	public String title;
