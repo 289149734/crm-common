@@ -90,6 +90,21 @@ public class ServiceMonitor {
 	@Around("pointCutDaoMethod()")
 	public Object doAroundDao(ProceedingJoinPoint joinPoint) throws Throwable {
 		long t1 = System.currentTimeMillis();
+		Object obj = joinPoint.proceed();
+		long t2 = System.currentTimeMillis();
+		log.debug("执行时间: {}(ms)>>>【Repository】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
+				joinPoint.getSignature().getName(), joinPoint.getArgs());
+		return obj;
+	}
+
+	@Pointcut("@annotation(com.sjy.monitor.RetryOnOptimisticLockingFailure)")
+	public void retryOnOptFailure() {
+		// pointcut mark
+	}
+
+	@Around("retryOnOptFailure()")
+	public Object doConcurrentOperation(ProceedingJoinPoint joinPoint) throws Throwable {
+		long t1 = System.currentTimeMillis();
 		int numAttempts = 0;
 		Throwable th = null;
 		do {
@@ -105,7 +120,7 @@ public class ServiceMonitor {
 			}
 		} while (numAttempts++ < maxRetries);
 		long t2 = System.currentTimeMillis();
-		log.debug("执行时间: {}(ms)>>>【Repository】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
+		log.debug("执行时间: {}(ms)>>>【retryOnOptFailure】层-->{}_{}: {}", (t2 - t1), joinPoint.getTarget().getClass(),
 				joinPoint.getSignature().getName(), joinPoint.getArgs());
 		throw th;
 	}

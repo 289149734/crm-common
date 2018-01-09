@@ -21,8 +21,9 @@ public class TradeType {
 	public static final int CASH_IN = 100; // 柜面充值
 	public static final int WEB_IN = 101; // 网上充值
 	public static final int BANK_IN = 102; // 银行卡充值
-	public static final int WEI_XIN = 168; // 微信支付充值
-
+	
+	@Dict(text = "微信公众号充值")
+	public static final int WEI_XIN = 168; // 微信公众号充值
 	public static final int ALI_PAY = 169; // 支付宝收银台充值
 	public static final int H5_IN = 162; // 微信收银台充值
 	public static final int APP_IN = 163; // APP收银台充值
