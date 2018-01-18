@@ -128,9 +128,9 @@ public class SftpUtils {
          * @param password 密码
          * */
         SftpUtils sftpUtils = new SftpUtils("192.168.1.68", 22 , "root" , "zhy2017") ; 
-        sftpUtils.uploadSftpFile("/webapps/uploads","d:/download","12492974011120180117.txt");
-        System.out.println("上传成功");
-        sftpUtils.downloadSftpFile("/webapps/uploads/" ,"D:/download","12492974011120180117.txt");
+//        sftpUtils.uploadSftpFile("/webapps/uploads/","d:/download/","12492974011120180119.txt");
+//        System.out.println("上传成功");
+        sftpUtils.downloadSftpFile("/webapps/uploads/" ,"D:/download","12492974011120180118.txt");
         System.out.println("下载成功");
     }
 }

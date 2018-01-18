@@ -216,7 +216,7 @@ public class BeanUtils extends BeanUtilsBean {
 		}
 		return null;
 	}
-
+	
 	public void clearAllProperties(final Object obj) throws IllegalAccessException, InvocationTargetException {
 
 		// Validate existence of the specified beans

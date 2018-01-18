@@ -40,12 +40,12 @@ public class FormatUtil {
 	}
 
 	/**
-	 * 分->元
+	 * 元->分
 	 * 
 	 * @param amount
 	 * @return
 	 */
 	public static Long yuanToFen(String amount) {
-		return new BigDecimal(amount).max(new BigDecimal(MULTIPLIER)).longValue();
+		return new BigDecimal(amount).multiply(new BigDecimal(MULTIPLIER)).longValue();
 	}
 }
