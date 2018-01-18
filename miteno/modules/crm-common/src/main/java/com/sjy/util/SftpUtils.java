@@ -76,7 +76,7 @@ public class SftpUtils {
             if(null != sftp){
                 sftp.cd(ftpPath);
                 log.info(String.format("cd %s" , ftpPath));
-                File file = new File(localPath+fileName);
+                File file = new File(localPath+"/"+fileName);
                 sftp.put(new FileInputStream(file), file.getName());
             }
             return true;
@@ -131,7 +131,7 @@ public class SftpUtils {
          * @param password 密码
          * */
         SftpUtils sftpUtils = new SftpUtils("192.168.1.68", 22 , "root" , "zhy2017") ; 
-//        sftpUtils.uploadSftpFile("/webapps/uploads/","D:/download/","12492974011120180119.txt");
+//        sftpUtils.uploadSftpFile("/webapps/uploads","D:/download","12492974011120180119.txt");
 //        System.out.println("上传成功");
         sftpUtils.downloadSftpFile("/webapps/uploads/" ,"D:/download","12492974011120180118.txt");
         System.out.println("下载成功");
