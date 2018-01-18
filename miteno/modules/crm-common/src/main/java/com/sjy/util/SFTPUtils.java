@@ -193,6 +193,7 @@ public class SFTPUtils {
 			}
 		} catch (SftpException e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			// this.disconnect();
 		}
@@ -222,14 +223,17 @@ public class SFTPUtils {
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (SftpException e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			if (null != fieloutput) {
 				try {
 					fieloutput.close();
 				} catch (IOException e) {
 					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 			}
 		}
@@ -255,14 +259,17 @@ public class SFTPUtils {
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (SftpException e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
 					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 			}
 		}
@@ -296,6 +303,7 @@ public class SFTPUtils {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			this.disconnect();
 		}
@@ -358,6 +366,7 @@ public class SFTPUtils {
 			return true;
 		} catch (SftpException e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return false;
 	}
@@ -475,15 +484,20 @@ public class SFTPUtils {
 	public static void main(String[] args) {
 		SFTPUtils sftp = null;
 		// 本地存放地址
-		String localPath = "D:/tomcat5/webapps/ASSESS/DocumentsDir/DocumentTempDir/txtData/";
+		String localPath = "D:/Download/weixinBills/";
 		// Sftp下载路径
-		String sftpPath = "/home/assess/sftp/jiesuan_2/2014/";
+		String sftpPath = "/webapp/weixinBills/20180117/";
 		List<String> filePathList = new ArrayList<String>();
 		try {
-			sftp = new SFTPUtils("10.163.201.115", "tdcp", "tdcp");
+			sftp = new SFTPUtils("192.168.1.215", "root", "rfv$%^456RFV");
 			sftp.connect();
 			// 下载
-			sftp.batchDownLoadFile(sftpPath, localPath, "ASSESS", ".txt", true);
+//			filePathList = sftp.batchDownLoadFile(sftpPath, localPath, "wxd", ".gzip", false);
+//			for (String string : filePathList) {
+//				System.out.println(string);
+//			}
+			boolean rs = sftp.bacthUploadFile(sftpPath, localPath, false);
+			System.out.println("批量上传文件结果："+rs);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
