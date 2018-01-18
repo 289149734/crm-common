@@ -50,6 +50,7 @@ public class SftpUtils {
             sshSession.setPassword(password);
             Properties sshConfig = new Properties();
             sshConfig.put("StrictHostKeyChecking", "no");
+            sshSession.setTimeout(100000);  
             sshSession.setConfig(sshConfig);
             sshSession.connect();
             log.info(String.format("%s connect success" , host));
@@ -94,7 +95,7 @@ public class SftpUtils {
      * @param localPath  本地文件路径
      * @param fileName  文件名称
      */
-    public void downloadSftpFile(String ftpPath, String localPath,String fileName) {
+    public boolean downloadSftpFile(String ftpPath, String localPath,String fileName) {
         ChannelSftp sftp = connect() ; 
         try {
             if(null != sftp){
@@ -102,12 +103,14 @@ public class SftpUtils {
         		String localFilePath = localPath + File.separatorChar + fileName;
                 sftp.get(ftpFilePath , localFilePath); 
             }
+            return true;
         } catch (Exception e) {
         	e.printStackTrace();
         	log.error("linux下载文件异常"+e.getMessage());
         }finally{
             close(sftp);
         }
+        return false;
     }
 
     protected void close(ChannelSftp sftp){
@@ -128,7 +131,7 @@ public class SftpUtils {
          * @param password 密码
          * */
         SftpUtils sftpUtils = new SftpUtils("192.168.1.68", 22 , "root" , "zhy2017") ; 
-//        sftpUtils.uploadSftpFile("/webapps/uploads/","d:/download/","12492974011120180119.txt");
+//        sftpUtils.uploadSftpFile("/webapps/uploads/","D:/download/","12492974011120180119.txt");
 //        System.out.println("上传成功");
         sftpUtils.downloadSftpFile("/webapps/uploads/" ,"D:/download","12492974011120180118.txt");
         System.out.println("下载成功");
