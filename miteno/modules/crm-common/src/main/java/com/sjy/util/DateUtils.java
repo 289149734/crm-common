@@ -25,6 +25,8 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	private static Map<String, ThreadLocal<DecimalFormat>> numberFormats = new HashMap<String, ThreadLocal<DecimalFormat>>();
 	public final static String START_TIME = "start_time";
 	public final static String END_TIME = "end_time";
+	public final static String DATE_FORMAT="yyyy-MM-dd";
+	public final static String DATETIME_FORMAT="yyyy-MM-dd HH:mm:ss";
 	// 以毫秒表示的时间
 	private static final long DAY_IN_MILLIS = 24 * 3600 * 1000;
 	private static final long HOUR_IN_MILLIS = 3600 * 1000;
@@ -102,7 +104,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	}
 
 	public static String getCurrentDateAndTime() {
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DateFormat format = new SimpleDateFormat(DateUtils.DATETIME_FORMAT);
 		return format.format(new Date());
 	}
 
