@@ -26,7 +26,9 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	public final static String START_TIME = "start_time";
 	public final static String END_TIME = "end_time";
 	public final static String DATE_FORMAT="yyyy-MM-dd";
+	public static final String DATE_FORMAT_STR = "yyyyMMdd";
 	public final static String DATETIME_FORMAT="yyyy-MM-dd HH:mm:ss";
+    public static final String DATETIME_FORMAT_STR = "yyyyMMddHHmmss";
 	// 以毫秒表示的时间
 	private static final long DAY_IN_MILLIS = 24 * 3600 * 1000;
 	private static final long HOUR_IN_MILLIS = 3600 * 1000;
