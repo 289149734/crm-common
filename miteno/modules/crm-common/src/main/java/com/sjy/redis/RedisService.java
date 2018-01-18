@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
+ * 
  * @since 2017年1月6日
  * @author liyan
  * @e-mail 289149734@qq.com
@@ -38,8 +39,22 @@ public interface RedisService {
 
 	Object popObjForSet(final String key);
 
+	/**
+	 * 先进先出队列--可以放入重复Value
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	boolean pushObj(final String key, Object value);
 
+	/**
+	 * 先进先出队列--不可以放入重复Value
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	boolean pushObjForSet(final String key, Object value);
 
 	boolean pushObjAllForSet(final String key, List<?> values);
