@@ -111,7 +111,7 @@ public class ServiceMonitor {
 			try {
 				return joinPoint.proceed();
 			} catch (OptimisticLockingFailureException e) {
-				log.error(e.getMessage());
+				log.error("retryOnOptFailure = {}", e.getMessage());
 				th = e;
 				continue;
 			} catch (Throwable t) {
