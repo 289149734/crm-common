@@ -13,6 +13,7 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -289,6 +290,43 @@ public class HttpClientUtils {
 		return null;
 	}
 
+	public static Boolean getFormForFile(String url, Map<String, String> params, File file) {
+		// 创建HttpClientBuilder
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		// HttpClient
+		CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+		// 创建httppost
+		HttpGet httpget = new HttpGet(getUrl(url, params));
+		try {
+			log.debug("executing request " + httpget.getURI());
+			HttpResponse response = closeableHttpClient.execute(httpget);
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					FileUtils.copyInputStreamToFile(entity.getContent(), file);
+					return true;
+				}
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (closeableHttpClient != null) {
+				try {
+					closeableHttpClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+
 	public static String getForm(String url) {
 		// 创建HttpClientBuilder
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -444,6 +482,50 @@ public class HttpClientUtils {
 			}
 		}
 		return null;
+	}
+
+	public static Boolean sendHttpPostForFile(String url, String data, File file) {
+		// 创建HttpClientBuilder
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		// HttpClient
+		CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+		// 创建httppost
+		HttpPost httppost = new HttpPost(url);
+		httppost.setHeader("Content-type", "application/json; charset=utf-8");
+		httppost.addHeader("Accept", "application/json; charset=utf-8");
+
+		try {
+			if (StringUtil.isNotBlank(data)) {
+				StringEntity r_entity = new StringEntity(data, "UTF-8");// 解决中文乱码问题
+				httppost.setEntity(r_entity);
+			}
+			log.debug("executing request " + httppost.getURI());
+			HttpResponse response = closeableHttpClient.execute(httppost);
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					FileUtils.copyInputStreamToFile(entity.getContent(), file);
+					return true;
+				}
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (closeableHttpClient != null) {
+				try {
+					closeableHttpClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
