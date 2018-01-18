@@ -60,7 +60,7 @@ public class SftpUtils {
         } catch (Exception e) {
         	e.printStackTrace();
         	log.error("connect:" + host+"{}", e ); 
-            close( null );
+            close(null);
             return null ; 
         }
         return sftp;
