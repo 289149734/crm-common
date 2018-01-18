@@ -67,8 +67,10 @@ public class SftpUtils {
     }
     /**
      * linux上传文件
-     * @param ftpPath 文件目录
-     * @param file  本地文件
+     * @param ftpPath 
+     * @param localPath
+     * @param fileName
+     * @return
      */
     public boolean uploadSftpFile(String ftpPath ,String localPath,String fileName){
         ChannelSftp sftp = connect() ; 
