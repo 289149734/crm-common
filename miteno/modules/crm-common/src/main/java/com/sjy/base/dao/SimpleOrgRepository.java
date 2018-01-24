@@ -23,8 +23,18 @@ import com.sjy.base.domain.SimpleOrg;
  */
 @Repository
 public interface SimpleOrgRepository extends JpaRepository<SimpleOrg, Long> {
-
+	/**
+	 * 根据微信公众号商户AppId查询
+	 * @param appId 
+	 * @return
+	 */
 	SimpleOrg findByAppId(String appId);
+	/**
+	 * 根据微信商户ID查询
+	 * @param mchId
+	 * @return
+	 */
+	SimpleOrg findByMchId(String mchId);
 
 	@Query("select new Map(o.id as id, trim(o.name) as name) from SimpleOrg as o where o.id = ?1 or o.parent = ?1")
 	List<Map<String, Object>> findSelfAndChilds(Long orgId);
