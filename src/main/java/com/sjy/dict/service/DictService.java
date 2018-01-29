@@ -155,25 +155,29 @@ public class DictService {
 	}
 
 	public void initToRedis() {
-		long t1 = System.currentTimeMillis();
-		// 加载所有字典项
-		loadFromConstant();
+		// TODO 判断是否需要初始化
+		boolean needInit = true;
+		if (needInit) {
+			long t1 = System.currentTimeMillis();
+			// 加载所有字典项
+			loadFromConstant();
 
-		Map<String, List<Dictionary>> map = new HashMap<String, List<Dictionary>>();
-		List<Dictionary> dicts = dictionaryRepository.findAll();
-		dicts.forEach(dict -> {
-			String key = DICT_CACHE + ":" + dict.getCategory().trim().toUpperCase();
-			List<Dictionary> list = map.get(key);
-			if (list == null)
-				list = new ArrayList<Dictionary>();
-			list.add(dict);
-			map.put(key, list);
-		});
+			Map<String, List<Dictionary>> map = new HashMap<String, List<Dictionary>>();
+			List<Dictionary> dicts = dictionaryRepository.findAll();
+			dicts.forEach(dict -> {
+				String key = DICT_CACHE + ":" + dict.getCategory().trim().toUpperCase();
+				List<Dictionary> list = map.get(key);
+				if (list == null)
+					list = new ArrayList<Dictionary>();
+				list.add(dict);
+				map.put(key, list);
+			});
 
-		map.forEach((k, v) -> {
-			redisService.set(k, v);
-		});
-		long t2 = System.currentTimeMillis();
-		log.debug("-------加载字典[{}]项成功,耗时:{}(ms)-------", map.size(), (t2 - t1));
+			map.forEach((k, v) -> {
+				redisService.set(k, v);
+			});
+			long t2 = System.currentTimeMillis();
+			log.debug("-------加载字典[{}]项成功,耗时:{}(ms)-------", map.size(), (t2 - t1));
+		}
 	}
 }
