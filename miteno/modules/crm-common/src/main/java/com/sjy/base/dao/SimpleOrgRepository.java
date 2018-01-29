@@ -29,12 +29,6 @@ public interface SimpleOrgRepository extends JpaRepository<SimpleOrg, Long> {
 	 * @return
 	 */
 	SimpleOrg findByAppId(String appId);
-	/**
-	 * 根据微信商户ID查询
-	 * @param mchId
-	 * @return
-	 */
-	SimpleOrg findByMchId(String mchId);
 
 	@Query("select new Map(o.id as id, trim(o.name) as name) from SimpleOrg as o where o.id = ?1 or o.parent = ?1")
 	List<Map<String, Object>> findSelfAndChilds(Long orgId);
