@@ -613,17 +613,25 @@ public class DataQueryService {
 		} else if (type.equals(SqlConfig.INTEGER)) {
 			trueValue = Integer.parseInt(value);
 		} else if (type.equals(SqlConfig.DATE)) {
-			if (isOracle)
+			if (isOracle) {
 				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
 						+ "','yyyymmddhh24miss')";
-			else
+			} else if (isMySql) {
+				trueValue = "date_format('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
+						+ "','%Y%m%d%H%i%s')";
+			} else {
 				trueValue = "'" + value + "'";
+			}
 		} else if (type.equals(SqlConfig.ENDDATE)) {
-			if (isOracle)
+			if (isOracle) {
 				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT)
 						+ "','yyyymmddhh24miss')";
-			else
+			} else if (isMySql) {
+				trueValue = "date_format('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
+						+ "','%Y%m%d%H%i%s')";
+			} else {
 				trueValue = "'" + FormatUtil.formatDate(FormatUtil.parseDateEnd(value)) + "'";
+			}
 
 		} else if (type.equals(SqlConfig.LONG)) {
 			trueValue = Long.parseLong(value);
