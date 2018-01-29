@@ -234,4 +234,8 @@ public class RedisServiceImpl implements RedisService {
 		return redisTemplate.opsForList().size(key);
 	}
 
+	@Override
+	public Set<Serializable> keys(String pattern) {
+		return redisTemplate.keys(pattern);
+	}
 }

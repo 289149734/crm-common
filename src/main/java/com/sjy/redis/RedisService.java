@@ -3,7 +3,9 @@
  */
 package com.sjy.redis;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @copyright(c) Copyright SJY Corporation 2016.
@@ -68,4 +70,6 @@ public interface RedisService {
 	Long getSetSize(final String key);
 
 	Long getListSize(final String key);
+
+	Set<Serializable> keys(String pattern);
 }
