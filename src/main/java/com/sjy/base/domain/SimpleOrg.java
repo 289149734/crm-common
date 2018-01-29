@@ -43,11 +43,8 @@ public class SimpleOrg implements Serializable {
 	Long parent; // parent_id //上级单位
 
 	@Column(length = 64, name = "orgAppId", unique = true)
-	String appId; // 微信公众号ID
-	
-	@Column(length = 64, unique = true)
-	String mchId; // 微信商户ID
-	
+	String appId; // 微信公众号ID 
+
 	@Column(length = 32/*, unique = true*/)
 	String wxAccountId; // 微信平台对应商户ID
 
