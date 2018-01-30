@@ -104,7 +104,7 @@ public class DictService {
 		}
 		List<Dictionary> list = findAll(category);
 		for (Dictionary dict : list) {
-			if (text.trim() == dict.getText()) {
+			if (text.trim() == dict.getText().trim()) {
 				return dict.getCode();
 			}
 		}
