@@ -89,6 +89,28 @@ public class DictService {
 		return text.trim();
 	}
 
+	/**
+	 * 取得字典项文本
+	 * 
+	 * @param category
+	 *            字典类型
+	 * @param code
+	 *            字典代码
+	 * @return 字典项文本
+	 */
+	public Integer getCodeByText(String category, String text) {
+		if (StringUtil.isBlank(text)) {
+			return null;
+		}
+		List<Dictionary> list = findAll(category);
+		for (Dictionary dict : list) {
+			if (text.trim() == dict.getText()) {
+				return dict.getCode();
+			}
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Dictionary> findAll(String category) {
 		List<Dictionary> dicts = null;
