@@ -25,15 +25,15 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	private static Map<String, ThreadLocal<DecimalFormat>> numberFormats = new HashMap<String, ThreadLocal<DecimalFormat>>();
 	public final static String START_TIME = "start_time";
 	public final static String END_TIME = "end_time";
-	
-	/**FORMAT:yyyy-MM-dd*/
-	public final static String DATE_FORMAT="yyyy-MM-dd";
-	/**FORMAT:yyyyMMdd*/
+
+	/** FORMAT:yyyy-MM-dd */
+	public final static String DATE_FORMAT = "yyyy-MM-dd";
+	/** FORMAT:yyyyMMdd */
 	public static final String DATE_FORMAT_STR = "yyyyMMdd";
-	/**FORMAT:yyyy-MM-dd HH:mm:ss*/
-	public final static String DATETIME_FORMAT="yyyy-MM-dd HH:mm:ss";
-	/**FORMAT:yyyyMMddHHmmss*/
-    public static final String DATETIME_FORMAT_STR = "yyyyMMddHHmmss";
+	/** FORMAT:yyyy-MM-dd HH:mm:ss */
+	public final static String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	/** FORMAT:yyyyMMddHHmmss */
+	public static final String DATETIME_FORMAT_STR = "yyyyMMddHHmmss";
 	// 以毫秒表示的时间
 	private static final long DAY_IN_MILLIS = 24 * 3600 * 1000;
 	private static final long HOUR_IN_MILLIS = 3600 * 1000;
@@ -281,15 +281,15 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	 * @return
 	 */
 	public static Date getDayEndTime(Date date) {
-		if (date == null)
+		if (date == null) {
 			return null;
-		else {
+		} else {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			cal.set(Calendar.MILLISECOND, 999);
 			return cal.getTime();
 		}
 	}
