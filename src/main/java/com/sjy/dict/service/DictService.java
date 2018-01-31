@@ -39,6 +39,9 @@ public class DictService {
 
 	public static final String DICT_CACHE = "DICTCACHE";
 
+	// TODO
+	private boolean initDict = false;
+
 	@Resource
 	RedisService redisService;
 
@@ -178,9 +181,7 @@ public class DictService {
 	}
 
 	public void initToRedis() {
-		// TODO 判断是否需要初始化
-		boolean needInit = true;
-		if (needInit) {
+		if (initDict) {
 			long t1 = System.currentTimeMillis();
 			// 加载所有字典项
 			loadFromConstant();
