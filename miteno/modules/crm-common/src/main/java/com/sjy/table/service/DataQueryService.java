@@ -627,7 +627,7 @@ public class DataQueryService {
 				trueValue = "to_date('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT)
 						+ "','yyyymmddhh24miss')";
 			} else if (isMySql) {
-				trueValue = "date_format('" + DateUtils.format(FormatUtil.parseDate(value), DB_DATEFORMAT)
+				trueValue = "date_format('" + DateUtils.format(FormatUtil.parseDateEnd(value), DB_DATEFORMAT)
 						+ "','%Y%m%d%H%i%s')";
 			} else {
 				trueValue = "'" + FormatUtil.formatDate(FormatUtil.parseDateEnd(value)) + "'";
