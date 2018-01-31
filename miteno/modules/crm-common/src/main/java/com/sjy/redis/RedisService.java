@@ -59,6 +59,17 @@ public interface RedisService {
 	 */
 	boolean pushObjForSet(final String key, Object value);
 
+	/**
+	 * 先进先出队列--不可以放入重复Value
+	 * 
+	 * @param key
+	 * @param value
+	 * @param expireTime
+	 *            单位：秒 失效时间
+	 * @return
+	 */
+	boolean pushObjForSet(final String key, Object value, Long expireTime);
+
 	boolean pushObjAllForSet(final String key, List<?> values);
 
 	boolean pushObjAll(final String key, List<?> values);
