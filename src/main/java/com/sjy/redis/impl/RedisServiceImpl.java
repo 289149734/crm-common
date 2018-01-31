@@ -169,6 +169,20 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
+	public boolean pushObjForSet(String key, Object value, Long expireTime) {
+		boolean result = false;
+		try {
+			SetOperations<Serializable, Object> list = redisTemplate.opsForSet();
+			list.add(key, value);
+			redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
 	public boolean pushObjAllForSet(String key, List<?> values) {
 		boolean result = false;
 		try {
