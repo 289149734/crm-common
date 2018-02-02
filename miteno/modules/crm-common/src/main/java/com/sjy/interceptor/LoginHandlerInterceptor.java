@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Aspect
+@Component
 public class LoginHandlerInterceptor implements HandlerInterceptor {
 
 	@Resource
