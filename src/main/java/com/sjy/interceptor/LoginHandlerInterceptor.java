@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.sjy.monitor;
+package com.sjy.interceptor;
 
 import java.util.Collections;
 import java.util.List;
@@ -73,7 +73,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 			});
 			Long orgId = (Long) sess.getAttribute(SessionParamType.ORGID);
 			Long userId = (Long) sess.getAttribute(SessionParamType.USERID);
-			log.info("session[{}]--->>[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", sessionId, request.getRequestURI(), orgId,
+			log.debug("session[{}]--->>[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", sessionId, request.getRequestURI(), orgId,
 					userId);
 			// if (orgId == null || userId == null) return false;
 		}
