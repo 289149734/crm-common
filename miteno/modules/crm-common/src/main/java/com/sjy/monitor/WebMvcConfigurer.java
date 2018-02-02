@@ -5,6 +5,8 @@ package com.sjy.monitor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.session.web.http.HeaderHttpSessionStrategy;
+import org.springframework.session.web.http.HttpSessionStrategy;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -51,4 +53,9 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 	}
 
+	@Bean
+	public HttpSessionStrategy httpSessionStrategy() {
+		// return new CookieHttpSessionStrategy();
+		return new HeaderHttpSessionStrategy();
+	}
 }
