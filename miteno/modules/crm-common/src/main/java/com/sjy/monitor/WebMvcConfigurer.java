@@ -31,9 +31,14 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
+	@Bean
+	public LoginHandlerInterceptor loginHandlerInterceptor() {
+		return new LoginHandlerInterceptor();
+	}
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(loginHandlerInterceptor()).addPathPatterns("/**");
 		super.addInterceptors(registry);
 	}
 
