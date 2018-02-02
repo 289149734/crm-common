@@ -36,7 +36,7 @@ import com.sjy.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+//@Slf4j
 @Service("dataQueryService")
 public class DataQueryService {
 
