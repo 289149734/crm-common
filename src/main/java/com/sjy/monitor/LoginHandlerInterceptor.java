@@ -7,10 +7,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,6 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Aspect
 public class LoginHandlerInterceptor implements HandlerInterceptor {
+
+	@Resource
+	SessionRepository<Session> sessionRepository;
 
 	/*
 	 * (non-Javadoc)
@@ -60,11 +66,17 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 				}
 			}
 		}
-
-		Long orgId = (Long) request.getSession().getAttribute(SessionParamType.ORGID);
-		Long userId = (Long) request.getSession().getAttribute(SessionParamType.USERID);
-		log.info("session[{}]--->>[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", sessionId, request.getRequestURI(), orgId, userId);
-		// if (orgId == null || userId == null) return false;
+		Session sess = sessionRepository.getSession(sessionId);
+		if (sess != null) {
+			sess.getAttributeNames().forEach(s -> {
+				log.info("--------------{}={}", s, sess.getAttribute(s));
+			});
+			Long orgId = (Long) sess.getAttribute(SessionParamType.ORGID);
+			Long userId = (Long) sess.getAttribute(SessionParamType.USERID);
+			log.info("session[{}]--->>[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", sessionId, request.getRequestURI(), orgId,
+					userId);
+			// if (orgId == null || userId == null) return false;
+		}
 		return true;
 	}
 
