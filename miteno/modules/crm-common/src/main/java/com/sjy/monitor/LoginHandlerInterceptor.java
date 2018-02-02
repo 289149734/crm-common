@@ -3,13 +3,19 @@
  */
 package com.sjy.monitor;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.alibaba.fastjson.JSON;
+import com.sjy.constant.SessionParamType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,12 +44,27 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		HttpSession session = request.getSession();
-		log.info("sessionId = {}", session.getId());  
-		// Long orgId = (Long) session.getAttribute(SessionParamType.ORGID);
-		// Long userId = (Long) session.getAttribute(SessionParamType.USERID);
-		// log.debug("[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", request.getRequestURI(),
-		// orgId, userId);
+		Map<String, String[]> rparams = request.getParameterMap();
+		rparams.forEach((k, v) -> {
+			log.debug("{} = {}", k, JSON.toJSONString(v, false));
+		});
+		String sessionId = null;
+		List<String> cookies = Collections.list(request.getHeaders("cookie"));
+		for (String cookie : cookies) {
+			log.debug("cookie>>>>>>[{}]", cookie);
+			String[] params = cookie.split("; ");
+			for (String param : params) {
+				if (param.startsWith("SESSION=")) {
+					sessionId = param.replace("SESSION=", "");
+					log.debug("session>>>>>>>[{}]", sessionId);
+				}
+			}
+		}
+		log.debug("session>>>>>>>[{}]", sessionId);
+
+		Long orgId = (Long) request.getSession().getAttribute(SessionParamType.ORGID);
+		Long userId = (Long) request.getSession().getAttribute(SessionParamType.USERID);
+		log.debug("[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", request.getRequestURI(), orgId, userId);
 		// if (orgId == null || userId == null) return false;
 		return true;
 	}
