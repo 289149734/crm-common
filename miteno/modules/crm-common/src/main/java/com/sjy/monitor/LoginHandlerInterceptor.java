@@ -60,11 +60,10 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 				}
 			}
 		}
-		log.debug("session>>>>>>>[{}]", sessionId);
 
 		Long orgId = (Long) request.getSession().getAttribute(SessionParamType.ORGID);
 		Long userId = (Long) request.getSession().getAttribute(SessionParamType.USERID);
-		log.debug("[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", request.getRequestURI(), orgId, userId);
+		log.info("session[{}]--->>[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", sessionId, request.getRequestURI(), orgId, userId);
 		// if (orgId == null || userId == null) return false;
 		return true;
 	}
