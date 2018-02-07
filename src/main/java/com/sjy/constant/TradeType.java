@@ -46,6 +46,8 @@ public class TradeType {
 	public static final int BANK_CONSUME = 153; // 银行卡消费
 	public static final int ALI_CONSUME = 148; // 支付宝消费
 	public static final int WX_CONSUME = 154; // 微信消费
+	public static final int MEMBER_COUPON = 200; // 会员卡消费
+	
 	@Dict(text = "微信商城消费")
 	public static final int ONLINE_CONSUME = 157; // 微信商城消费
 	public static final int H5_CONSUME = 158; // 虚拟终端消费[暂不用]
@@ -129,6 +131,7 @@ public class TradeType {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(COUPON_CONSUME);
 		list.add(COUPON_CONSUME_ONLINE);
+		list.add(MEMBER_COUPON);
 		return list;
 	}
 }
