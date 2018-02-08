@@ -9,6 +9,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class StringUtil extends StringUtils {
 	static final String HEX_FORMAT = "%02x";
 
@@ -254,13 +257,17 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static String format(String content, JSONObject obj) {
-		for (String key : obj.keySet()) {
-			String reg = "\\{" + key + "\\}";
-			Pattern pattern = Pattern.compile(reg);
-			Matcher matcher = pattern.matcher(content);
-			while (matcher.find()) {
-				content = matcher.replaceAll(obj.getString(key));
+		try {
+			for (String key : obj.keySet()) {
+				String reg = "\\{" + key + "\\}";
+				Pattern pattern = Pattern.compile(reg);
+				Matcher matcher = pattern.matcher(content);
+				while (matcher.find()) {
+					content = matcher.replaceAll(obj.getString(key));
+				}
 			}
+		} catch (Exception e) {
+			log.error("替换占位符失败", e);
 		}
 		return content;
 	}
