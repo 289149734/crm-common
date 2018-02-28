@@ -2,16 +2,9 @@ package com.sjy.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
-
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class StringUtil extends StringUtils {
 	static final String HEX_FORMAT = "%02x";
 
@@ -20,8 +13,7 @@ public class StringUtil extends StringUtils {
 	}
 
 	public static String bytesToHexStr(byte b[], int start, int len) {
-		if (start >= b.length || b == null || b.length == 0)
-			return "";
+		if (start >= b.length || b == null || b.length == 0) return "";
 		StringBuffer str = new StringBuffer();
 		for (int i = start; i < start + len; i++) {
 			str.append(String.format(HEX_FORMAT, b[i]));
@@ -41,8 +33,7 @@ public class StringUtil extends StringUtils {
 		}
 		byte[] temp = new byte[str.length() / 2];
 		for (int i = 0; i < str.length(); i = i + 2) {
-			temp[i / 2] = (byte) (Byte.parseByte(str.substring(i, i + 1), 16) * 16
-					+ Byte.parseByte(str.substring(i + 1, i + 2), 16));
+			temp[i / 2] = (byte) (Byte.parseByte(str.substring(i, i + 1), 16) * 16 + Byte.parseByte(str.substring(i + 1, i + 2), 16));
 		}
 		return temp;
 	}
@@ -65,8 +56,7 @@ public class StringUtil extends StringUtils {
 			str = "0" + str;
 		}
 		for (int i = 0; i < Math.min(str.length(), length * 2) && (from + i / 2) < b.length; i = i + 2) {
-			b[from + i / 2] = (byte) (Byte.parseByte(str.substring(i, i + 1), 16) * 16
-					+ Byte.parseByte(str.substring(i + 1, i + 2), 16));
+			b[from + i / 2] = (byte) (Byte.parseByte(str.substring(i, i + 1), 16) * 16 + Byte.parseByte(str.substring(i + 1, i + 2), 16));
 		}
 	}
 
@@ -82,8 +72,8 @@ public class StringUtil extends StringUtils {
 		}
 		byte[] temp = new byte[str.length() / 2];
 		for (int i = 0; i < str.length(); i = i + 2) {
-			temp[temp.length - 1 - i / 2] = (byte) (Byte.parseByte(str.substring(i, i + 1), 16) * 16
-					+ Byte.parseByte(str.substring(i + 1, i + 2), 16));
+			temp[temp.length - 1 - i / 2] = (byte) (Byte.parseByte(str.substring(i, i + 1), 16) * 16 + Byte.parseByte(
+					str.substring(i + 1, i + 2), 16));
 		}
 		return temp;
 	}
@@ -156,11 +146,9 @@ public class StringUtil extends StringUtils {
 	 *         20050301 update by guty 汉字算作长度为2
 	 */
 	public static String lengthFix(String text, int length, char ch, boolean end) {
-		if (text == null)
-			text = "";
+		if (text == null) text = "";
 		int tempLength = text.getBytes().length;
-		if (length == tempLength)
-			return text;
+		if (length == tempLength) return text;
 
 		if (length > tempLength) {
 			char[] fix = new char[length - tempLength];
@@ -175,10 +163,8 @@ public class StringUtil extends StringUtils {
 			}
 			return buffer.toString();
 		} else {
-			if (end)
-				return new String(text.getBytes(), 0, length);
-			else
-				return new String(text.getBytes(), tempLength - length, length);
+			if (end) return new String(text.getBytes(), 0, length);
+			else return new String(text.getBytes(), tempLength - length, length);
 		}
 	}
 
@@ -244,32 +230,8 @@ public class StringUtil extends StringUtils {
 		if (arrs != null) {
 			for (String e : arrs)
 				list.add(e);
-		}
+		} 
 		return list;
-	}
-
-	/**
-	 * 替换占位符:
-	 * 尊敬的VIP会员,赠送你{coupon.num}张优惠券，点击查看{coupon.url}-->>尊敬的VIP会员,赠送你1张优惠券，点击查看www/myvipo2o.com/login.html
-	 * 
-	 * @param str
-	 * @param obj
-	 * @return
-	 */
-	public static String format(String content, JSONObject obj) {
-		try {
-			for (String key : obj.keySet()) {
-				String reg = "\\{" + key + "\\}";
-				Pattern pattern = Pattern.compile(reg);
-				Matcher matcher = pattern.matcher(content);
-				while (matcher.find()) {
-					content = matcher.replaceAll(obj.getString(key));
-				}
-			}
-		} catch (Exception e) {
-			log.error("替换占位符失败", e);
-		}
-		return content;
 	}
 
 	public static void main(String[] args) throws Exception {
