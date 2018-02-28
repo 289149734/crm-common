@@ -77,9 +77,6 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 			Long userId = (Long) sess.getAttribute(SessionParamType.USERID);
 			log.debug("session[{}]--->>[{}]当前登录机构ID：{}, 当前登录操作员ID: {}", sessionId, request.getRequestURI(), orgId,
 					userId);
-
-			request.getSession().setAttribute(SessionParamType.ORGID, orgId);
-			request.getSession().setAttribute(SessionParamType.USERID, userId);
 			// if (orgId == null || userId == null) return false;
 		}
 		return true;

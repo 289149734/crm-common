@@ -216,21 +216,7 @@ public class BeanUtils extends BeanUtilsBean {
 		}
 		return null;
 	}
-
-	public static <T> T getBeanById(Object beanId, Class<T> clsName) {
-		try {
-			T tobean = clsName.newInstance();
-			if (beanId == null) {
-				return tobean;
-			}
-			PropertyUtils.setProperty(tobean, "id", beanId);
-			return tobean;
-		} catch (Exception e) {
-			log.error("", e);
-		}
-		return null;
-	}
-
+	
 	public void clearAllProperties(final Object obj) throws IllegalAccessException, InvocationTargetException {
 
 		// Validate existence of the specified beans
